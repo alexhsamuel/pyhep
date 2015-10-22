@@ -1,0 +1,18 @@
+from   hep.cernlib import hbook
+
+def ls(hbook_dir, indent=0):
+    # Loop over directory elements in 'path'.
+    for name in hbook_dir.keys():
+        info = hbook_dir.getInfo(name)
+        print "%s%s%s%5d  %s" % (" " * indent, name,
+                                 " " * (40 - indent - len(name)),
+                                 info.rz_id, info.type)
+        # If it's a directory, list its contents recursively.
+        if info.is_directory:
+            ls(hbook_dir[name], indent + 1)
+
+
+if __name__ == "__main__":
+    import sys
+    file = hbook.open(sys.argv[1])
+    ls(file)

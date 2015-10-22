@@ -1,0 +1,110 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+<title>2.2.2 Additional axis parameters</title>
+<META NAME="description" CONTENT="2.2.2 Additional axis parameters">
+<META NAME="keywords" CONTENT="pyhep">
+<META NAME="resource-type" CONTENT="document">
+<META NAME="distribution" CONTENT="global">
+<link rel="STYLESHEET" href="pyhep.css">
+<link rel="first" href="pyhep.html">
+<link rel="contents" href="contents.html" title="Contents">
+
+<LINK REL="next" HREF="node9.html">
+<LINK REL="previous" HREF="node7.html">
+<LINK REL="up" HREF="node6.html">
+<LINK REL="next" HREF="node9.html">
+</head>
+<body>
+<DIV CLASS="navigation">
+<table align="center" width="100%" cellpadding="0" cellspacing="2">
+<tr>
+<td><A HREF="node7.html"><img src="icons//previous.gif"
+  border="0" height="32"
+  alt="Previous Page" width="32"></A></td>
+<td><A HREF="node6.html"><img src="icons//up.gif"
+  border="0" height="32"
+  alt="Up One Level" width="32"></A></td>
+<td><A HREF="node9.html"><img src="icons//next.gif"
+  border="0" height="32"
+  alt="Next Page" width="32"></A></td>
+<td align="center" width="100%"> PyHEP Tutorial</td>
+<td><A href="contents.html"><img src="icons//contents.gif"
+  border="0" height="32"
+  alt="Contents" width="32"></A></td>
+<td><img src="icons//blank.gif"
+  border="0" height="32"
+  alt="" width="32"></td>
+<td><img src="icons//blank.gif"
+  border="0" height="32"
+  alt="" width="32"></td>
+</tr></table>
+<b class="navlabel">Previous:</b> <a class="sectref" HREF="node7.html">2.2.1 Axis type</A>
+<b class="navlabel">Up:</b> <a class="sectref" HREF="node6.html">2.2 Creating histograms</A>
+<b class="navlabel">Next:</b> <a class="sectref" HREF="node9.html">2.2.3 Bin type and</A>
+<br><hr>
+</DIV>
+<!--End of Navigation Panel-->
+
+<H2><A NAME="SECTION004220000000000000000">
+2.2.2 Additional axis parameters</A>
+</H2>
+
+<P>
+In addition to the number of bins and axis range, you may optionally
+provide additional elements to a tuple specifying an axis (or as the
+arguments to <tt class="function">Histogram1D</tt>).  The third argument is the string
+name of the axis quantity, and the fourth argument is a string
+describing the units of this quantity.  For example,
+<dl><dd><pre class="verbatim">
+h = hep.hist.Histogram1D(30, (0.05, 0.20), "pi0 mass", "GeV/$c^2$")
+</pre></dl>
+creates a histogram of 30 bins of pi0 mass between 0.05 and 0.2
+GeV/<SPAN CLASS="MATH"><IMG
+ WIDTH="18" HEIGHT="16" ALIGN="BOTTOM" BORDER="0"
+ SRC="img2.gif"
+ ALT="$c^2$"></SPAN>.  
+
+<P>
+<SPAN CLASS="logo,LaTeX">L<SUP><SMALL>A</SMALL></SUP>T<SMALL>E</SMALL>X</SPAN>markup may be used in the axis name and units; these will be
+rendered appropriately when plotting the histogram.  See the section on
+<SPAN CLASS="logo,LaTeX">L<SUP><SMALL>A</SMALL></SUP>T<SMALL>E</SMALL>X</SPAN>markup for details of the syntax.
+
+<P>
+
+<DIV CLASS="navigation">
+<p><hr>
+<table align="center" width="100%" cellpadding="0" cellspacing="2">
+<tr>
+<td><A HREF="node7.html"><img src="icons//previous.gif"
+  border="0" height="32"
+  alt="Previous Page" width="32"></A></td>
+<td><A HREF="node6.html"><img src="icons//up.gif"
+  border="0" height="32"
+  alt="Up One Level" width="32"></A></td>
+<td><A HREF="node9.html"><img src="icons//next.gif"
+  border="0" height="32"
+  alt="Next Page" width="32"></A></td>
+<td align="center" width="100%"> PyHEP Tutorial</td>
+<td><A href="contents.html"><img src="icons//contents.gif"
+  border="0" height="32"
+  alt="Contents" width="32"></A></td>
+<td><img src="icons//blank.gif"
+  border="0" height="32"
+  alt="" width="32"></td>
+<td><img src="icons//blank.gif"
+  border="0" height="32"
+  alt="" width="32"></td>
+</tr></table>
+<b class="navlabel">Previous:</b> <a class="sectref" HREF="node7.html">2.2.1 Axis type</A>
+<b class="navlabel">Up:</b> <a class="sectref" HREF="node6.html">2.2 Creating histograms</A>
+<b class="navlabel">Next:</b> <a class="sectref" HREF="node9.html">2.2.3 Bin type and</A>
+<hr>
+
+</DIV>
+<!--End of Navigation Panel-->
+<ADDRESS>
+<tt>alex@alexsamuel.net</tt>
+</ADDRESS>
+</BODY>
+</HTML>

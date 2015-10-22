@@ -1,0 +1,160 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+<title>11.3.1 Plotting functions</title>
+<META NAME="description" CONTENT="11.3.1 Plotting functions">
+<META NAME="keywords" CONTENT="pyhep">
+<META NAME="resource-type" CONTENT="document">
+<META NAME="distribution" CONTENT="global">
+<link rel="STYLESHEET" href="pyhep.css">
+<link rel="first" href="pyhep.html">
+<link rel="contents" href="contents.html" title="Contents">
+
+<LINK REL="next" HREF="node59.html">
+<LINK REL="previous" HREF="node57.html">
+<LINK REL="up" HREF="node57.html">
+<LINK REL="next" HREF="node59.html">
+</head>
+<body>
+<DIV CLASS="navigation">
+<table align="center" width="100%" cellpadding="0" cellspacing="2">
+<tr>
+<td><A HREF="node57.html"><img src="icons//previous.gif"
+  border="0" height="32"
+  alt="Previous Page" width="32"></A></td>
+<td><A HREF="node57.html"><img src="icons//up.gif"
+  border="0" height="32"
+  alt="Up One Level" width="32"></A></td>
+<td><A HREF="node59.html"><img src="icons//next.gif"
+  border="0" height="32"
+  alt="Next Page" width="32"></A></td>
+<td align="center" width="100%"> PyHEP Tutorial</td>
+<td><A href="contents.html"><img src="icons//contents.gif"
+  border="0" height="32"
+  alt="Contents" width="32"></A></td>
+<td><img src="icons//blank.gif"
+  border="0" height="32"
+  alt="" width="32"></td>
+<td><img src="icons//blank.gif"
+  border="0" height="32"
+  alt="" width="32"></td>
+</tr></table>
+<b class="navlabel">Previous:</b> <a class="sectref" HREF="node57.html">11.3 Interactive functions and</A>
+<b class="navlabel">Up:</b> <a class="sectref" HREF="node57.html">11.3 Interactive functions and</A>
+<b class="navlabel">Next:</b> <a class="sectref" HREF="node59.html">11.3.2 Table functions</A>
+<br><hr>
+</DIV>
+<!--End of Navigation Panel-->
+
+<H2><A NAME="SECTION0013310000000000000000">
+11.3.1 Plotting functions</A>
+</H2>
+
+<P>
+Interactive  PyHEP plots histograms in a pop-up plot window, similar to
+PAW.  The plot window may be divided into rectangular ``zones'', each
+displaying one plot.  All plots are shown in the same window, replacing
+other plots where necessary.
+
+<P>
+<dl><dt><b><a name="l2h-16"><tt class="function">iplot</tt></a></b>(<var>histogram</var><big>[</big><var>, over, **style</var><big>]</big>)
+<dd>
+ Plots a histogram or scatter plot in the plot window.  The argument is
+ a histogram or <tt class="class">Scatter</tt> object.  The <code>over</code> parameter
+ specifies whether the histogram is overlayed onto the current plot.  If
+ false (the default), the histogram is displayed in a new plot in the
+ next plot zone, replacing the plot there.  If <code>over</code> true, it is
+ added as an additional series to the current plot.  Any additional
+ keyword arguments are used as style attributes for the new plot or plot
+ series.
+</dl>
+
+<P>
+<dl><dt><b><a name="l2h-17"><tt class="function">idivide</tt></a></b>(<var>columns, rows</var><big>[</big><var>, gutter</var><big>]</big>)
+<dd>
+ Divide the plot window into a grid of rectangular plot zones.  The
+ arguments are the number of columns and rows in the grid.  The optional
+ third <code>gutter</code> argument is the size of the gutter between plot
+ zones, by default 1 cm.  Each call to <tt class="function">iplot</tt> uses the next
+ plot zone, proceeding left-to-right and then top-to-bottom, unless the
+ <code>over</code> argument is true.  Note that calling <tt class="function">idivide</tt>
+ always removes all plots and clears the plot window.
+</dl>
+
+<P>
+<dl><dt><b><a name="l2h-18"><tt class="function">iselect</tt></a></b>(<var>column, row</var>)
+<dd>
+ Select a plot zone.  Its arguments are the column and row coordinates
+ of the zone.  The next plot is drawn in this zone. 
+</dl>
+
+<P>
+<dl><dt><b><a name="l2h-19"><tt class="function">iredraw</tt></a></b>(<big>[</big><var>all</var><big>]</big>)
+<dd>
+ Redraw the plot in the current zone.  If the optional <code>all</code>
+ argument is true, all zones are redrawn.  Changes to the plot style or
+ histogram contents are reflected only when the plot is redrawn.
+</dl>
+
+<P>
+<dl><dt><b><a name="l2h-20"><tt class="function">iprint</tt></a></b>(<var>file_name</var>)
+<dd>
+ Print the contents of the plot window to a file.  The type of the file
+ is inferred from the file name extension: ``.ps'' produces a PostScript
+ file, and ``.eps'' produces an encapsulated PostScript file.
+</dl>
+
+<P>
+The global variable <code>i_plot</code> always refers to the current
+<code>Plot</code> object (or <code>None</code> if the current plot zone is empty).
+The global variable <code>i_plots</code> is a sequence of sequences of
+<code>Plot</code> objects for all zones in the plot window.
+
+<P>
+The global variable <code>i_window</code> is a draw object for the plot
+window, and <code>i_zone</code> is a draw object for the current plot zone.
+
+<P>
+You may modify any plot displayed in any plot zone.  Select the zone
+with <tt class="function">iselect</tt>, access and modify the plot with <code>i_plot</code>
+(for instance, adjust its style or add a series), and then call
+<tt class="function">iredraw</tt> to redraw it.
+
+<P>
+
+<DIV CLASS="navigation">
+<p><hr>
+<table align="center" width="100%" cellpadding="0" cellspacing="2">
+<tr>
+<td><A HREF="node57.html"><img src="icons//previous.gif"
+  border="0" height="32"
+  alt="Previous Page" width="32"></A></td>
+<td><A HREF="node57.html"><img src="icons//up.gif"
+  border="0" height="32"
+  alt="Up One Level" width="32"></A></td>
+<td><A HREF="node59.html"><img src="icons//next.gif"
+  border="0" height="32"
+  alt="Next Page" width="32"></A></td>
+<td align="center" width="100%"> PyHEP Tutorial</td>
+<td><A href="contents.html"><img src="icons//contents.gif"
+  border="0" height="32"
+  alt="Contents" width="32"></A></td>
+<td><img src="icons//blank.gif"
+  border="0" height="32"
+  alt="" width="32"></td>
+<td><img src="icons//blank.gif"
+  border="0" height="32"
+  alt="" width="32"></td>
+</tr></table>
+<b class="navlabel">Previous:</b> <a class="sectref" HREF="node57.html">11.3 Interactive functions and</A>
+<b class="navlabel">Up:</b> <a class="sectref" HREF="node57.html">11.3 Interactive functions and</A>
+<b class="navlabel">Next:</b> <a class="sectref" HREF="node59.html">11.3.2 Table functions</A>
+<hr>
+
+</DIV>
+<!--End of Navigation Panel-->
+<ADDRESS>
+<tt>alex@alexsamuel.net</tt>
+</ADDRESS>
+</BODY>
+</HTML>

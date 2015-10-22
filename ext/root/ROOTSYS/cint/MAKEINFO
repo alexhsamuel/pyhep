@@ -1,0 +1,18 @@
+# This file had been automatically generated
+# And will be re-generated when running make
+# Unless the keyword DEFAULT is replaced by LOCAL
+# on the next line, before MAKEINFO
+# DEFAULT MAKEINFO
+
+CC          = gcc
+CPP         = g++
+CPREP       = gcc -E -C
+CPPPREP     = g++ -E -C
+
+# source code postfix
+CSRCPOST    = .c
+CHDRPOST    = .h
+CPPSRCPOST  = .cxx
+CPPHDRPOST  = .h
+OBJPOST     = .o
+DLLPOST     = .dl

@@ -1,0 +1,137 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+<title>8.2 Vectors</title>
+<META NAME="description" CONTENT="8.2 Vectors">
+<META NAME="keywords" CONTENT="pyhep">
+<META NAME="resource-type" CONTENT="document">
+<META NAME="distribution" CONTENT="global">
+<link rel="STYLESHEET" href="pyhep.css">
+<link rel="first" href="pyhep.html">
+<link rel="contents" href="contents.html" title="Contents">
+
+<LINK REL="next" HREF="node51.html">
+<LINK REL="previous" HREF="node49.html">
+<LINK REL="up" HREF="node48.html">
+<LINK REL="next" HREF="node51.html">
+</head>
+<body>
+<DIV CLASS="navigation">
+<table align="center" width="100%" cellpadding="0" cellspacing="2">
+<tr>
+<td><A HREF="node49.html"><img src="icons//previous.gif"
+  border="0" height="32"
+  alt="Previous Page" width="32"></A></td>
+<td><A HREF="node48.html"><img src="icons//up.gif"
+  border="0" height="32"
+  alt="Up One Level" width="32"></A></td>
+<td><A HREF="node51.html"><img src="icons//next.gif"
+  border="0" height="32"
+  alt="Next Page" width="32"></A></td>
+<td align="center" width="100%"> PyHEP Tutorial</td>
+<td><A href="contents.html"><img src="icons//contents.gif"
+  border="0" height="32"
+  alt="Contents" width="32"></A></td>
+<td><img src="icons//blank.gif"
+  border="0" height="32"
+  alt="" width="32"></td>
+<td><img src="icons//blank.gif"
+  border="0" height="32"
+  alt="" width="32"></td>
+</tr></table>
+<b class="navlabel">Previous:</b> <a class="sectref" HREF="node49.html">8.1 Reference frames</A>
+<b class="navlabel">Up:</b> <a class="sectref" HREF="node48.html">8. Lorentz geometry and</A>
+<b class="navlabel">Next:</b> <a class="sectref" HREF="node51.html">8.3 Transformations and frames</A>
+<br><hr>
+</DIV>
+<!--End of Navigation Panel-->
+
+<H1><A NAME="SECTION0010200000000000000000">
+8.2 Vectors</A>
+</H1>
+
+<P>
+A four-vector is represented by an instance of
+<tt class="class">hep.lorentz.Vector</tt> class.  A <tt class="class">Vector</tt> instance represents
+the geometric object, which is independent of reference frame, so you
+can specify or obtain its coordinate values only in reference to a
+frame.  You may use the lab frame for this, or any other frame which you
+create.
+
+<P>
+To create a vector by specifying its coordinates in a particular frame,
+use the <tt class="method">Vector</tt> method of that frame.  For instance,
+<dl><dd><pre class="verbatim">
+from hep.lorentz import lab
+vector = lab.Vector(5.0, 1.0, 0.0, -2.0)
+</pre></dl>
+creates a four-vector whose time coordinate is 5.0 and whose space
+coordinates are (1.0, 0.0, -2.0) in the lab frame.
+
+<P>
+To obtain the coordinates of a four-vector in a reference frame, use the
+<tt class="method">coordinatesOf</tt> method of that frame.  For instance,
+<dl><dd><pre class="verbatim">
+t, x, y, z = lab.coordinatesOf(vector)
+</pre></dl>
+
+<P>
+You may negate (invert) a vector or scale it by a constant.  You may
+also add or subtract two vectors.  Since these are geometric operations,
+no frame is specified.  For example,
+<dl><dd><pre class="verbatim">
+vector3 = - vector1 / 2 + 3 * vector2
+</pre></dl>
+Use the <code>^</code> operator to obtain the inner product of two vectors.
+Each vector also has an attribute <tt class="member">norm</tt>, its Lorentz-invariant
+normal.  For example,
+<dl><dd><pre class="verbatim">
+c = (vector1 ^ vector2) / (vector1.norm * vector2.norm)
+</pre></dl>
+
+<P>
+You may also use <tt class="class">hep.lorentz.Momentum</tt>, a subclass of
+<tt class="class">Vector</tt> that represents a four-momentum.  It provided an
+additional attribute <tt class="member">mass</tt>, which is equivalent to
+<tt class="member">norm</tt>, plus an attribute <tt class="member">rest_frame</tt>, which is a
+<tt class="class">Frame</tt> object representing the rest frame of a particle with that
+four-momentum. 
+
+<P>
+
+<DIV CLASS="navigation">
+<p><hr>
+<table align="center" width="100%" cellpadding="0" cellspacing="2">
+<tr>
+<td><A HREF="node49.html"><img src="icons//previous.gif"
+  border="0" height="32"
+  alt="Previous Page" width="32"></A></td>
+<td><A HREF="node48.html"><img src="icons//up.gif"
+  border="0" height="32"
+  alt="Up One Level" width="32"></A></td>
+<td><A HREF="node51.html"><img src="icons//next.gif"
+  border="0" height="32"
+  alt="Next Page" width="32"></A></td>
+<td align="center" width="100%"> PyHEP Tutorial</td>
+<td><A href="contents.html"><img src="icons//contents.gif"
+  border="0" height="32"
+  alt="Contents" width="32"></A></td>
+<td><img src="icons//blank.gif"
+  border="0" height="32"
+  alt="" width="32"></td>
+<td><img src="icons//blank.gif"
+  border="0" height="32"
+  alt="" width="32"></td>
+</tr></table>
+<b class="navlabel">Previous:</b> <a class="sectref" HREF="node49.html">8.1 Reference frames</A>
+<b class="navlabel">Up:</b> <a class="sectref" HREF="node48.html">8. Lorentz geometry and</A>
+<b class="navlabel">Next:</b> <a class="sectref" HREF="node51.html">8.3 Transformations and frames</A>
+<hr>
+
+</DIV>
+<!--End of Navigation Panel-->
+<ADDRESS>
+<tt>alex@alexsamuel.net</tt>
+</ADDRESS>
+</BODY>
+</HTML>

@@ -1,0 +1,200 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+<title>3.2.1 Example: creating a table from a text file</title>
+<META NAME="description" CONTENT="3.2.1 Example: creating a table from a text file">
+<META NAME="keywords" CONTENT="pyhep">
+<META NAME="resource-type" CONTENT="document">
+<META NAME="distribution" CONTENT="global">
+<link rel="STYLESHEET" href="pyhep.css">
+<link rel="first" href="pyhep.html">
+<link rel="contents" href="contents.html" title="Contents">
+
+<LINK REL="previous" HREF="node17.html">
+<LINK REL="up" HREF="node17.html">
+<LINK REL="next" HREF="node19.html">
+</head>
+<body>
+<DIV CLASS="navigation">
+<table align="center" width="100%" cellpadding="0" cellspacing="2">
+<tr>
+<td><A HREF="node17.html"><img src="icons//previous.gif"
+  border="0" height="32"
+  alt="Previous Page" width="32"></A></td>
+<td><A HREF="node17.html"><img src="icons//up.gif"
+  border="0" height="32"
+  alt="Up One Level" width="32"></A></td>
+<td><A HREF="node19.html"><img src="icons//next.gif"
+  border="0" height="32"
+  alt="Next Page" width="32"></A></td>
+<td align="center" width="100%"> PyHEP Tutorial</td>
+<td><A href="contents.html"><img src="icons//contents.gif"
+  border="0" height="32"
+  alt="Contents" width="32"></A></td>
+<td><img src="icons//blank.gif"
+  border="0" height="32"
+  alt="" width="32"></td>
+<td><img src="icons//blank.gif"
+  border="0" height="32"
+  alt="" width="32"></td>
+</tr></table>
+<b class="navlabel">Previous:</b> <a class="sectref" HREF="node17.html">3.2 Creating and filling</A>
+<b class="navlabel">Up:</b> <a class="sectref" HREF="node17.html">3.2 Creating and filling</A>
+<b class="navlabel">Next:</b> <a class="sectref" HREF="node19.html">3.3 Using tables</A>
+<br><hr>
+</DIV>
+<!--End of Navigation Panel-->
+
+<H2><A NAME="SECTION005210000000000000000">
+3.2.1 Example: creating a table from a text file</A>
+</H2>
+
+<P>
+The script below converts a table of values in a text file into a
+ PyHEP table.  The script assumes that the file contains floating-point
+values only, except that the first line of the text file contains
+headings that will be used as the names of the columns in the table.
+<dl><dd><pre class="verbatim">import hep.table
+
+def textFileToTable(input_file_name, table_file_name):
+    """Convert a text file containing tabular values to a table.
+
+    'input_file_name' -&#45; The file name of a text file containing a table
+    of floating-point values.  The first line is assumed to contain the
+    column names.  All additional lines are assumed to contain values
+    for each column.
+
+    'table_file_name' -&#45; The file name of the table to create."""
+
+    lines = iter(file(input_file_name))
+
+    # Read the first line in the file, and split it into column names.
+    heading_row = lines.next()
+    column_names = heading_row.split()
+
+    # Construct the schema from these column names.
+    schema = hep.table.Schema()
+    for column_name in column_names:
+        schema.addColumn(column_name, "float32")
+    # Create the table.
+    table = hep.table.create(table_file_name, schema)
+
+    # Scan over remaining lines in the file.
+    for line in lines:
+        # Split the line into values and convert them to numbers.
+        values = map(float, line.split())
+        # Make sure the line contains the right number of values.
+        if len(values) != len(column_names):
+            raise RuntimeError, "format error"
+        # Construct a dictionary mapping column names to values.
+        row = dict(zip(column_names, values))
+        # Add the row to the table.
+        table.append(row)
+
+    del row, table
+
+if __name__ == "__main__":
+    # This file was invoked as a script.  Convert a text file as
+    # specified on the command line.
+    import sys
+    textFileToTable(sys.argv[1], sys.argv[2])
+
+</pre>
+<div class="verbatiminput-footer">
+<a href="table1.txt" type="text/plain">Download as text.</a>
+</div>
+</dd></dl>
+
+<P>
+Here is a table containing parameters for tracks measured in a
+detector.  The first column is the track's energy; the other three are
+the x, y, and z components of momentum.
+<dl><dd><pre class="verbatim">energy         p_x            p_y            p_z
+1.180304e+00   -4.751910e-01  -7.889777e-01  -7.305207e-01 
+2.080963e+00   1.452333e+00   -4.622423e-01  1.412906e+00  
+1.743646e+00   1.421417e+00   -3.871017e-01  9.267482e-01  
+1.541235e+00   -1.059296e-01  -1.395949e+00  -6.358849e-01 
+1.617172e+00   1.401164e+00   -8.951803e-03  8.004645e-01  
+2.035846e+00   -4.445600e-02  1.965886e+00   5.165461e-01  
+1.202767e+00   -1.163040e+00  1.832017e-01   -2.219467e-01 
+2.567302e+00   -2.095504e+00  8.135615e-02   1.477200e+00  
+2.603921e+00   -9.120621e-01  -1.848932e+00  1.587083e+00  
+2.523255e+00   2.622356e-01   -1.991126e+00  1.523911e+00  
+2.233162e+00   -1.252426e+00  1.779797e+00   4.894894e-01  
+2.276338e+00   -1.044715e+00  5.443484e-01   1.944943e+00  
+2.208343e+00   1.969946e+00   -3.294630e-01  9.361521e-01  
+1.679185e+00   1.460185e+00   7.744986e-01   2.766050e-01  
+1.097246e+00   2.343778e-01   -1.065456e+00  -5.151948e-02 
+1.192835e+00   -9.905712e-01  5.303552e-01   3.862431e-01  
+3.180005e+00   -7.034522e-01  1.516622e+00   2.703014e+00  
+2.583735e+00   7.747896e-01   -1.303546e+00  2.089256e+00  
+1.953654e+00   1.482216e-01   1.877128e+00   5.099221e-01  
+2.217959e+00   5.964227e-01   1.990123e+00   7.693304e-01  
+2.307544e+00   -1.608457e+00  5.832562e-01   1.544757e+00  
+1.705716e+00   -4.596864e-01  1.543895e+00   5.508014e-01  
+2.343682e+00   1.468491e+00   -4.265070e-01  1.772938e+00  
+2.371860e+00   -1.794360e+00  1.057422e+00   1.129905e+00  
+1.370261e+00   4.528853e-01   1.226287e+00   -3.969452e-01 
+2.294908e+00   2.271728e-02   -2.027759e+00  1.069166e+00  
+2.875299e+00   1.594167e+00   1.849570e+00   1.514564e+00  
+2.917657e+00   1.757843e+00   5.340980e-01   2.264131e+00  
+2.766238e+00   -1.591074e+00  1.628313e+00   1.567799e+00  
+2.030203e+00   -1.662516e+00  -4.085008e-01  1.086154e+00  
+2.698105e+00   -5.955992e-01  -1.737854e+00  1.973255e+00  
+2.095454e+00   5.345570e-01   1.171157e+00   1.649971e+00  
+2.118398e+00   1.290140e+00   1.337788e+00   1.011093e+00  
+1.129607e+00   -6.164498e-01  7.138193e-01   -6.126172e-01 
+1.987723e+00   7.570301e-01   -1.814894e+00  2.700781e-01  
+2.018107e+00   -6.774516e-02  -1.672229e+00  1.122789e+00  
+</pre>
+<div class="verbatiminput-footer">
+<a href="tracks.txt" type="text/plain">Download as text.</a>
+</div>
+</dd></dl>
+
+<P>
+If you save the script as <span class="file">txt2table.py</span> and the table as
+<span class="file">tracks.table</span>, you would invoke this command to convert it to a
+table: 
+<dl><dd><pre class="verbatim">
+&gt; python txt2table.py tracks.txt tracks.table
+</pre></dl>
+
+<P>
+
+<DIV CLASS="navigation">
+<p><hr>
+<table align="center" width="100%" cellpadding="0" cellspacing="2">
+<tr>
+<td><A HREF="node17.html"><img src="icons//previous.gif"
+  border="0" height="32"
+  alt="Previous Page" width="32"></A></td>
+<td><A HREF="node17.html"><img src="icons//up.gif"
+  border="0" height="32"
+  alt="Up One Level" width="32"></A></td>
+<td><A HREF="node19.html"><img src="icons//next.gif"
+  border="0" height="32"
+  alt="Next Page" width="32"></A></td>
+<td align="center" width="100%"> PyHEP Tutorial</td>
+<td><A href="contents.html"><img src="icons//contents.gif"
+  border="0" height="32"
+  alt="Contents" width="32"></A></td>
+<td><img src="icons//blank.gif"
+  border="0" height="32"
+  alt="" width="32"></td>
+<td><img src="icons//blank.gif"
+  border="0" height="32"
+  alt="" width="32"></td>
+</tr></table>
+<b class="navlabel">Previous:</b> <a class="sectref" HREF="node17.html">3.2 Creating and filling</A>
+<b class="navlabel">Up:</b> <a class="sectref" HREF="node17.html">3.2 Creating and filling</A>
+<b class="navlabel">Next:</b> <a class="sectref" HREF="node19.html">3.3 Using tables</A>
+<hr>
+
+</DIV>
+<!--End of Navigation Panel-->
+<ADDRESS>
+<tt>alex@alexsamuel.net</tt>
+</ADDRESS>
+</BODY>
+</HTML>

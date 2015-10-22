@@ -1,0 +1,62 @@
+#-----------------------------------------------------------------------
+#
+# pyhep.spec
+#
+# Copyright 2004 by Alex Samuel.  All rights reserved.
+#
+#-----------------------------------------------------------------------
+
+Summary: PyHEP (Python library for High Energy Physics)
+Name: pyhep
+Version: 0.8.1
+Release: 1
+URL: http://www.indetermi.net/pyhep
+Source0: %{name}-%{version}.tgz
+License: GPL
+Group: Physics/Libraries
+
+%description
+PyHEP is a Python module to support High Energy Physics simulation
+and data analysis.
+
+Includes components from the CERNLIB libraries.
+Includes libraries from the Root system.
+
+%prep
+rm -rf /tmp/%{name}-%{version}
+tar zxf %{SOURCE0} -C /tmp
+cd /tmp/%{name}-%{version}
+# FIXME
+./configure \
+  --enable-docs \
+  --prefix=/usr \
+  --with-python=/usr/bin/python2 \
+  --with-cernlib=no \
+  --with-root=no \
+  --with-evtgen=no
+
+%build
+cd /tmp/%{name}-%{version}
+make
+
+%install
+cd /tmp/%{name}-%{version}
+make install
+
+%clean
+rm -rf /tmp/%{name}-%{version}
+
+%files
+%defattr(-,root,root)
+/usr/lib/python2.2/hep
+/usr/bin/pyhep
+/usr/bin/pdt
+/usr/share/doc/pyhep-%{version}
+
+#-----------------------------------------------------------------------
+# Local Variables:
+# mode: rpm-spec
+# indent-tabs-mode: nil
+# fill-column: 72
+# End:
+#-----------------------------------------------------------------------

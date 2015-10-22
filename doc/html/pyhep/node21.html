@@ -1,0 +1,152 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+<title>3.5 Projecting histograms from tables</title>
+<META NAME="description" CONTENT="3.5 Projecting histograms from tables">
+<META NAME="keywords" CONTENT="pyhep">
+<META NAME="resource-type" CONTENT="document">
+<META NAME="distribution" CONTENT="global">
+<link rel="STYLESHEET" href="pyhep.css">
+<link rel="first" href="pyhep.html">
+<link rel="contents" href="contents.html" title="Contents">
+
+<LINK REL="next" href="module-hep.histogram.html">
+<LINK REL="previous" href="module-hep.lorentz.html">
+<LINK REL="up" HREF="node15.html">
+<LINK REL="next" href="module-hep.histogram.html">
+</head>
+<body>
+<DIV CLASS="navigation">
+<table align="center" width="100%" cellpadding="0" cellspacing="2">
+<tr>
+<td><A href="module-hep.lorentz.html"><img src="icons//previous.gif"
+  border="0" height="32"
+  alt="Previous Page" width="32"></A></td>
+<td><A HREF="node15.html"><img src="icons//up.gif"
+  border="0" height="32"
+  alt="Up One Level" width="32"></A></td>
+<td><A href="module-hep.histogram.html"><img src="icons//next.gif"
+  border="0" height="32"
+  alt="Next Page" width="32"></A></td>
+<td align="center" width="100%"> PyHEP Tutorial</td>
+<td><A href="contents.html"><img src="icons//contents.gif"
+  border="0" height="32"
+  alt="Contents" width="32"></A></td>
+<td><img src="icons//blank.gif"
+  border="0" height="32"
+  alt="" width="32"></td>
+<td><img src="icons//blank.gif"
+  border="0" height="32"
+  alt="" width="32"></td>
+</tr></table>
+<b class="navlabel">Previous:</b> <a class="sectref" href="module-hep.lorentz.html">3.4 Iterating over rows</A>
+<b class="navlabel">Up:</b> <a class="sectref" HREF="node15.html">3. Tables</A>
+<b class="navlabel">Next:</b> <a class="sectref" href="module-hep.histogram.html">3.6 Using expressions with</A>
+<br><hr>
+</DIV>
+<!--End of Navigation Panel-->
+
+<H1><A NAME="SECTION005500000000000000000">
+3.5 Projecting histograms from tables</A>
+</H1>
+
+<P>
+If you have a sequence or iterator of values, you can use the built-in
+<tt class="function">map</tt> function to accumulate them into a histogram.  For
+instance, if <var>energies</var> is a sequence of energy values, you could
+fill them into a histogram using,
+<dl><dd><pre class="verbatim">
+&gt;&gt;&gt; energy_hist = hep.hist.Histogram1D(20, (0.0, 5.0))
+&gt;&gt;&gt; map(energy_hist.accumulate, energies)
+</pre></dl>
+
+<P>
+Generally, though, you will want to project many histograms at one time
+from a table.  Use the <tt class="function">hep.hist.project</tt> function to project
+multiple histograms in a single scan over a table.  Pass an iterable
+over the table rows to project--the table itself, or an iterator
+constructed with the <tt class="method">select</tt> method--and a sequence of
+histogram objects.  Each histogram should have an attribute
+<tt class="member">expression</tt>, which is the expression whose value is accumulated
+into the histogram for each table row.  The expression are similar to
+those used with the <tt class="method">select</tt> method, except that their values
+should be numerical instead of boolean.
+
+<P>
+For example, this script projects three histograms - energy, transverse
+momentum, and invariant mass, from the table of tracks we constructed
+previously.  Only high-energy tracks (those with energy above 2.5) are
+included.  The dictionary containing the histograms is stored in a
+standard pickle file.
+<dl><dd><pre class="verbatim">from   hep.hist import Histogram, Histogram1D, project
+import hep.table
+import pickle
+
+histograms = {
+    "energy":   Histogram1D(20, (0.0, 5.0), "energy", "GeV",
+                expression="energy"),
+
+    "pt":       Histogram1D(20, (1.0, 3.0), "p_T", "GeV/c",
+                expression="hypot(p_x, p_y)"),
+
+    "mass":     Histogram1D(20, (0.0, 0.2), "mass", "GeV/c^2",
+                expression="sqrt(energy**2 - p_x**2 - p_y**2 - p_z**2)"),
+
+    "px_vs_py": Histogram((8, (-2.0, 2.0), "p_x", "GeV/c"),
+                          (8, (-2.0, 2.0), "p_y", "GeV/c"),
+                expression="p_x, p_y"),
+    }
+
+tracks = hep.table.open("tracks.table")
+project(tracks.select("energy &gt; 2.5"), histograms.values())
+pickle.dump(histograms, file("histograms.pickle", "w"))
+</pre>
+<div class="verbatiminput-footer">
+<a href="project1.txt" type="text/plain">Download as text.</a>
+</div>
+</dd></dl>
+Observe that the last histogram is two-dimensional, and its expression
+specifies the two coordinates of the sample using a comma expression.
+
+<P>
+With this scheme, you can determine later how the values in a histogram
+were computed, by checking its <tt class="member">expression</tt> attribute.
+
+<P>
+
+<DIV CLASS="navigation">
+<p><hr>
+<table align="center" width="100%" cellpadding="0" cellspacing="2">
+<tr>
+<td><A href="module-hep.lorentz.html"><img src="icons//previous.gif"
+  border="0" height="32"
+  alt="Previous Page" width="32"></A></td>
+<td><A HREF="node15.html"><img src="icons//up.gif"
+  border="0" height="32"
+  alt="Up One Level" width="32"></A></td>
+<td><A href="module-hep.histogram.html"><img src="icons//next.gif"
+  border="0" height="32"
+  alt="Next Page" width="32"></A></td>
+<td align="center" width="100%"> PyHEP Tutorial</td>
+<td><A href="contents.html"><img src="icons//contents.gif"
+  border="0" height="32"
+  alt="Contents" width="32"></A></td>
+<td><img src="icons//blank.gif"
+  border="0" height="32"
+  alt="" width="32"></td>
+<td><img src="icons//blank.gif"
+  border="0" height="32"
+  alt="" width="32"></td>
+</tr></table>
+<b class="navlabel">Previous:</b> <a class="sectref" href="module-hep.lorentz.html">3.4 Iterating over rows</A>
+<b class="navlabel">Up:</b> <a class="sectref" HREF="node15.html">3. Tables</A>
+<b class="navlabel">Next:</b> <a class="sectref" href="module-hep.histogram.html">3.6 Using expressions with</A>
+<hr>
+
+</DIV>
+<!--End of Navigation Panel-->
+<ADDRESS>
+<tt>alex@alexsamuel.net</tt>
+</ADDRESS>
+</BODY>
+</HTML>

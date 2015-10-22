@@ -1,0 +1,7 @@
+config.cache
+config.log
+config.mk
+config.status
+pyhep.spec
+files.txt
+tmp

@@ -1,0 +1,6 @@
+Traceback (most recent call last):
+  File "cut1.py", line 5, in ?
+    import hep.cuts
+  File "/home/samuel/dev/pyhep/py/hep/cuts.py", line 20, in ?
+    from   numarray import *
+ImportError: No module named numarray

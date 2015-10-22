@@ -1,0 +1,118 @@
+#!/usr/bin/python
+
+#-----------------------------------------------------------------------
+# imports
+#-----------------------------------------------------------------------
+
+from __future__ import division
+
+from   hep.bool import *
+import hep.config
+import os
+import os.path
+import popen2
+import sys
+
+#-----------------------------------------------------------------------
+# functions
+#-----------------------------------------------------------------------
+
+def fnroot(file_name):
+    return os.path.splitext(file_name)[0]
+
+
+def fnext(file_name):
+    return os.path.splitext(file_name)[1]
+
+
+def testDir(dir):
+    file_names = os.listdir(dir)
+    file_names.sort()
+
+    tests_run = 0
+    tests_passed = 0
+    tests_xfail = 0
+
+    for name in file_names:
+        path = os.path.join(dir, name)
+        if name.startswith("stress") and not include_stress_tests:
+            continue
+
+        if fnext(name) == ".py" and os.path.isfile(path):
+            is_xfail = file(path).read().find("PyHEP XFAIL") != -1
+
+            root = fnroot(name)
+            out_file = os.path.join(dir, root + ".out")
+            print "test %-40s" % path,
+            sys.stdout.flush()
+            tests_run += 1
+            result = os.system("(cd %s && %s '%s') > '%s' 2>&1"
+                               % (dir, sys.executable, name, out_file))
+            if result == 0:
+                tests_passed += 1
+                if is_xfail:
+                    print "* xfail passed"
+                else:
+                    print "\r",
+            else:
+                if is_xfail:
+                    tests_xfail += 1
+                    print "* xfail"
+                else:
+                    print "* fail"
+
+        elif os.path.isdir(path):
+            subtests_run, subtests_passed, subtests_xfail = testDir(path)
+            tests_run += subtests_run
+            tests_passed += subtests_passed
+            tests_xfail += subtests_xfail
+
+    return tests_run, tests_passed, tests_xfail
+
+
+def printUsage(error=False):
+    if error:
+        out_file = sys.stderr
+    else:
+        out_file = sys.stdout
+    print >> out_file, \
+          "Usage: %s [--stress] [ TEST | DIR ]" % sys.argv[0]
+    if error:
+        sys.exit(1)
+    else:
+        sys.exit(0)
+
+
+#-----------------------------------------------------------------------
+# script
+#-----------------------------------------------------------------------
+
+include_stress_tests = False
+
+args = list(sys.argv[1:])
+
+if len(args) > 0 and args[0] == "--stress":
+    include_stress_tests = True
+    args = args[1:]
+    
+if len(args) == 0:
+    test_path = "."
+elif len(args) == 1:
+    test_path, = args
+else:
+    printUsage(True)
+
+print "Testing PyHEP in %s." % hep.config.base_dir
+
+tests_run, tests_passed, tests_xfail = testDir(test_path)
+print "\r" + 72 * " "
+print "%d tests run, %d passed (%3.0f%%), %d xfail (%3.0f%%)" % \
+      (tests_run,
+       tests_passed, 100 * tests_passed / tests_run,
+       tests_xfail, 100 * tests_xfail / tests_run)
+
+#-----------------------------------------------------------------------
+# Local variables:
+# mode: python
+# fill-column: 72
+# End:

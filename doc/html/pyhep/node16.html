@@ -1,0 +1,123 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+<title>3.1 Table implementations</title>
+<META NAME="description" CONTENT="3.1 Table implementations">
+<META NAME="keywords" CONTENT="pyhep">
+<META NAME="resource-type" CONTENT="document">
+<META NAME="distribution" CONTENT="global">
+<link rel="STYLESHEET" href="pyhep.css">
+<link rel="first" href="pyhep.html">
+<link rel="contents" href="contents.html" title="Contents">
+
+<LINK REL="next" HREF="node17.html">
+<LINK REL="previous" HREF="node15.html">
+<LINK REL="up" HREF="node15.html">
+<LINK REL="next" HREF="node17.html">
+</head>
+<body>
+<DIV CLASS="navigation">
+<table align="center" width="100%" cellpadding="0" cellspacing="2">
+<tr>
+<td><A HREF="node15.html"><img src="icons//previous.gif"
+  border="0" height="32"
+  alt="Previous Page" width="32"></A></td>
+<td><A HREF="node15.html"><img src="icons//up.gif"
+  border="0" height="32"
+  alt="Up One Level" width="32"></A></td>
+<td><A HREF="node17.html"><img src="icons//next.gif"
+  border="0" height="32"
+  alt="Next Page" width="32"></A></td>
+<td align="center" width="100%"> PyHEP Tutorial</td>
+<td><A href="contents.html"><img src="icons//contents.gif"
+  border="0" height="32"
+  alt="Contents" width="32"></A></td>
+<td><img src="icons//blank.gif"
+  border="0" height="32"
+  alt="" width="32"></td>
+<td><img src="icons//blank.gif"
+  border="0" height="32"
+  alt="" width="32"></td>
+</tr></table>
+<b class="navlabel">Previous:</b> <a class="sectref" HREF="node15.html">3. Tables</A>
+<b class="navlabel">Up:</b> <a class="sectref" HREF="node15.html">3. Tables</A>
+<b class="navlabel">Next:</b> <a class="sectref" HREF="node17.html">3.2 Creating and filling</A>
+<br><hr>
+</DIV>
+<!--End of Navigation Panel-->
+
+<H1><A NAME="SECTION005100000000000000000">
+3.1 Table implementations</A>
+</H1>
+
+<P>
+Several table implementations are provided.  Other than for creating new
+tables or opening existing tables, the interfaces of these
+implementations are identical.
+
+<P>
+
+<OL>
+<LI>A extension-class implementation written in C++ in the
+ <tt class="module">hep.table</tt> module.  The table resides in a disk file, and rows
+ are loaded into memory as needed.  The implementation is simple and
+ efficient.  Other programs may write and access these tables via a
+ simple C++ interface.
+
+<P>
+</LI>
+<LI>An implementation which uses HBOOK ntuples (column-wise or
+ row-wise) stored in HBOOK files.  Not all features of HBOOK ntuples are
+ supported.
+
+<P>
+</LI>
+<LI>An implementation which uses ROOT tress stored in ROOT files.
+ Not all features of ROOT trees are supported.
+
+<P>
+</LI>
+</OL>
+
+<P>
+The extension-class implementation in <tt class="module">hep.table</tt> is used in this
+tutorial. 
+
+<P>
+
+<DIV CLASS="navigation">
+<p><hr>
+<table align="center" width="100%" cellpadding="0" cellspacing="2">
+<tr>
+<td><A HREF="node15.html"><img src="icons//previous.gif"
+  border="0" height="32"
+  alt="Previous Page" width="32"></A></td>
+<td><A HREF="node15.html"><img src="icons//up.gif"
+  border="0" height="32"
+  alt="Up One Level" width="32"></A></td>
+<td><A HREF="node17.html"><img src="icons//next.gif"
+  border="0" height="32"
+  alt="Next Page" width="32"></A></td>
+<td align="center" width="100%"> PyHEP Tutorial</td>
+<td><A href="contents.html"><img src="icons//contents.gif"
+  border="0" height="32"
+  alt="Contents" width="32"></A></td>
+<td><img src="icons//blank.gif"
+  border="0" height="32"
+  alt="" width="32"></td>
+<td><img src="icons//blank.gif"
+  border="0" height="32"
+  alt="" width="32"></td>
+</tr></table>
+<b class="navlabel">Previous:</b> <a class="sectref" HREF="node15.html">3. Tables</A>
+<b class="navlabel">Up:</b> <a class="sectref" HREF="node15.html">3. Tables</A>
+<b class="navlabel">Next:</b> <a class="sectref" HREF="node17.html">3.2 Creating and filling</A>
+<hr>
+
+</DIV>
+<!--End of Navigation Panel-->
+<ADDRESS>
+<tt>alex@alexsamuel.net</tt>
+</ADDRESS>
+</BODY>
+</HTML>

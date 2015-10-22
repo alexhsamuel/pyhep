@@ -1,0 +1,8 @@
+*.pyc
+*.pyo
+*.table
+*.hbook
+*.root
+last.kumac
+last.kumacold
+paw.metafile

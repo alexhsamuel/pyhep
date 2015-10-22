@@ -1,0 +1,287 @@
+\chapter{Expressions}
+
+We have already seen expressions used as predicates in a table's
+\method{select} method, and as formulas for computing the values to
+accumulate into histograms.  Generally, operations using expressions
+execute much faster than the same logic coded directly as Python, since
+expressions are compiled for the specific table into a special format
+from which they are evaluated very quickly.
+
+\section{Building and evaluating expressions}
+
+To parse an expression into a Python expression object representing its
+parse tree, use \function{hep.expr.asExpression}.
+\begin{verbatim}
+>>> import hep.expr
+>>> ex = hep.expr.asExpression("p_x ** 2 + p_y ** 2")
+\end{verbatim}
+The expression object's string representation looks similar to the
+original formula:
+\begin{verbatim}
+>>> print ex
+(p_x ** 2) + (p_y ** 2)
+\end{verbatim}
+The expression object's \function{repr} shows its tree structure:
+\begin{verbatim}
+>>> print repr(ex)
+Add(Power(Symbol('p_x', None), Constant(2)), Power(Symbol('p_y', None), Constant(2)))
+\end{verbatim}
+
+To evaluate an expression, you must provide the values of all symbols.
+For the expression above, the symbols \var{p_x} and \var{p_y} must be
+specified.  You may either call the expression object directly, passing
+symbol values as keyword arguments:
+\begin{verbatim}
+>>> ex(p_x=1, p_y=2)
+5.0
+\end{verbatim}
+or you may call its \method{evaluate} method with a map providing values
+of the symbols mentioned in the expression:  
+\begin{verbatim}
+>>> ex.evaluate({"p_x": 1, "p_y": 2})
+5.0
+\end{verbatim}
+
+\section{Compiling expressions}
+
+Expression objects, as well as expression coded directly in Python,
+execute quite a bit slower than similar mathematical expressions
+implemented in a compiled language like C or C++.  However, \pyhep can
+often execute an expressions much faster, by compiling it to an internal
+binary format and then evaluating it with an optimized, stack-based
+evaluator implemented in C++.
+
+To compile an expression to this optimized form, use
+\function{hep.expr.compile}.  It returns an expression object that can
+be used the same way as the original expression, but which executes
+faster.
+\begin{verbatim}
+>>> cex = hep.expr.compile(ex)
+>>> cex(p_x=1, p_y=2)
+5.0
+\end{verbatim}
+
+There is no need to use \code{asExpression} before \code{compile}; just
+pass it the expression formula directly.
+\begin{verbatim}
+>>> cex = hep.expr.compile("p_x ** 2 + p_y ** 2")
+>>> cex(p_x=1, p_y=2)
+5.0
+\end{verbatim}
+
+
+\subsection{Expression types}
+
+\pyhep attempts to determine the numeric type of the result of an
+expression.  To do this, it needs to know the types of the symbol values
+in the expression.  For constants, this is obvious, but since Python is
+an untyped language, the expression compiler cannot automatically
+determine the types of symbolic names in an expression, and treats them
+as generic objects.  
+
+\pyhep expressions understand the types \code{int}, \code{float}, and
+\code{complex}.  The value \code{None} indicates that the type is not
+known, so the value should be treated as a generic Python object.
+
+For example, in these expressions, \pyhep can infer the type of the
+expression value entirely from the types of constants.
+\begin{verbatim}
+>>> print hep.expr.asExpression("10 + 12.5").type
+<type 'float'>
+>>> print hep.expr.asExpression("3 ** 4").type
+<type 'int'>
+\end{verbatim}
+However, a symbol's type is assumed to be generic, so the whole
+expression's type cannot be inferred.
+\begin{verbatim}
+>>> print hep.expr.asExpression("2 * c + 10").type
+None
+\end{verbatim}
+
+The expression compiler can do a much better job if it knows the
+numerical type of the expression's symbols.  When you call
+\function{compile}, you can specify the types of symbols as keyword
+arguments.  For example,
+\begin{verbatim}
+>>> cex = hep.expr.compile("2 * c + 10", c=int)
+>>> print cex.type
+<type 'int'>
+\end{verbatim}
+If you provide a second non-keyword argument, this type is used as the
+default for all symbols in the expression.
+\begin{verbatim}
+>>> cex = hep.expr.compile("a**2 + b**2 + c**2", float)
+>>> print cex.type
+<type 'float'>
+\end{verbatim}
+By specifying symbol types, you can construct compiled expressions that
+execute much faster than expressions with generic types.
+
+You can also construct an uncompiled expression with types specified for
+symbols using the \function{hep.expr.setTypes},
+\function{hep.expr.setTypesFrom}, and \function{hep.expr.setTypesFixed}
+functions.
+
+
+\section{Using expressions with tables}
+
+Since a table row object is a map from column names to values, you may
+specify a row object as the argument to \method{evaluate}.  In the
+expression, the name of a column in the table is replaced by the
+corresponding value in that row.  Using the \file{tracks.table} table we
+created earlier,
+\begin{verbatim}
+>>> import hep.table
+>>> tracks = hep.table.open("tracks.table")
+>>> print ex.evaluate(tracks[0])
+0.848292267373
+\end{verbatim}
+
+This works well for small numbers of rows.  However, if the expression
+is to be evaluated on a large number of rows in the same table, it
+should be compiled.  Use the table's \method{compile} method, which sets
+the symbol types according to the table's schema and performs other
+necessary expansions before compiling the expression.  The compiled
+expression object behaves just like the original expression object,
+except that it runs faster.
+\begin{verbatim}
+>>> cm = tracks.compile(ex)
+>>> print cm.evaluate(tracks[0])
+0.848292267373
+\end{verbatim}
+You may also pass an expression as a string to \method{compile}.
+Functions provided by \pyhep which work with expressions, such as a
+table's \method{select} method or \function{hep.hist.project} will
+compile expressions automatically, where possible.  
+
+
+\section{Expression syntax}
+
+An expression is specified using Python's ordinary expression syntax,
+with the following assumptions:
+\begin{itemize}
+ \item Arbitrary names may be used in expressions as variable
+ quantities, functions, etc.  Other than the built-in names listed
+ below, all names must be resolved when the expression is evaluated.
+
+ \item The forward-slash operator for integers is true division, i.e. it
+ produces a \code{float} quotient.  Use the double forward-slash
+ operator (e.g. ``x // 3'') to obtain the C-style truncated integer
+ division.
+\end{itemize}
+
+The following names are recognized in expressions:
+\begin{itemize}
+ \item Built-in Python constants \code{True}, \code{False}, and
+ \code{None}.  
+
+ \item Built-in Python types \code{int}, \code{float}, \code{complex},
+ and \code{bool}.
+
+ \item Built-in Python functions \code{abs}, \code{min}, and \code{max}.
+
+ \item Constants from the \module{math} module: \code{e} and \code{pi}.
+
+ \item Functions from the \module{math} module: \code{acos},
+ \code{asin}, \code{atan}, \code{atan2}, \code{ceil}, \code{cos},
+ \code{cosh}, \code{exp}, \code{floor}, \code{log}, \code{sin},
+ \code{sinh}, \code{sqrt}, \code{tan}, and \code{tanh}.
+
+ \item From the \module{hep.lorentz} module, \code{Frame} and
+ \code{lab}.
+\end{itemize}
+
+In addition, expressions may use these numerical convenience functions.
+(They are also available in Python programs in the \module{hep.num}
+module.)
+
+\begin{funcdesc}{gaussian}{mu, sigma, x}
+Returns the probability density at \var{x} from a gaussian PDF with mean
+\var{mu} and standard deviation \var{sigma}.
+\end{funcdesc}
+
+\begin{funcdesc}{get_bit}{value, bit}
+Returns true iff. bit \var{bit} in \var{value} is set.
+\end{funcdesc}
+
+\begin{funcdesc}{hypot}{*terms}
+A generalization of \function{math.hypot} to arbitrary number of
+arguments.  Returns the square root of the sum of the squares of its
+arguments.
+\end{funcdesc}
+
+\begin{funcdesc}{if_then}{condition, value_if_true, value_if_false}
+Returns \var{value_if_true} if \var{condition} is true,
+\var{value_if_false} otherwise.  Note that in a compiled expression
+(only), the second and third arguments are evaluated lazily, so that
+if \var{condition} is true, \var{value_if_false} is not evaluated, and
+otherwise \var{value_if_true} is not evaluated.
+\end{funcdesc}
+
+\begin{funcdesc}{near}{central_value, half_interval, value}
+Returns true if the absolute difference between \var{central_value} and
+\var{value} is less than \var{half_interval}. 
+\end{funcdesc}
+
+
+\section{Other ways to make expressions}
+
+You may specify a constant instead of a string when constructing an
+expression with \function{asExpression} or \function{compile}.  The
+resulting expression simply returns the constant.
+\begin{verbatim}
+>>> ex = hep.expr.asExpression(15)
+>>> print ex
+15
+>>> print ex.type
+<type 'int'>
+\end{verbatim}
+
+You may also specify a function that takes only positional arguments.
+The resulting expression calls this function, using symbols for the
+function arguments matching the parameter names in the function
+definition.  If the function has a parameters \code{xyz}, the expression
+will evaluate the symbol \code{xyz} and call the function with this
+value.  For example,
+\begin{verbatim}
+>>> def foo(x, a):
+...   return x ** a
+...
+>>> ex = hep.expr.asExpression(foo)
+>>> print ex
+foo(x, a)
+>>> ex(a=8, x=2)
+256
+\end{verbatim}
+
+The type of the value returned from such a function is not known. 
+\begin{verbatim}
+>>> ex = hep.expr.asExpression(foo)
+>>> print ex.type
+None
+\end{verbatim}
+You may specify it by attaching an attribute \member{type} to the
+function, containing the expected type of the function's return value.
+\begin{verbatim}
+>>> foo.type = float
+>>> ex = hep.expr.asExpression(foo)
+>>> print ex.type
+<type 'float'>
+\end{verbatim}
+
+You may also construct expressions pragmatically from the classes used
+by \pyhep to represent expressions internally.  Each class represents a
+single operation.  Invoke \code{help(hep.expr.classes)} for a list of
+these classes and their interfaces.
+
+Here's an example to give you an idea.
+\begin{verbatim}
+>>> from hep.expr import Add, Divide, Constant, Symbol
+>>> mean = Divide(Add(Symbol("a"), Symbol("b")), Constant(2))
+>>> print mean
+(a + b) / 2
+>>> mean(a=16, b=20)
+18.0
+\end{verbatim}
+
+

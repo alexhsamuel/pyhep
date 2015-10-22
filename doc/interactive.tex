@@ -1,0 +1,152 @@
+\chapter{Interactive PyHEP}
+
+%-----------------------------------------------------------------------
+
+This chapter describes how to use interactive \pyhep.  Interactive
+\pyhep is simply the ordinary Python interpreter with certain \pyhep
+modules preloaded, commonly-used names imported into the global
+namespace, and some additional interactive functions and variables are
+provided.
+
+
+\section{Invoking interactive \pyhep}
+
+The \code{pyhep} script launches interactive \pyhep.  This is installed
+by default in \code{/usr/bin}; check your installation for your specific
+location.  
+
+In addition to the Python interpreter's usual startup message, the
+\pyhep version is displayed.
+
+\section{Imported names}
+
+These names are imported into the global namespace:
+\begin{itemize}
+
+ \item The contents of the standard \module{math} module.
+
+ \item The contents of the \module{hep.num} module.
+
+ \item If your version of Python doesn't include built-in \code{bool},
+ \code{True}, and \code{False}, these names are added.
+
+ \item The \code{hep.lorentz.lab} reference frame object, as \code{lab}.
+
+ \item The \code{default} particle data dictionary from
+ \module{hep.pdt}, as \code{pdt}.
+
+\end{itemize}
+
+
+\section{Interactive functions and variables}
+
+The names of interactive \pyhep functions always begin with `\code{i}',
+and the names of variables always begin with `\code{i_}'.
+
+The \function{ihelp} function displays some help information for
+interactive \pyhep.
+
+
+\subsection{Plotting functions}
+
+Interactive \pyhep plots histograms in a pop-up plot window, similar to
+PAW.  The plot window may be divided into rectangular ``zones'', each
+displaying one plot.  All plots are shown in the same window, replacing
+other plots where necessary.
+
+\begin{funcdesc}{iplot}{histogram\optional{, **style}}
+ Show a new plots of a histogram or scatter plot in the plot window.
+ The argument is a histogram or \class{Scatter} object.  Any keyword
+ arguments are used as style attributes for the new plot.
+\end{funcdesc}
+
+\begin{funcdesc}{iseries}{histogram\optional{, **style}}
+ Add a series to the current plot in the plot window.  The argument is a
+ histogram or \class{Scatter} object.  Any keyword arguments are used as
+ style attributes for the new plot.
+\end{funcdesc}
+
+\begin{funcdesc}{igrid}{columns, rows}
+ Divide the plot window into a grid of rectangular plot zones.  The
+ arguments are the number of columns and rows in the grid.  Each call to
+ \function{iplot} uses the next plot zone, proceeding left-to-right and
+ then top-to-bottom.  Note that calling \function{igrid} always
+ removes all plots and clears the plot window.
+\end{funcdesc}
+
+\begin{funcdesc}{iselect}{column, row}
+ Select a plot zone.  Its arguments are the column and row coordinates
+ of the zone.  The next plot is drawn in this zone. 
+\end{funcdesc}
+
+\begin{funcdesc}{ishow}{figure}
+ Show \code{figure} in the plot window.  If you have divided the figure
+ with \function{igrid}, shows \code{figure} in the current cell.
+\end{funcdesc}
+
+\begin{funcdesc}{iprint}{file_name}
+ Print the contents of the plot window to a file.  The type of the file
+ is inferred from the file name extension: ``.ps'' produces a PostScript
+ file, and ``.eps'' produces an encapsulated PostScript file.
+\end{funcdesc}
+
+The global variable \code{ifig} always refers to the current \code{Plot}
+object, the current figure (if you added one with \function{ishow}, or
+\code{None} (if the current plot zone is empty).  The global variable
+\code{i_plots} is a sequence of sequences of \code{Plot} objects for all
+zones in the plot window.
+
+The global variable \code{iwin} is a draw object for the plot window.
+
+The global variable \code{istyle} is a style dictionary that is used for
+plots and series created with \function{iplot} and \function{iseries}.
+If you set a style attribute in \code{istyle}, it will become the
+default for subsequent plots.  You can also call the \method{setall}
+method of \code{istyle}, which sets a style attribute not only in this
+dictionary, but in all of the plots currently shown in the plot window. 
+For example, to set a log scale for the plots currently shown as well as
+subsequent plots,
+\begin{verbatim}
+>>> istyle.setall("log_scale", True)
+\end{verbatim}
+To set a style attribute in the current plot only, access its
+\member{style} member through \code{ifig}, like this:
+\begin{verbatim}
+>>> ifig.style["log_scale"] = True
+\end{verbatim}
+\pyhep keeps track of when a plot's style dictionary is changed, and
+redraws the plot automatically.
+
+You may modify any plot displayed in any plot zone.  Select the zone
+with \function{iselect}, access and modify the plot with \code{i_plot}
+(for instance, adjust its style or add a series), and then call
+\function{iredraw} to redraw it.
+
+\subsection{Table functions}
+
+\begin{funcdesc}{iproject}{table, expression\optional{, selection,
+      number_of_bins, range}}
+ Project a histogram from a table.  The first argument is the table
+ object, and the second argument is the expression to accumulate in the
+ histogram.  The optional \code{selection} argument is a selection
+ expression; only table rows for which this expression is true are
+ projected into the histogram.  The number of bins and histogram range
+ are automatically determined, but to override these, use the
+ \code{number_of_bins} and \code{range} (a pair of values) arguments,
+ respectively.  The return value is a histogram object.
+
+ To project a one-dimensional histogram, use an ordinary expression.  To
+ project a two-dimensional histogram, specify two expressions in
+ \code{expression} separated by commas; for instance \code{"p_x, p_y"}.
+ You can also use the \function{iproj1} function to project a
+ one-dimensional histogram from a table.
+\end{funcdesc}
+
+\begin{funcdesc}{idump}{rows, *expressions}
+ Dumps values from a table.  The first argument is a table or an
+ iterator over table rows.  One or more additional arguments are
+ expressions whose values are to be displayed.  The output is a table
+ with the row number followed by the values of the specified
+ expressions.
+\end{funcdesc}
+

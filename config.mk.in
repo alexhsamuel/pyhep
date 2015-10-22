@@ -1,0 +1,64 @@
+#-----------------------------------------------------------------------
+# variables
+#-----------------------------------------------------------------------
+
+CC		= @CC@
+CFLAGS		= @CFLAGS@
+CXX		= @CXX@
+CXXFLAGS	= @CXXFLAGS@
+FC		= @FC@
+
+LIBX11		= @LIBX11@
+
+PYHEPDIR	= @SOURCE_PREFIX@
+BASEDIR		= $(PYHEPDIR)/py
+DATADIR		= $(BASEDIR)/hep/data
+
+PYTHON		= @PYTHON@
+PYTHONPREFIX	= @PYTHON_PREFIX@
+PYTHONVERSION	= @PYTHON_VERSION@
+PYTHONINCDIR	= $(PYTHONPREFIX)/include/python$(PYTHONVERSION)/
+PYTHONLIBDIR	= $(PYTHONPREFIX)/lib/python$(PYTHONVERSION)/
+
+ENABLEDOCS	= @ENABLE_DOCS@
+PYDOC		= $(PYTHONPREFIX)/lib/python$(PYTHONVERSION)/pydoc.py
+
+X_CFLAGS	= @X_CFLAGS@
+X_LIBS		= @X_LIBS@ @X_EXTRA_LIBS@ -lX11
+XFT_CFLAGS	= @XFT_CFLAGS@
+XFT_LIBS	= @XFT_LIBS@
+IMLIB_CFLAGS	= @IMLIB_CFLAGS@
+IMLIB_LIBS	= @IMLIB_LIBS@
+
+ROOTSYS		= @ROOT_PREFIX@
+CERN		= @CERN_PREFIX@
+EVTGEN		= @EVTGEN_PREFIX@
+
+SWIG		= @SWIG@
+SWIGVERSION	= @SWIGVERSION@
+
+AGG		= $(PYHEPDIR)/packages/agg
+AGGINCDIR	= $(AGG)/include
+AGG_LIBS	= $(AGG)/src/libagg.a
+
+INSTALL		= @INSTALL@
+INSTALLPROGRAM	= $(INSTALL) -m 755
+INSTALLDATA	= $(INSTALL) -m 644
+
+INSTALLDIR	= @prefix@
+INSTALLLIBDIR	= $(INSTALLDIR)/lib/python$(PYTHONVERSION)
+INSTALLBINDIR	= $(INSTALLDIR)/bin
+INSTALLDOCDIR	= $(INSTALLDIR)/share/doc/pyhep-$(VERSION)
+INSTALLDATADIR  = $(INSTALLLIBDIR)/hep/data
+
+#-----------------------------------------------------------------------
+# the version number
+#-----------------------------------------------------------------------
+
+VERSION		= $(shell cat $(PYHEPDIR)/version)
+
+#-----------------------------------------------------------------------
+# Local variables:
+# mode: Makefile
+# fill-column: 72
+# End:

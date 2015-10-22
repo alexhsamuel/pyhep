@@ -1,0 +1,16 @@
+***************
+*** 14,20 ****
+  
+  from   hep.num import hypot
+  from   math import sqrt, sin, cos, pi
+- from   hep.ext import FourVector as Vector
+  
+  #-----------------------------------------------------------------------
+  # classes
+--- 14,19 ----
+  
+  from   hep.num import hypot
+  from   math import sqrt, sin, cos, pi
+  
+  #-----------------------------------------------------------------------
+  # classes

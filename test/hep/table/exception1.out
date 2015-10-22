@@ -1,0 +1,2 @@
+warning: Python exception during expression evaluation
+warning: exception 'division by zero' in expression "x / y" in 'project'

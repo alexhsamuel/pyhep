@@ -1,0 +1,160 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+<title>7.6 Plot objects</title>
+<META NAME="description" CONTENT="7.6 Plot objects">
+<META NAME="keywords" CONTENT="pyhep">
+<META NAME="resource-type" CONTENT="document">
+<META NAME="distribution" CONTENT="global">
+<link rel="STYLESHEET" href="pyhep.css">
+<link rel="first" href="pyhep.html">
+<link rel="contents" href="contents.html" title="Contents">
+
+<LINK REL="previous" HREF="node46.html">
+<LINK REL="up" HREF="node41.html">
+<LINK REL="next" HREF="node48.html">
+</head>
+<body>
+<DIV CLASS="navigation">
+<table align="center" width="100%" cellpadding="0" cellspacing="2">
+<tr>
+<td><A HREF="node46.html"><img src="icons//previous.gif"
+  border="0" height="32"
+  alt="Previous Page" width="32"></A></td>
+<td><A HREF="node41.html"><img src="icons//up.gif"
+  border="0" height="32"
+  alt="Up One Level" width="32"></A></td>
+<td><A HREF="node48.html"><img src="icons//next.gif"
+  border="0" height="32"
+  alt="Next Page" width="32"></A></td>
+<td align="center" width="100%"> PyHEP Tutorial</td>
+<td><A href="contents.html"><img src="icons//contents.gif"
+  border="0" height="32"
+  alt="Contents" width="32"></A></td>
+<td><img src="icons//blank.gif"
+  border="0" height="32"
+  alt="" width="32"></td>
+<td><img src="icons//blank.gif"
+  border="0" height="32"
+  alt="" width="32"></td>
+</tr></table>
+<b class="navlabel">Previous:</b> <a class="sectref" HREF="node46.html">7.5 Plotting Styles</A>
+<b class="navlabel">Up:</b> <a class="sectref" HREF="node41.html">7. Drawing and Plotting</A>
+<b class="navlabel">Next:</b> <a class="sectref" HREF="node48.html">8. Lorentz geometry and</A>
+<br><hr>
+</DIV>
+<!--End of Navigation Panel-->
+
+<H1><A NAME="SECTION009600000000000000000">
+7.6 <tt class="class">Plot</tt> objects</A>
+</H1>
+
+<P>
+The return value of the <tt class="function">plot</tt> function is a
+<tt class="class">hep.hist.plot.Plot</tt> objects.  You can also create an empty
+<tt class="class">Plot</tt> object explicitly, passing a style dictionary for the plot,
+and add one or more series manually.  The plot's style is accessible as
+its <tt class="member">style</tt> attribute.
+
+<P>
+To add a histogram series to a plot, use the <tt class="method">addSeries</tt> method.
+An option second argument is the style dictionary for that series.
+(Remember, any style not specified in a series's style dictionary is
+inherited from the plot's style dictionary, or from the default.)  The
+series are accessible as the plot object's <tt class="member">series</tt> attribute,
+which is a sequence of <code>Series</code> objects.  Each of these has a
+<tt class="member">data</tt> attribute, referring to the histogram itself, and a
+<tt class="member">style</tt> attribute, containing the series's style dictionary.
+Note that adding series of different types (histograms of different
+dimensionality and/or scatter plots) to a single plot may produce
+unpredictable results.
+
+<P>
+To draw a plot, call its <tt class="method">draw</tt> method, passing a draw object.
+
+<P>
+If you wish to draw additional annotations onto a plot after drawing it,
+call the <tt class="method">buildLayout</tt> method, passing the draw object.
+The returned layout object has attributes containing draw objects with
+which you can draw onto various parts of the plot:
+
+<UL>
+<LI><tt class="member">draw</tt> is the entire draw object used for the plot
+
+<P>
+</LI>
+<LI><tt class="member">x_axis_draw</tt> is used to draw the x axis; its x scale is
+  set to the actual x axis scale in the plot
+
+<P>
+</LI>
+<LI><tt class="member">y_axis_draw</tt> is correspondingly for the y axis
+
+<P>
+</LI>
+<LI><tt class="member">data_draw</tt> is used to draw the plot data; its x and y
+  scales are set to the actual axis scales in the plot
+
+<P>
+</LI>
+</UL>
+
+<P>
+This example shows how to make a plot displaying two one-dimensional
+histograms, and draw it to an EPS file.  One histogram (say, results of
+simulation) is drawn as a filled-in contour; the other (say, data) is
+drawn as filled dots with error bars.
+<dl><dd><pre class="verbatim">
+import hep.draw
+import hep.draw.postscript
+import hep.hist.plot
+
+# Create a PostScript file.
+ps_file = hep.draw.postscript.PSFile("histograms.ps", border=0.03)
+# Add a plot showing two histograms.
+plot = hep.hist.plot.plot(ps_file, simulation_hist, bin_style="filled")
+plot.addSeries(data_hist, 
+               show_errors=True, 
+               bin_style="marker", marker=hep.draw.Marker("filled dot"))
+# Draw it.
+plot.draw(ps_file)
+</pre></dl>
+
+<P>
+
+<DIV CLASS="navigation">
+<p><hr>
+<table align="center" width="100%" cellpadding="0" cellspacing="2">
+<tr>
+<td><A HREF="node46.html"><img src="icons//previous.gif"
+  border="0" height="32"
+  alt="Previous Page" width="32"></A></td>
+<td><A HREF="node41.html"><img src="icons//up.gif"
+  border="0" height="32"
+  alt="Up One Level" width="32"></A></td>
+<td><A HREF="node48.html"><img src="icons//next.gif"
+  border="0" height="32"
+  alt="Next Page" width="32"></A></td>
+<td align="center" width="100%"> PyHEP Tutorial</td>
+<td><A href="contents.html"><img src="icons//contents.gif"
+  border="0" height="32"
+  alt="Contents" width="32"></A></td>
+<td><img src="icons//blank.gif"
+  border="0" height="32"
+  alt="" width="32"></td>
+<td><img src="icons//blank.gif"
+  border="0" height="32"
+  alt="" width="32"></td>
+</tr></table>
+<b class="navlabel">Previous:</b> <a class="sectref" HREF="node46.html">7.5 Plotting Styles</A>
+<b class="navlabel">Up:</b> <a class="sectref" HREF="node41.html">7. Drawing and Plotting</A>
+<b class="navlabel">Next:</b> <a class="sectref" HREF="node48.html">8. Lorentz geometry and</A>
+<hr>
+
+</DIV>
+<!--End of Navigation Panel-->
+<ADDRESS>
+<tt>alex@alexsamuel.net</tt>
+</ADDRESS>
+</BODY>
+</HTML>

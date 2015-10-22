@@ -1,0 +1,13 @@
+INDIVIDUAL AXES
+---------------
+x_axis_line		whether to draw the axis line
+x_axis_thickness	thickness of the axis line
+x_log_scale		log or linear scale
+x_overflows		whether to draw overflow bins
+x_axis_position		positioning of axis ("left", "right", "top", "bottom")
+x_ticks			approximate number of ticks or list of tick positions
+
+
+AXES
+----
+color, font_family, font_size

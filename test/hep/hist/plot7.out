@@ -1,0 +1,14 @@
+Traceback (most recent call last):
+  File "plot7.py", line 41, in ?
+    hep.draw.postscript.EPSFile("plot7.eps", (0.23, 0.1)).render(layout)
+  File "/home/samuel/dev/pyhep/py/hep/draw/postscript.py", line 345, in render
+    figure._render(self, (0, 0, sx, sy))
+  File "/home/samuel/dev/pyhep/py/hep/draw/__init__.py", line 380, in _render
+    figure._render(renderer, (x0, y0, x1, y1))
+  File "/home/samuel/dev/pyhep/py/hep/hist/plot.py", line 1578, in _render
+    s._render(
+  File "/home/samuel/dev/pyhep/py/hep/hist/plot.py", line 1265, in _render
+    self << formatStatistics(self.statistics, histogram)
+  File "/home/samuel/dev/pyhep/py/hep/hist/plot.py", line 2119, in formatStatistics
+    raise ValueError, "unknown statistic %r" % stat
+ValueError: unknown statistic 'sd'

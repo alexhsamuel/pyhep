@@ -1,0 +1,133 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+<title>3.3 Using tables</title>
+<META NAME="description" CONTENT="3.3 Using tables">
+<META NAME="keywords" CONTENT="pyhep">
+<META NAME="resource-type" CONTENT="document">
+<META NAME="distribution" CONTENT="global">
+<link rel="STYLESHEET" href="pyhep.css">
+<link rel="first" href="pyhep.html">
+<link rel="contents" href="contents.html" title="Contents">
+
+<LINK REL="next" href="module-hep.lorentz.html">
+<LINK REL="previous" HREF="node17.html">
+<LINK REL="up" HREF="node15.html">
+<LINK REL="next" href="module-hep.lorentz.html">
+</head>
+<body>
+<DIV CLASS="navigation">
+<table align="center" width="100%" cellpadding="0" cellspacing="2">
+<tr>
+<td><A HREF="node18.html"><img src="icons//previous.gif"
+  border="0" height="32"
+  alt="Previous Page" width="32"></A></td>
+<td><A HREF="node15.html"><img src="icons//up.gif"
+  border="0" height="32"
+  alt="Up One Level" width="32"></A></td>
+<td><A href="module-hep.lorentz.html"><img src="icons//next.gif"
+  border="0" height="32"
+  alt="Next Page" width="32"></A></td>
+<td align="center" width="100%"> PyHEP Tutorial</td>
+<td><A href="contents.html"><img src="icons//contents.gif"
+  border="0" height="32"
+  alt="Contents" width="32"></A></td>
+<td><img src="icons//blank.gif"
+  border="0" height="32"
+  alt="" width="32"></td>
+<td><img src="icons//blank.gif"
+  border="0" height="32"
+  alt="" width="32"></td>
+</tr></table>
+<b class="navlabel">Previous:</b> <a class="sectref" HREF="node18.html">3.2.1 Example: creating a</A>
+<b class="navlabel">Up:</b> <a class="sectref" HREF="node15.html">3. Tables</A>
+<b class="navlabel">Next:</b> <a class="sectref" href="module-hep.lorentz.html">3.4 Iterating over rows</A>
+<br><hr>
+</DIV>
+<!--End of Navigation Panel-->
+
+<H1><A NAME="SECTION005300000000000000000">
+3.3 Using tables</A>
+</H1>
+
+<P>
+To open an existing table, use the <tt class="function">open</tt> function.  The first
+argument is the table file name.  The second argument is the mode in
+which to open the table, similar to the built-in <tt class="function">open</tt>
+function: <tt class="constant">"r"</tt> (the default) for read-only, <tt class="constant">"w"</tt> for
+write.  
+
+<P>
+For instance, to open the table we created in the last section,
+<dl><dd><pre class="verbatim">
+&gt;&gt;&gt; tracks = hep.table.open("tracks.table")
+</pre></dl>
+
+<P>
+The table object is a sequence whose elements are the rows.  Each row is
+has a row index, which is equal to its position in the table.  Thus, the
+<tt class="function">len</tt> function returns the number of rows in the table.
+<dl><dd><pre class="verbatim">
+&gt;&gt;&gt; number_of_tracks = len(tracks)
+</pre></dl>
+To access a row by its row index, use the normal sequence index
+notation.  This returns a <tt class="class">Row</tt> object, which is a mapping from
+column names to values.
+<dl><dd><pre class="verbatim">
+&gt;&gt;&gt; track = tracks[19]
+&gt;&gt;&gt; print track["energy"]
+</pre></dl>
+
+<P>
+The table's <tt class="member">schema</tt> attribute contains the table's schema; the
+schema's <tt class="member">column</tt> attribute is a sequence of the columns in the
+schema (in unspecified order).  You can examine these directly, or use
+the <tt class="function">dumpSchema</tt> function to print out the schema.
+<dl><dd><pre class="verbatim">
+&gt;&gt;&gt; hep.table.dumpSchema(tracks.schema)
+name             type
+-----------------------------
+energy           float32
+p_x              float32
+p_y              float32
+p_z              float32
+</pre></dl>
+
+<P>
+
+<DIV CLASS="navigation">
+<p><hr>
+<table align="center" width="100%" cellpadding="0" cellspacing="2">
+<tr>
+<td><A HREF="node18.html"><img src="icons//previous.gif"
+  border="0" height="32"
+  alt="Previous Page" width="32"></A></td>
+<td><A HREF="node15.html"><img src="icons//up.gif"
+  border="0" height="32"
+  alt="Up One Level" width="32"></A></td>
+<td><A href="module-hep.lorentz.html"><img src="icons//next.gif"
+  border="0" height="32"
+  alt="Next Page" width="32"></A></td>
+<td align="center" width="100%"> PyHEP Tutorial</td>
+<td><A href="contents.html"><img src="icons//contents.gif"
+  border="0" height="32"
+  alt="Contents" width="32"></A></td>
+<td><img src="icons//blank.gif"
+  border="0" height="32"
+  alt="" width="32"></td>
+<td><img src="icons//blank.gif"
+  border="0" height="32"
+  alt="" width="32"></td>
+</tr></table>
+<b class="navlabel">Previous:</b> <a class="sectref" HREF="node18.html">3.2.1 Example: creating a</A>
+<b class="navlabel">Up:</b> <a class="sectref" HREF="node15.html">3. Tables</A>
+<b class="navlabel">Next:</b> <a class="sectref" href="module-hep.lorentz.html">3.4 Iterating over rows</A>
+<hr>
+
+</DIV>
+<!--End of Navigation Panel-->
+<ADDRESS>
+<tt>alex@alexsamuel.net</tt>
+</ADDRESS>
+</BODY>
+</HTML>

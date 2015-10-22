@@ -1,0 +1,37 @@
+Drawing operations and their arguments
+--------------------------------------
+
+Stateless, but provide defaults [in brackets] for each.
+
+  - draw line, curve
+    + color [black]
+    + thickness [0.75 pt]
+    + pattern (none, solid, dashed, dotted...) [solid]
+
+  - draw shape, rectangle, circle, etc.
+    + fill 
+      + pattern (none, solid, hatched, ...) [solid]
+      + color [black]
+    + border, as per line [as line]
+
+  - draw text
+    + color [black]
+    + font: family, size, bold, italic [TimesRoman 8pt]
+    + orientation [0°]
+
+  - draw symbol
+    + type [no default]
+    + size [something reasonable]
+    + color [black]
+
+
+SCALING????
+
+
+plot
+  - style
+  - layout
+  - axes
+  - [ series ]
+    - data
+    - style

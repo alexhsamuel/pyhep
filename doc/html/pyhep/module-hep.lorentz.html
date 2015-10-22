@@ -1,0 +1,178 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+<title>3.4 Iterating over rows</title>
+<META NAME="description" CONTENT="3.4 Iterating over rows">
+<META NAME="keywords" CONTENT="pyhep">
+<META NAME="resource-type" CONTENT="document">
+<META NAME="distribution" CONTENT="global">
+<link rel="STYLESHEET" href="pyhep.css">
+<link rel="first" href="pyhep.html">
+<link rel="contents" href="contents.html" title="Contents">
+
+<LINK REL="next" HREF="node21.html">
+<LINK REL="previous" HREF="node19.html">
+<LINK REL="up" HREF="node15.html">
+<LINK REL="next" HREF="node21.html">
+</head>
+<body>
+<DIV CLASS="navigation">
+<table align="center" width="100%" cellpadding="0" cellspacing="2">
+<tr>
+<td><A HREF="node19.html"><img src="icons//previous.gif"
+  border="0" height="32"
+  alt="Previous Page" width="32"></A></td>
+<td><A HREF="node15.html"><img src="icons//up.gif"
+  border="0" height="32"
+  alt="Up One Level" width="32"></A></td>
+<td><A HREF="node21.html"><img src="icons//next.gif"
+  border="0" height="32"
+  alt="Next Page" width="32"></A></td>
+<td align="center" width="100%"> PyHEP Tutorial</td>
+<td><A href="contents.html"><img src="icons//contents.gif"
+  border="0" height="32"
+  alt="Contents" width="32"></A></td>
+<td><img src="icons//blank.gif"
+  border="0" height="32"
+  alt="" width="32"></td>
+<td><img src="icons//blank.gif"
+  border="0" height="32"
+  alt="" width="32"></td>
+</tr></table>
+<b class="navlabel">Previous:</b> <a class="sectref" HREF="node19.html">3.3 Using tables</A>
+<b class="navlabel">Up:</b> <a class="sectref" HREF="node15.html">3. Tables</A>
+<b class="navlabel">Next:</b> <a class="sectref" HREF="node21.html">3.5 Projecting histograms from</A>
+<br><hr>
+</DIV>
+<!--End of Navigation Panel-->
+
+<H1><A NAME="SECTION005400000000000000000">
+3.4 Iterating over rows</A>
+</H1>
+
+<P>
+For most HEP applications, the rows of a table represent independent
+measurements, and are processed sequentially.  An <i>iterator</i>
+represents this sequential processing of rows.  Using iterators instead
+of indexed looping constructs simplifies code, opens up powerful
+functional-programming methods, and enables automatic optimization of
+independent operations on rows.
+
+<P>
+Since a table satisfies the Python sequence protocol, you can produce an
+iterator over its elements (<i>i.e.</i> rows) with the <tt class="function">iter</tt>
+function.  The Python <code>for</code> construction does even this
+automatically.  The simplest idiom for processing rows in a table
+sequentially looks like this:
+<dl><dd><pre class="verbatim">
+&gt;&gt;&gt; total_energy = 0
+&gt;&gt;&gt; for track in tracks:
+...     total_energy += track["energy"]
+...
+&gt;&gt;&gt; print total_energy
+74.7496351004
+</pre></dl>
+
+<P>
+Since <code>iter(tracks)</code> is an iterator rather than a sequence of all
+rows, each row is loaded from disk into memory only when needed in the
+loop, and is subsequently deleted.  This is critical for scanning over
+large tables.  (Note that after the loop completes, the last row remains
+loaded, until the variable <var>track</var> is deleted or goes out of scope.
+Also, the table object itself is deleted only after any variables that
+refer to it, as well as any variables that refer to any of its rows, are
+deleted.)
+
+<P>
+Table iterators may be used to iterate over a subset of rows in a
+sequence.  Most obviously, you could implement this by using a
+conditional in the loop.  For instance, to print the energy of each
+track with an energy greater than 2.5,
+<dl><dd><pre class="verbatim">
+&gt;&gt;&gt; for track in tracks:
+...     if track["energy"] &gt; 2.5:
+...         print track["energy"]
+...
+</pre></dl>
+While this is straightforward, it forces  PyHEP to examine each row
+every time the program is run.  By using the selection in the iterator,
+PyHEP can optimize the selection process, often significantly.
+The selection criterion can be any boolean-valued expression involving
+the values in the row.  The selection expression is evaluated for each
+row, and if the result is true, the iterator yields that row; otherwise,
+that row is skipped.  (This is semantically similar to the first
+argument of the built-in <tt class="function">filter</tt> function.)  The expression
+can be a string containing an ordinary Python expression using column
+names as if they were variable name (with certain limitations and
+special features), or may be specified in other ways.  Expressions are
+discussed in greater detail later.
+
+<P>
+For instance, the same high-energy tracks can be obtained using the
+selection expression <tt class="constant">"energy &gt; 2.5"</tt>.  Notice that
+<var>energy</var> appears in this expression as if it were a variable defined
+when the expression is evaluated.  The <tt class="method">select</tt> method returns an
+iterator which yields only rows for which the selection is true.
+<dl><dd><pre class="verbatim">
+&gt;&gt;&gt; for track in tracks.select("energy &gt; 2.5"):
+...     print track["energy"]
+...
+</pre></dl>
+
+<P>
+Python's list comprehensions provide a handy method for collecting
+values from a table.  For instance, to enumerate all values of
+<var>energy</var> above 2.5 instead of merely printing them,
+<dl><dd><pre class="verbatim">
+&gt;&gt;&gt; energies = [ track["energy"] for track in tracks.select("energy &gt; 2.5") ]
+</pre></dl>
+Note here that <code>tracks.select("energy &gt; 2.5")</code> returns an iterator
+object, so it may only be used (i.e. iterated over) once.  However, if
+you really want a sequence of <code>Row</code> objects, you can use the
+<tt class="function">list</tt> or <tt class="function">tuple</tt> functions to expand an iterator into
+an actual sequence, as in
+<dl><dd><pre class="verbatim">
+&gt;&gt;&gt; high_energy_tracks = list(tracks.select("energy &gt; 2.5"))
+</pre></dl>
+Such a sequence consumes more resources than an iterator.  You can
+iterate over such a sequence repeatedly, or perform other sequence
+operations. 
+
+<P>
+
+<DIV CLASS="navigation">
+<p><hr>
+<table align="center" width="100%" cellpadding="0" cellspacing="2">
+<tr>
+<td><A HREF="node19.html"><img src="icons//previous.gif"
+  border="0" height="32"
+  alt="Previous Page" width="32"></A></td>
+<td><A HREF="node15.html"><img src="icons//up.gif"
+  border="0" height="32"
+  alt="Up One Level" width="32"></A></td>
+<td><A HREF="node21.html"><img src="icons//next.gif"
+  border="0" height="32"
+  alt="Next Page" width="32"></A></td>
+<td align="center" width="100%"> PyHEP Tutorial</td>
+<td><A href="contents.html"><img src="icons//contents.gif"
+  border="0" height="32"
+  alt="Contents" width="32"></A></td>
+<td><img src="icons//blank.gif"
+  border="0" height="32"
+  alt="" width="32"></td>
+<td><img src="icons//blank.gif"
+  border="0" height="32"
+  alt="" width="32"></td>
+</tr></table>
+<b class="navlabel">Previous:</b> <a class="sectref" HREF="node19.html">3.3 Using tables</A>
+<b class="navlabel">Up:</b> <a class="sectref" HREF="node15.html">3. Tables</A>
+<b class="navlabel">Next:</b> <a class="sectref" HREF="node21.html">3.5 Projecting histograms from</A>
+<hr>
+
+</DIV>
+<!--End of Navigation Panel-->
+<ADDRESS>
+<tt>alex@alexsamuel.net</tt>
+</ADDRESS>
+</BODY>
+</HTML>

@@ -1,0 +1,8 @@
+Traceback (most recent call last):
+  File "latex1.py", line 33, in ?
+    print >> output, table.generate()
+  File "/home/samuel/dev/pyhep/py/hep/latex.py", line 531, in generate
+    result = "".join([ c.generateSetup(self) for c in self.columns ])
+  File "/home/samuel/dev/pyhep/py/hep/latex.py", line 205, in generateSetup
+    lengths.append[length]
+TypeError: unsubscriptable object

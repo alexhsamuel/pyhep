@@ -1,0 +1,20 @@
+from   hep.histogram import Binned1D
+import hep.table
+
+tracks = hep.table.open("tracks.table")
+
+energy_hist = Binned1D(
+    20, (0.0, 5.0), title="energy", units="GeV",
+    expression="energy")
+
+pt_hist = Binned1D(
+    20, (1.0, 3.0), title="p_T", units="GeV/c",
+    expression="sqrt(p_x**2 + p_y**2)")
+
+mass_hist = Binned1D(
+    20, (0.0, 0.2), title="mass", units="GeV/c^2",
+    expression="sqrt(energy**2 - p_x**2 - p_y**2 - p_z**2)")
+
+hep.histogram.project(tracks.rows(selection="energy > 2.5"),
+                      (energy_hist, pt_hist, mass_hist))
+

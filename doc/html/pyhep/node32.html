@@ -1,0 +1,152 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+<title>4.5 Other ways to make expressions</title>
+<META NAME="description" CONTENT="4.5 Other ways to make expressions">
+<META NAME="keywords" CONTENT="pyhep">
+<META NAME="resource-type" CONTENT="document">
+<META NAME="distribution" CONTENT="global">
+<link rel="STYLESHEET" href="pyhep.css">
+<link rel="first" href="pyhep.html">
+<link rel="contents" href="contents.html" title="Contents">
+
+<LINK REL="previous" HREF="node31.html">
+<LINK REL="up" HREF="node26.html">
+<LINK REL="next" HREF="node33.html">
+</head>
+<body>
+<DIV CLASS="navigation">
+<table align="center" width="100%" cellpadding="0" cellspacing="2">
+<tr>
+<td><A HREF="node31.html"><img src="icons//previous.gif"
+  border="0" height="32"
+  alt="Previous Page" width="32"></A></td>
+<td><A HREF="node26.html"><img src="icons//up.gif"
+  border="0" height="32"
+  alt="Up One Level" width="32"></A></td>
+<td><A HREF="node33.html"><img src="icons//next.gif"
+  border="0" height="32"
+  alt="Next Page" width="32"></A></td>
+<td align="center" width="100%"> PyHEP Tutorial</td>
+<td><A href="contents.html"><img src="icons//contents.gif"
+  border="0" height="32"
+  alt="Contents" width="32"></A></td>
+<td><img src="icons//blank.gif"
+  border="0" height="32"
+  alt="" width="32"></td>
+<td><img src="icons//blank.gif"
+  border="0" height="32"
+  alt="" width="32"></td>
+</tr></table>
+<b class="navlabel">Previous:</b> <a class="sectref" HREF="node31.html">4.4 Expression syntax</A>
+<b class="navlabel">Up:</b> <a class="sectref" HREF="node26.html">4. Expressions</A>
+<b class="navlabel">Next:</b> <a class="sectref" HREF="node33.html">5. Working with HBOOK</A>
+<br><hr>
+</DIV>
+<!--End of Navigation Panel-->
+
+<H1><A NAME="SECTION006500000000000000000">
+4.5 Other ways to make expressions</A>
+</H1>
+
+<P>
+You may specify a constant instead of a string when constructing an
+expression with <tt class="function">asExpression</tt> or <tt class="function">compile</tt>.  The
+resulting expression simply returns the constant.
+<dl><dd><pre class="verbatim">
+&gt;&gt;&gt; ex = hep.expr.asExpression(15)
+&gt;&gt;&gt; print ex
+15
+&gt;&gt;&gt; print ex.type
+&lt;type 'int'&gt;
+</pre></dl>
+
+<P>
+You may also specify a function that takes only positional arguments.
+The resulting expression calls this function, using symbols for the
+function arguments matching the parameter names in the function
+definition.  If the function has a parameters <code>xyz</code>, the expression
+will evaluate the symbol <code>xyz</code> and call the function with this
+value.  For example,
+<dl><dd><pre class="verbatim">
+&gt;&gt;&gt; def foo(x, a):
+...   return x ** a
+...
+&gt;&gt;&gt; ex = hep.expr.asExpression(foo)
+&gt;&gt;&gt; print ex
+foo(x, a)
+&gt;&gt;&gt; ex(a=8, x=2)
+256
+</pre></dl>
+
+<P>
+The type of the value returned from such a function is not known. 
+<dl><dd><pre class="verbatim">
+&gt;&gt;&gt; ex = hep.expr.asExpression(foo)
+&gt;&gt;&gt; print ex.type
+None
+</pre></dl>
+You may specify it by attaching an attribute <tt class="member">type</tt> to the
+function, containing the expected type of the function's return value.
+<dl><dd><pre class="verbatim">
+&gt;&gt;&gt; foo.type = float
+&gt;&gt;&gt; ex = hep.expr.asExpression(foo)
+&gt;&gt;&gt; print ex.type
+&lt;type 'float'&gt;
+</pre></dl>
+
+<P>
+You may also construct expressions programatically from the classes used
+by  PyHEP to represent expressions internally.  Each class represents a
+single operation.  Invoke <code>help(hep.expr.classes)</code> for a list of
+these classes and their interfaces.
+
+<P>
+Here's an example to give you an idea.
+<dl><dd><pre class="verbatim">
+&gt;&gt;&gt; from hep.expr import Add, Divide, Constant, Symbol
+&gt;&gt;&gt; mean = Divide(Add(Symbol("a"), Symbol("b")), Constant(2))
+&gt;&gt;&gt; print mean
+(a + b) / 2
+&gt;&gt;&gt; mean(a=16, b=20)
+18.0
+</pre></dl>
+
+<P>
+
+<DIV CLASS="navigation">
+<p><hr>
+<table align="center" width="100%" cellpadding="0" cellspacing="2">
+<tr>
+<td><A HREF="node31.html"><img src="icons//previous.gif"
+  border="0" height="32"
+  alt="Previous Page" width="32"></A></td>
+<td><A HREF="node26.html"><img src="icons//up.gif"
+  border="0" height="32"
+  alt="Up One Level" width="32"></A></td>
+<td><A HREF="node33.html"><img src="icons//next.gif"
+  border="0" height="32"
+  alt="Next Page" width="32"></A></td>
+<td align="center" width="100%"> PyHEP Tutorial</td>
+<td><A href="contents.html"><img src="icons//contents.gif"
+  border="0" height="32"
+  alt="Contents" width="32"></A></td>
+<td><img src="icons//blank.gif"
+  border="0" height="32"
+  alt="" width="32"></td>
+<td><img src="icons//blank.gif"
+  border="0" height="32"
+  alt="" width="32"></td>
+</tr></table>
+<b class="navlabel">Previous:</b> <a class="sectref" HREF="node31.html">4.4 Expression syntax</A>
+<b class="navlabel">Up:</b> <a class="sectref" HREF="node26.html">4. Expressions</A>
+<b class="navlabel">Next:</b> <a class="sectref" HREF="node33.html">5. Working with HBOOK</A>
+<hr>
+
+</DIV>
+<!--End of Navigation Panel-->
+<ADDRESS>
+<tt>alex@alexsamuel.net</tt>
+</ADDRESS>
+</BODY>
+</HTML>

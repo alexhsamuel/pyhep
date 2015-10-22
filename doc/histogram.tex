@@ -1,0 +1,301 @@
+\section{\module{hep.hist} --- Histograms}
+
+\declaremodule{extension}{hep.hist}
+\modulesynopsis{Histograms.}
+
+This module provides a way of collecting and manipulating histograms.  A
+histogram is used to measure a statistical distribution by collecting
+data sampled from this distribution.  This module supports binned
+histograms, in which the data are divided into rectangular bins spanning
+the range of possible values.  The values themselves may be one- or
+higher-dimensional, and the value's component in each dimension may be
+of a different numerical type.
+
+A \class{Histogram} object represents a histogram of a distribution of
+one or more dimensions.  Each dimension is represented by an
+\class{Axis} object.  The \class{Axis} specifies the minimum and maximum
+value of each sample point in that dimensions, and divides the range
+into evenly-sized bind.
+
+\begin{funcdesc}{Axis}{num_bins, min, max\optional{, axis_type,
+ **kw_args}}
+ Create an object representing an evenly-binned dimension in sample
+ space with values greater than or equal to \var{min} and less than
+ \var{max}.  This range of values is divided into \var{num_bins} bins of
+ even size.  Values in this dimension are specified by the numerical
+ type \var{axis_type}, which is inferred from \var{min} and \var{max} if
+ omitted.  If \var{axis_type} is integral, the number of bins must
+ divide evenly into \var{max} - \var{min}.
+
+ Any additional \var{**kw_args} are added to the \class{Axis} object as
+ attributes.
+\end{funcdesc}
+
+A histogram also records the number of samples which fall above or below
+the specifies axis range in each dimension.  A value below the minimum
+is stored as an ``underflow'' value along that axis, and a value equal
+to or above the maximum is stored as an ``overflow''.
+
+For each bin, a histogram stores the accumulated weight of samples whose
+sample values fall in the bin.  Often, samples are accumulated with unit
+weight, so that the content of a bin is the number of samples whose
+values fall in the bin.  
+
+The histogram also estimates the error on each bin.  The error is
+computed as the square root of the sum of the squares of weights of
+sample whose sample values fall in the bin.  If samples are accumulated
+with unit weight, this is equal to the square root of the number of
+samples whose values fall in the bin.  Note that this estimate of the
+error is not always statistically valid; use your judgement when
+interpreting this error value.
+
+To create a histogram, use
+
+\begin{funcdesc}{Histogram}{*axes\optional{, value_type, **kw_args}}
+ Create a histogram with evenly-binned axes that implements the
+ histogram protocol.  
+
+ The number of dimensions of the histogram is equal to the number of
+ \var{axes} arguments.  Each argument may be either
+ \begin{itemize}
+  \item An \class{Axis} instance.
+
+  \item A sequence of the form \code{(num_bins, min, max\optional{,
+  axis_type, name, units})}.  If specified, \var{axis_type} is the type
+  used for bin contents; if omitted, the type for that axis is inferred
+  from the values of \var{min} and \var{max}.  If specified, \var{name}
+  and \var{units} are set as attributes of the same name on the
+  \class{Axis} object.
+ \end{itemize}
+
+ The keyword argument \var{bin_type} specifies the numeical type used to
+ store the value in each bin.  \emph{If omitted, the default is
+ \code{int}}.  If any additional \var{**kw_args} are provided, they are
+ set as attributes to the returned histogram object.
+\end{funcdesc}
+
+Histograms of a one-dimenstional independent variable are commonly
+used.  A subclass of \class{Histogram} for one-dimensional histograms,
+\class{Histogram1D}, provides a more convenient interface and more
+efficient implementation.
+
+\begin{funcdesc}{Histogram1D}{num_bins, min, max\optional{, axis_type,
+name, units, **kw_args}} 
+ Arguments are as for \function{Histogram}.  As with
+ \function{Histogram}, the numerical type used to represent the contents
+ of a bin is \code{int} unless the \var{bin_type} keyword argument is
+ provided.
+\end{funcdesc}
+
+For example, this call creates a two-dimensional histogram.  The first
+dimension, named ``energy,'' takes \code{float} values between 0 GeV and
+4 GeV, divided into 40 bins.  The second dimension, named ``drift
+chamber hits,'' takes integer values between 0 and 60, with one bin for
+each possible value.  Bin contents are stored as integers.  The title of
+this histogram and the units for bin contents are also specified.
+\begin{verbatim}
+histogram = Histogram(
+    (40, 0, 4, float, "energy", "GeV"),
+    (60, 0, 60, int, "drift chamber hits"),
+    title="Fiducial track distribution",
+    units="tracks")
+\end{verbatim}
+
+This example creates a one-dimenstional histogram over \code{float}
+values between -1 and 1.  Bin contents are stored as \code{float}.  
+The histogram title is also specified.
+\begin{verbatim}
+histogram = Histogram1D(20, -1.0, 1.0, bin_type=float, title="cos(theta)")
+\end{verbatim}
+
+%-----------------------------------------------------------------------
+
+\subsection{The histogram protocol}
+
+The histogram protocol is used for histograms with arbitrary binning
+along one or more axes.  
+
+A position in the histogram is represented by a sequence whose length is
+the number of dimensions of the histogram.  Each element of the sequence
+is the position along the corresponding axis.  The type of each element
+must be the type of the corresponding axis, or coercible to it.  Such a
+position sequence corresponds to exactly one bin in the histogram, which
+may be an overflow or underflow bin if one or more elements fall outside
+the ranges of their corresponding bins.
+
+A bin may also be specified by a bin number, which is also a sequence
+whose length is the number of dimensions of the histogram.  Each element
+is a bin number between zero and one less than the number of bins of the
+corresponding axis, or the strings \code{"underflow"} or
+\code{"overflow"}.  For example, \code{(0, 4, "overflow")} is a bin
+number for a three-dimensional histogram, specifying the first bin in
+the first dimension, the fifth bin in the second dimension, and a value
+larger than the axis range in the third dimension.
+
+\begin{memberdesc}{dimensions}
+ \readonly The number of dimensions.
+\end{memberdesc}
+
+\begin{memberdesc}{axes}
+ \readonly A sequence of \class{Axis} instances describing the
+ dimensions of the histogram's sample space.
+\end{memberdesc}
+
+\begin{memberdesc}{bin_type}
+ \readonly The type used to for bin contents.
+\end{memberdesc}
+
+\begin{methoddesc}{accumulate}{value\optional{, weight=1}}
+ Add \var{weight} to the contents of the bin at \var{value}; update the
+ bin error accordingly.
+\end{methoddesc}
+
+\begin{methoddesc}{__lshift__}{value}
+ A synonym for \method{accumulate}, with unit \var{weight}.
+\end{methoddesc}
+
+\begin{methoddesc}{getBin}{bin_number}
+ Return the contents of bin \var{bin_number}.
+\end{methoddesc}
+
+\begin{methoddesc}{setBin}{bin_number, bin_contents}
+ Set the contents of bin \var{bin_number} to \var{bin_contents}. 
+\end{methoddesc}
+
+\begin{methoddesc}{setError}{bin_number, bin_contents}
+ Set the error on bin \var{bin_number} to \var{bin_contents}. 
+\end{methoddesc}
+
+\begin{methoddesc}{getError}{bin_number}
+ Return the error on the bin \var{bin_number}.
+\end{methoddesc}
+
+\begin{methoddesc}{getBinRange}{bin_number}
+ Return the range of values spanned by the bin \var{bin_number}.  The
+ result a sequence of pairs, where each pair contains the minimum and
+ maximum value for the bin along that axis dimension.
+\end{methoddesc}
+
+\begin{methoddesc}{map}{value}
+ Return the bin number corresponding to \var{value}.
+\end{methoddesc}
+
+An \class{Axis} instance represents a one-dimensional axis of a
+histogram.  Bins are numbered from zero to one less than the number of
+bins; the bin number for an underflow value is \code{"underflow"}, and
+the bin number for an overflow value is \code{"overflow"}.
+
+\begin{memberdesc}{number_of_bins}
+ \readonly The number of bins along this axis, not including underflow
+ and overflow bins.
+\end{memberdesc}
+
+\begin{memberdesc}{range}
+ \readonly A pair \code{(min, max)} of the range of values spanned by
+ the bins of the histogram.  A value less than \var{min} is considered
+ an underflow, and a value greater than or equal to \var{max} is
+ considered an overflow.
+\end{memberdesc}
+
+\begin{memberdesc}{type}
+ \readonly The type for values along this axis.
+\end{memberdesc}
+
+\begin{methoddesc}{__call__}{value}
+ Return the bin number for a value along the axis.  
+\end{methoddesc}
+
+\begin{methoddesc}{getBinRange}{bin_number}
+ Return the range \code{(min, max)} for a bin.
+\end{methoddesc}
+
+%-----------------------------------------------------------------------
+
+\subsection{The simplified one-dimensional histogram protocol}
+
+\class{Histogram1D} uses a simplified protocol to ease manipulation of
+one-dimensional histograms.  It is identical to the general histogram
+protocol, except that bin values and bin numbers are represented by
+single values instead of sequences, and bin ranges are represented by
+\var{(min, max)} pairs instead of sequences of such pairs.
+
+\class{Histogram1D} is a subclass of \class{Histogram}, and provides the
+following additional methods and attributes:
+
+\begin{memberdesc}{axis}
+ \readonly The sample axis; equivalent to \code{axes[0]}.
+\end{memberdesc}
+
+\begin{methoddesc}{__getitem__}{bin_number}
+ Equivalent to \function{getBin}.
+\end{methoddesc}
+
+\begin{methoddesc}{__setitem__}{bin_number, bin_contents}
+ Equivalent to \function{setBin}.
+\end{methoddesc}
+
+For example, this code creates and fills a one-dimensional histogram
+with \class{Histogram}:
+\begin{verbatim}
+histogram = Histogram((10, 0.0, 1.0), bin_type=float)
+for value in data_samples:
+    histogram << (value, )
+
+for bin_number in range(10):
+    print "bin %d: %f" % (bin_number, histogram.getBinContent((bin_number, )))
+\end{verbatim}
+Since \class{Histogram} represents a histogram with a sample space in
+arbitrary dimensions, the sample value and bin_number for the
+one-dimensional case must be specified as a sequence with one element,
+in this case \code{(value, )} and \code{(bin_number, )} respectively.
+
+Using \class{Histogram1D}, this code is simplified:
+\begin{verbatim}
+histogram = Histogram1D(10, 0.0, 1.0, bin_type=float)
+for value in data_samples:
+    histogram << value
+
+for bin_number in range(10):
+    print "bin %d: %f" % (bin_number, histogram[bin_number])
+\end{verbatim}
+
+%-----------------------------------------------------------------------
+
+\subsection{Projecting histograms}
+
+To accumulate into multiple histograms from arbitrary functions of a
+sequence of values, use the \function{hep.hist.project} function.
+
+\begin{funcdesc}{project}{events, projections\optional{, weight}}
+ Project multiple histograms from a collection of \var{events}.
+
+ The \var{events} argument is a sequence or iterator.  Each item is a
+ map containing variable values for that event: each key is the name of
+ a variable, and the corresponding value is the event's value for that
+ variable.  Each event in \var{events} should have the same keys.
+
+ The \var{projections} argument is a sequence describing the histograms
+ to project.  Each sequence element is of the form \code{(expression,
+ histogram)}, where \var{expression} is an expression over the variables
+ in the events; for each event, it is evaluated and the result is
+ accumulated into \var{histogram}.  The expression may be a string, a
+ callable, or an expression object (see the description of
+ \module{hep.expr} elsewhere in this manual).  
+
+ The \var{weight} argument is an expression over the event variables
+ which yields the weight to use for that event.  For each event, the
+ same weight value is used for accumulating into all histograms.  If
+ \var{weight} is omitted, unit weight is assumed.
+
+ The function returns the sum of weights (which is the number of events,
+ if unit weight is used) projected into the histograms.
+\end{funcdesc}
+
+Note that \function{project} is designed to work well with tables:
+simply pass a table iterator or a sequence of row objects as
+\var{events}.  In this case, \function{project} determines that a table
+row is in use, and will use special table features to perform the
+projections efficiently.  To project a subset of rows in a table, use
+the selection feature of table iterators.
+
+%-----------------------------------------------------------------------

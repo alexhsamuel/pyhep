@@ -1,0 +1,113 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+<title>2.3 Other kinds of axes</title>
+<META NAME="description" CONTENT="2.3 Other kinds of axes">
+<META NAME="keywords" CONTENT="pyhep">
+<META NAME="resource-type" CONTENT="document">
+<META NAME="distribution" CONTENT="global">
+<link rel="STYLESHEET" href="pyhep.css">
+<link rel="first" href="pyhep.html">
+<link rel="contents" href="contents.html" title="Contents">
+
+<LINK REL="next" HREF="node11.html">
+<LINK REL="previous" HREF="node6.html">
+<LINK REL="up" HREF="node4.html">
+<LINK REL="next" HREF="node11.html">
+</head>
+<body>
+<DIV CLASS="navigation">
+<table align="center" width="100%" cellpadding="0" cellspacing="2">
+<tr>
+<td><A HREF="node9.html"><img src="icons//previous.gif"
+  border="0" height="32"
+  alt="Previous Page" width="32"></A></td>
+<td><A HREF="node4.html"><img src="icons//up.gif"
+  border="0" height="32"
+  alt="Up One Level" width="32"></A></td>
+<td><A HREF="node11.html"><img src="icons//next.gif"
+  border="0" height="32"
+  alt="Next Page" width="32"></A></td>
+<td align="center" width="100%"> PyHEP Tutorial</td>
+<td><A href="contents.html"><img src="icons//contents.gif"
+  border="0" height="32"
+  alt="Contents" width="32"></A></td>
+<td><img src="icons//blank.gif"
+  border="0" height="32"
+  alt="" width="32"></td>
+<td><img src="icons//blank.gif"
+  border="0" height="32"
+  alt="" width="32"></td>
+</tr></table>
+<b class="navlabel">Previous:</b> <a class="sectref" HREF="node9.html">2.2.3 Bin type and</A>
+<b class="navlabel">Up:</b> <a class="sectref" HREF="node4.html">2. Histograms</A>
+<b class="navlabel">Next:</b> <a class="sectref" HREF="node11.html">2.4 Filling histograms</A>
+<br><hr>
+</DIV>
+<!--End of Navigation Panel-->
+
+<H1><A NAME="SECTION004300000000000000000">
+2.3 Other kinds of axes</A>
+</H1>
+
+<P>
+The histogram axes we've used up to now have been evenly binned,
+<i>i.e.</i> all the bins on each axis are the same size.  It is also
+possible to create a histogrma with unevenly-binned axes, using the
+<tt class="class">hep.hist.UnevenlyBinnedAxis</tt> class.  
+
+<P>
+Create an <tt class="class">UnevenlyBinnedAxis</tt> instance, specifying a list of bin
+edges as its argument.  You can then specify this axis when creating a
+histogram.  Note that each histogram axis is independently specified, so
+that one, several, or all may be unevenly binned.
+
+<P>
+For example, to create a 2-D histogram with an unevenly-binned x axis
+and one evenly-binned y axis,
+<dl><dd><pre class="verbatim">
+&gt;&gt;&gt; import hep.hist.axis
+&gt;&gt;&gt; x_axis = hep.hist.UnevenlyBinnedAxis(
+...     [0, 2, 4, 5, 6, 8, 10, 15, 20], name="count")
+&gt;&gt;&gt; histogram = hep.hist.Histogram(x_axis, 
+...     (10, (0., 5.), "time", "sec"))
+</pre></dl>
+
+<P>
+
+<DIV CLASS="navigation">
+<p><hr>
+<table align="center" width="100%" cellpadding="0" cellspacing="2">
+<tr>
+<td><A HREF="node9.html"><img src="icons//previous.gif"
+  border="0" height="32"
+  alt="Previous Page" width="32"></A></td>
+<td><A HREF="node4.html"><img src="icons//up.gif"
+  border="0" height="32"
+  alt="Up One Level" width="32"></A></td>
+<td><A HREF="node11.html"><img src="icons//next.gif"
+  border="0" height="32"
+  alt="Next Page" width="32"></A></td>
+<td align="center" width="100%"> PyHEP Tutorial</td>
+<td><A href="contents.html"><img src="icons//contents.gif"
+  border="0" height="32"
+  alt="Contents" width="32"></A></td>
+<td><img src="icons//blank.gif"
+  border="0" height="32"
+  alt="" width="32"></td>
+<td><img src="icons//blank.gif"
+  border="0" height="32"
+  alt="" width="32"></td>
+</tr></table>
+<b class="navlabel">Previous:</b> <a class="sectref" HREF="node9.html">2.2.3 Bin type and</A>
+<b class="navlabel">Up:</b> <a class="sectref" HREF="node4.html">2. Histograms</A>
+<b class="navlabel">Next:</b> <a class="sectref" HREF="node11.html">2.4 Filling histograms</A>
+<hr>
+
+</DIV>
+<!--End of Navigation Panel-->
+<ADDRESS>
+<tt>alex@alexsamuel.net</tt>
+</ADDRESS>
+</BODY>
+</HTML>

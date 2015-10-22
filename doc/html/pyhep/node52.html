@@ -1,0 +1,190 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+<title>9. Particle properties</title>
+<META NAME="description" CONTENT="9. Particle properties">
+<META NAME="keywords" CONTENT="pyhep">
+<META NAME="resource-type" CONTENT="document">
+<META NAME="distribution" CONTENT="global">
+<link rel="STYLESHEET" href="pyhep.css">
+<link rel="first" href="pyhep.html">
+<link rel="contents" href="contents.html" title="Contents">
+
+<LINK REL="next" HREF="node53.html">
+<LINK REL="previous" HREF="node48.html">
+<LINK REL="up" HREF="pyhep.html">
+<LINK REL="next" HREF="node53.html">
+</head>
+<body>
+<DIV CLASS="navigation">
+<table align="center" width="100%" cellpadding="0" cellspacing="2">
+<tr>
+<td><A HREF="node51.html"><img src="icons//previous.gif"
+  border="0" height="32"
+  alt="Previous Page" width="32"></A></td>
+<td><A HREF="pyhep.html"><img src="icons//up.gif"
+  border="0" height="32"
+  alt="Up One Level" width="32"></A></td>
+<td><A HREF="node53.html"><img src="icons//next.gif"
+  border="0" height="32"
+  alt="Next Page" width="32"></A></td>
+<td align="center" width="100%"> PyHEP Tutorial</td>
+<td><A href="contents.html"><img src="icons//contents.gif"
+  border="0" height="32"
+  alt="Contents" width="32"></A></td>
+<td><img src="icons//blank.gif"
+  border="0" height="32"
+  alt="" width="32"></td>
+<td><img src="icons//blank.gif"
+  border="0" height="32"
+  alt="" width="32"></td>
+</tr></table>
+<b class="navlabel">Previous:</b> <a class="sectref" HREF="node51.html">8.3 Transformations and frames</A>
+<b class="navlabel">Up:</b> <a class="sectref" HREF="pyhep.html">PyHEP Tutorial</A>
+<b class="navlabel">Next:</b> <a class="sectref" HREF="node53.html">10. Using EvtGen</A>
+<br><hr>
+</DIV>
+<!--End of Navigation Panel-->
+
+<H1><A NAME="SECTION0011000000000000000000">
+9. Particle properties</A>
+</H1>
+
+<P>
+The <tt class="module">hep.pdt</tt> module provides code to access a <i>particle
+data table</i>, which contains measured properties of particles studied in
+high energy physics.  
+
+<P>
+PyHEP includes a particle data table in <code>hep.pdt.default</code>.  This
+table contains particle data from the XXXX edition of the <i>Review
+of Particle Properties</i> published by the Particle Data Group (PDG).  The
+function <tt class="function">hep.pdt.loadPdtFile</tt> can be used to load particle
+data from a file in the PDG's text file format.
+
+<P>
+A particle data table is represented by a <tt class="class">hep.pdt.Table</tt>
+instance, which acts as a dictionary keyed with the plain-text names of
+particles.  The text (ASCII) names are set by the PDG.  These names are
+generally the same as the conventional particle designations, with Greek
+letters spelled out and underscores used to denote subscripts.  For
+particle names associated with more than one charge state, the charge
+muse be indicated.  Neutral antiparticles conventionally designated with
+an overbar are denoted by the ``<code>anti-</code>'' prefix.  For example, a
+positron is spelled ``<code>e+</code>'', and the short-lived kaon eignstate
+``<code>K_S0</code>''.  The usual <tt class="method">keys</tt> method will return the
+plain-text names of all particles in the table.  A particle's name may
+have alternate common text spellings; these are stored as aliases, and a
+particle may be accessed in the table by any of its aliases.
+
+<P>
+The values in a particle data table are <tt class="class">hep.pdt.Particle</tt>
+instances.  Each represents a siggle species of particle, with unique
+quantum numbers.  (Some special particle codes representing bound
+states, particles that have not been established, Monte Carlo internal
+constructs, etc. are also included.)  
+
+<P>
+A <tt class="class">Particle</tt> object has these attributes.  Central values are
+given for measured properties.
+
+<P>
+
+<UL>
+<LI><tt class="member">name</tt> is the particle's text name.
+
+<P>
+</LI>
+<LI><tt class="member">aliases</tt> is a sequence of alternate text names for the
+  particle.
+
+<P>
+</LI>
+<LI><tt class="member">charge_conjugate</tt> is the <tt class="class">Particle</tt> object for the
+  particle's charge conjugate.
+
+<P>
+</LI>
+<LI><tt class="member">mass</tt> is the particle's nominal mass, in GeV.
+
+<P>
+</LI>
+<LI><tt class="member">width</tt> is the particle's width, in GeV.
+
+<P>
+</LI>
+<LI><tt class="member">charge</tt> is the particle's electric charge.
+
+<P>
+</LI>
+<LI><tt class="member">spin</tt> is the particle's spin, in units of half h-bar.
+
+<P>
+</LI>
+<LI><tt class="member">is_stable</tt> is true if the particle is considered
+  stable. 
+
+<P>
+</LI>
+<LI><tt class="member">id</tt> is the particle's Monte Carlo ID number in the PDG's
+  numbering scheme.
+
+<P>
+</LI>
+</UL>
+
+<P>
+The <tt class="class">Table</tt> object also as a method <tt class="method">findId</tt>, which returns
+the particle corresponding to a Monte Carlo ID number.
+
+<P>
+The following is a demonstration of using the default particle data
+table to look up some particle properties.
+<dl><dd><pre class="verbatim">
+&gt;&gt;&gt; from hep.pdt import default as particle_data
+&gt;&gt;&gt; print particle_data["e-"].mass
+0.000510999
+&gt;&gt;&gt; print particle_data["J/psi"].spin
+1.0
+&gt;&gt;&gt; print particle_data.findId(22).name
+gamma
+</pre></dl>
+
+<P>
+
+<DIV CLASS="navigation">
+<p><hr>
+<table align="center" width="100%" cellpadding="0" cellspacing="2">
+<tr>
+<td><A HREF="node51.html"><img src="icons//previous.gif"
+  border="0" height="32"
+  alt="Previous Page" width="32"></A></td>
+<td><A HREF="pyhep.html"><img src="icons//up.gif"
+  border="0" height="32"
+  alt="Up One Level" width="32"></A></td>
+<td><A HREF="node53.html"><img src="icons//next.gif"
+  border="0" height="32"
+  alt="Next Page" width="32"></A></td>
+<td align="center" width="100%"> PyHEP Tutorial</td>
+<td><A href="contents.html"><img src="icons//contents.gif"
+  border="0" height="32"
+  alt="Contents" width="32"></A></td>
+<td><img src="icons//blank.gif"
+  border="0" height="32"
+  alt="" width="32"></td>
+<td><img src="icons//blank.gif"
+  border="0" height="32"
+  alt="" width="32"></td>
+</tr></table>
+<b class="navlabel">Previous:</b> <a class="sectref" HREF="node51.html">8.3 Transformations and frames</A>
+<b class="navlabel">Up:</b> <a class="sectref" HREF="pyhep.html">PyHEP Tutorial</A>
+<b class="navlabel">Next:</b> <a class="sectref" HREF="node53.html">10. Using EvtGen</A>
+<hr>
+
+</DIV>
+<!--End of Navigation Panel-->
+<ADDRESS>
+<tt>alex@alexsamuel.net</tt>
+</ADDRESS>
+</BODY>
+</HTML>

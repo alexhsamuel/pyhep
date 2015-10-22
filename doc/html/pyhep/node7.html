@@ -1,0 +1,130 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+<title>2.2.1 Axis type</title>
+<META NAME="description" CONTENT="2.2.1 Axis type">
+<META NAME="keywords" CONTENT="pyhep">
+<META NAME="resource-type" CONTENT="document">
+<META NAME="distribution" CONTENT="global">
+<link rel="STYLESHEET" href="pyhep.css">
+<link rel="first" href="pyhep.html">
+<link rel="contents" href="contents.html" title="Contents">
+
+<LINK REL="next" HREF="node8.html">
+<LINK REL="previous" HREF="node6.html">
+<LINK REL="up" HREF="node6.html">
+<LINK REL="next" HREF="node8.html">
+</head>
+<body>
+<DIV CLASS="navigation">
+<table align="center" width="100%" cellpadding="0" cellspacing="2">
+<tr>
+<td><A HREF="node6.html"><img src="icons//previous.gif"
+  border="0" height="32"
+  alt="Previous Page" width="32"></A></td>
+<td><A HREF="node6.html"><img src="icons//up.gif"
+  border="0" height="32"
+  alt="Up One Level" width="32"></A></td>
+<td><A HREF="node8.html"><img src="icons//next.gif"
+  border="0" height="32"
+  alt="Next Page" width="32"></A></td>
+<td align="center" width="100%"> PyHEP Tutorial</td>
+<td><A href="contents.html"><img src="icons//contents.gif"
+  border="0" height="32"
+  alt="Contents" width="32"></A></td>
+<td><img src="icons//blank.gif"
+  border="0" height="32"
+  alt="" width="32"></td>
+<td><img src="icons//blank.gif"
+  border="0" height="32"
+  alt="" width="32"></td>
+</tr></table>
+<b class="navlabel">Previous:</b> <a class="sectref" HREF="node6.html">2.2 Creating histograms</A>
+<b class="navlabel">Up:</b> <a class="sectref" HREF="node6.html">2.2 Creating histograms</A>
+<b class="navlabel">Next:</b> <a class="sectref" HREF="node8.html">2.2.2 Additional axis parameters</A>
+<br><hr>
+</DIV>
+<!--End of Navigation Panel-->
+
+<H2><A NAME="SECTION004210000000000000000">
+2.2.1 Axis type</A>
+</H2>
+
+<P>
+By specifying the range for each axis, you also implicitly specify the
+numeric type for values along the axis.  (If the low and high values you
+specify for the range are of different types, a common type is obtained
+by Phython's standard <code>coerce</code> mechanism.)  So, for instance, if
+you specify two integer values for the low and high boundaries for the
+axis, the axis will expect integer values, but if you specify one
+integer and one floating-point value, the axis will expect
+floating-point values.
+
+<P>
+You can find out the type of an axis by consulting its <code>type</code>
+attribute.  For example,
+<dl><dd><pre class="verbatim">
+&gt;&gt;&gt; histogram = hep.hist.Histogram((20, (-1.0, 1.0)), (20, (-10, 10)))
+&gt;&gt;&gt; histogram.axes[0].type
+&lt;type 'float'&gt;
+&gt;&gt;&gt; histogram.axes[1].type
+&lt;type 'int'&gt;
+</pre></dl>
+
+<P>
+If the type for an axis is <code>int</code> or <code>long</code> (because you
+specified integer or long values for the axis range), the difference
+between the high and low ends of the range must be an even multiple of
+the number of bins.  If this is not desired, use <code>float</code> values for
+the axis.  For example, this construction raises an exception:
+<dl><dd><pre class="verbatim">
+&gt;&gt;&gt; histogram = hep.hist.Histogram1D(8, (-50, 50))
+[... stack trace ...]
+ValueError: number of bins must be a divisor of axis range
+</pre></dl>
+because 50 - (-50) = 100 is not a multiple of 8.  However, any of these
+will work:
+<dl><dd><pre class="verbatim">
+&gt;&gt;&gt; histogram = hep.hist.Histogram1D(10, (-50, 50))
+&gt;&gt;&gt; histogram = hep.hist.Histogram1D(8, (-60, 60))
+&gt;&gt;&gt; histogram = hep.hist.Histogram1D(8, (-50.0, 50.0))
+</pre></dl>
+
+<P>
+
+<DIV CLASS="navigation">
+<p><hr>
+<table align="center" width="100%" cellpadding="0" cellspacing="2">
+<tr>
+<td><A HREF="node6.html"><img src="icons//previous.gif"
+  border="0" height="32"
+  alt="Previous Page" width="32"></A></td>
+<td><A HREF="node6.html"><img src="icons//up.gif"
+  border="0" height="32"
+  alt="Up One Level" width="32"></A></td>
+<td><A HREF="node8.html"><img src="icons//next.gif"
+  border="0" height="32"
+  alt="Next Page" width="32"></A></td>
+<td align="center" width="100%"> PyHEP Tutorial</td>
+<td><A href="contents.html"><img src="icons//contents.gif"
+  border="0" height="32"
+  alt="Contents" width="32"></A></td>
+<td><img src="icons//blank.gif"
+  border="0" height="32"
+  alt="" width="32"></td>
+<td><img src="icons//blank.gif"
+  border="0" height="32"
+  alt="" width="32"></td>
+</tr></table>
+<b class="navlabel">Previous:</b> <a class="sectref" HREF="node6.html">2.2 Creating histograms</A>
+<b class="navlabel">Up:</b> <a class="sectref" HREF="node6.html">2.2 Creating histograms</A>
+<b class="navlabel">Next:</b> <a class="sectref" HREF="node8.html">2.2.2 Additional axis parameters</A>
+<hr>
+
+</DIV>
+<!--End of Navigation Panel-->
+<ADDRESS>
+<tt>alex@alexsamuel.net</tt>
+</ADDRESS>
+</BODY>
+</HTML>

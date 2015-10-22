@@ -1,0 +1,111 @@
+#!/usr/bin/python2
+#-----------------------------------------------------------------------
+# imports
+#-----------------------------------------------------------------------
+
+from __future__ import generators
+
+import getopt
+from   hep.bool import *
+import hep.fs
+import hep.mctruth
+from   hep.pdt import default as pdt
+import os
+import sys
+
+#-----------------------------------------------------------------------
+# constants
+#-----------------------------------------------------------------------
+
+program_name = os.path.split(sys.argv[0])[1]
+
+short_option_spec = "hst"
+long_option_spec = (
+    "help",
+    "no-stable",
+    "table",
+    )
+
+usage_summary = \
+"""Usage: %s [OPTION] TRUTH_TABLE [INDEX ...]
+
+Print Monte Carlo truth information from TRUTH_TABLE.  If one or more
+INDEX is given, print decay trees for these indices.  Otherwise, print
+decay trees for all root particles.
+
+Options:
+  -h, --help                display this help and exit
+  -s, --no-stable           don't show decays of stable particles
+  -t, --table               show results in tabular format
+"""
+
+#-----------------------------------------------------------------------
+# functions
+#-----------------------------------------------------------------------
+
+def printUsageAndExit(is_error):
+    if is_error:
+        out = sys.stderr
+        exit_code = 1
+    else:
+        out = sys.stdout
+        exit_code = 0
+    print >> out, usage_summary % program_name
+    sys.exit(exit_code)
+
+
+def getIndex(i):
+    """Adaptor from a row iterator to an iterator over the rows' indices."""
+
+    while True:
+        yield i.next()["_index"]
+
+
+#-----------------------------------------------------------------------
+# script
+#-----------------------------------------------------------------------
+
+# Parse command-line options.
+try:
+    options, arguments = \
+        getopt.getopt(sys.argv[1:], short_option_spec, long_option_spec)
+except getopt.GetoptError:
+    printUsageAndExit(True)
+
+# Initialize defaults.
+print_function = hep.mctruth.printTree
+stable_decays = True
+
+# Decode options.
+for option, option_arg in options:
+    if option in ("-h", "--help", ):
+        printUsageAndExit(False)
+    elif option in ("-s", "--no-stable"):
+        stable_decays = False
+    elif option in ("-t", "--table"):
+        print_function = hep.mctruth.printTable
+    else:
+        raise NotImplementedError, option
+
+# Open the table.
+if len(arguments) < 1:
+    printUsageAndExit(True)
+truth_table = hep.fs.get(arguments[0])
+
+if len(arguments) == 1:
+    # No indices were specified.  Get an iterator over indices of root
+    # particles in the table.
+    root_indices = getIndex(truth_table.select("parent_offset == 0"))
+else:
+    # Use the specified indices.
+    root_indices = map(int, arguments[1:])
+
+# Print the truth info.
+for root_index in root_indices:
+    print_function(truth_table, root_index, stable_decays=stable_decays)
+
+#-----------------------------------------------------------------------
+# Local Variables:
+# mode: python
+# indent-tabs-mode: nil
+# End:

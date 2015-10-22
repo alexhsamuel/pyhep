@@ -1,0 +1,229 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+<title>7.5 Plotting Styles</title>
+<META NAME="description" CONTENT="7.5 Plotting Styles">
+<META NAME="keywords" CONTENT="pyhep">
+<META NAME="resource-type" CONTENT="document">
+<META NAME="distribution" CONTENT="global">
+<link rel="STYLESHEET" href="pyhep.css">
+<link rel="first" href="pyhep.html">
+<link rel="contents" href="contents.html" title="Contents">
+
+<LINK REL="next" HREF="node47.html">
+<LINK REL="previous" HREF="node45.html">
+<LINK REL="up" HREF="node41.html">
+<LINK REL="next" HREF="node47.html">
+</head>
+<body>
+<DIV CLASS="navigation">
+<table align="center" width="100%" cellpadding="0" cellspacing="2">
+<tr>
+<td><A HREF="node45.html"><img src="icons//previous.gif"
+  border="0" height="32"
+  alt="Previous Page" width="32"></A></td>
+<td><A HREF="node41.html"><img src="icons//up.gif"
+  border="0" height="32"
+  alt="Up One Level" width="32"></A></td>
+<td><A HREF="node47.html"><img src="icons//next.gif"
+  border="0" height="32"
+  alt="Next Page" width="32"></A></td>
+<td align="center" width="100%"> PyHEP Tutorial</td>
+<td><A href="contents.html"><img src="icons//contents.gif"
+  border="0" height="32"
+  alt="Contents" width="32"></A></td>
+<td><img src="icons//blank.gif"
+  border="0" height="32"
+  alt="" width="32"></td>
+<td><img src="icons//blank.gif"
+  border="0" height="32"
+  alt="" width="32"></td>
+</tr></table>
+<b class="navlabel">Previous:</b> <a class="sectref" HREF="node45.html">7.4 Plotting</A>
+<b class="navlabel">Up:</b> <a class="sectref" HREF="node41.html">7. Drawing and Plotting</A>
+<b class="navlabel">Next:</b> <a class="sectref" HREF="node47.html">7.6 Plot objects</A>
+<br><hr>
+</DIV>
+<!--End of Navigation Panel-->
+
+<H1><A NAME="SECTION009500000000000000000">
+7.5 Plotting Styles</A>
+</H1>
+
+<P>
+The visual format of a plot is stored in a ``style dictionary.''  This
+is a mapping of names of style attributes (see below for a list).  The
+values in the style dictionary are boolean flags, lengths, colors, and
+other settings that control how the plot is drawn.  The default style
+dictionary, <code>hep.hist.plot.default_style</code>, contains default values
+for all style attributes used by the plotting code.  Each plot has its
+own style, and each series in a plot has its own style as well; however,
+these styles need not define every style attribute.  Instead, styles are
+cascading: a style attribute not found in a series's style dictionary is
+obtained from the plot's style dictionary; if it isn't there either, it
+is taken from the default style dictionary.
+
+<P>
+These are the most important style attributes:
+
+<UL>
+<LI><code>"show_overflow"</code> specifies whether or not to show underflow
+ and overflow bins.
+
+<P>
+</LI>
+<LI><code>"show_errors"</code> specifies whether or not to display errors
+ (uncertainties) in the plot.
+
+<P>
+</LI>
+<LI><code>"bin_style"</code> specifies how to draw bins of a histogram.
+ The value <code>"default"</code> uses the default bin style for each type of
+ histogram.  Other styles are described below.
+
+<P>
+</LI>
+<LI><code>"line_style"</code> is the <tt class="class">hep.draw.LineStyle</tt> used when
+ drawing data and error bars.
+
+<P>
+</LI>
+<LI><code>"marker"</code> is a <tt class="class">hep.draw.Marker</tt> instance, which
+ specifies the marker style used to plot data.
+
+<P>
+</LI>
+<LI><code>"x_axis_range"</code> and <code>"y_axis_range"</code> are pairs of
+ values that specify the range to plot on the axes.  If the value is
+ <code>"default"</code>, the range is determined automatically.
+
+<P>
+</LI>
+<LI><code>"x_axis_line_style"</code> and <code>"y_axis_line_style"</code> are
+ <tt class="class">LineStyle</tt> objects specifying how to draw the axis lines.  If
+ one is <code>None</code>, no axis line is drawn.
+
+<P>
+</LI>
+<LI><code>"tick_size"</code> and <code>"tick_line_style"</code> control the
+ drawing of tick marks on axes.  The latter is a <tt class="class">LineStyle</tt>
+ object, or <code>None</code> to suppress tick marks.
+
+<P>
+</LI>
+<LI><code>"label_font"</code> is a <tt class="class">hep.draw.Font</tt> object specifying
+ the font to use for labelling the plot.
+
+<P>
+</LI>
+</UL>
+
+<P>
+For one-dimensionaly histograms, these bin styles may be used:
+
+<UL>
+<LI><code>"filled"</code> draws bins as a landscape of filled rectangles.
+ The height of each rectangle represents the contents of a bin.  The
+ <code>"data_fill"</code> style attribute is a <tt class="class">hep.draw.Fill</tt> object
+ that specifies how the rectangles are filled.
+
+<P>
+</LI>
+<LI><code>"marker"</code> represents bins as markers.  If errors are shown,
+ they are represented by vertical lines through the markers.  The
+ <code>"marker"</code> style attribute is a <tt class="class">hep.draw.Marker</tt> object
+ that specifies how the markers are drawn
+
+<P>
+</LI>
+<LI><code>"cross"</code> represents a bin's as a cross.  The horizontal
+ line indicates the bin value and bin width; the vertical line shows bin
+ errors.  
+
+<P>
+</LI>
+</UL>
+
+<P>
+For two-dimensional histograms, these bin styles may be used:
+
+<UL>
+<LI><code>"box"</code> draws a box plot.  The <code>"data_fill"</code> style
+ attribute is specifies how the boxes are filled.
+
+<P>
+</LI>
+<LI><code>"box_twotone"</code> draws a box plot where boxes for positive
+ bin values are drawn in black and boxes for negative bin values are
+ drawn in blue.  The area of the box is proportional to the absolute
+ value of the bin contents.
+
+<P>
+</LI>
+<LI><code>"density"</code> draws a density plot.  The value of each bin is
+ represented by a colored rectangle, where the color is interpolated
+ between white (the z-axis minimum value) and the color of
+ <code>"data_fill"</code> (the z-axis maximum value).
+
+<P>
+</LI>
+<LI><code>"density_twotone"</code> draws a density plot where positive bin
+ values are represented by shades of grey and negative bin values are
+ represented by shades of blue.  Solid black represents the z-axis
+ maximum value; white represents zero, and solid blue represents the
+ z-axis minimum value.
+
+<P>
+</LI>
+</UL>
+
+<P>
+The function <tt class="function">makeStyle</tt> function constructs a style dictionary
+suitable for displaying a particular histogram or scatter plot in a
+particular format and size.  Pass the histogram or scatter plot as the
+first argument.  The <code>format</code> parameter may be <code>"print"</code>
+(optimized for hardcopy output), <code>"screen"</code> (optimzied for screen
+display), or <code>"presentation"</code> (optimized for large-format
+presentation).  The <code>scale</code> parameter is the size (either vertical
+or horizontal) in which the plot will be drawn.  Additional keyword
+arguments are added as style attributes to the returned style
+dictionary.
+
+<P>
+
+<DIV CLASS="navigation">
+<p><hr>
+<table align="center" width="100%" cellpadding="0" cellspacing="2">
+<tr>
+<td><A HREF="node45.html"><img src="icons//previous.gif"
+  border="0" height="32"
+  alt="Previous Page" width="32"></A></td>
+<td><A HREF="node41.html"><img src="icons//up.gif"
+  border="0" height="32"
+  alt="Up One Level" width="32"></A></td>
+<td><A HREF="node47.html"><img src="icons//next.gif"
+  border="0" height="32"
+  alt="Next Page" width="32"></A></td>
+<td align="center" width="100%"> PyHEP Tutorial</td>
+<td><A href="contents.html"><img src="icons//contents.gif"
+  border="0" height="32"
+  alt="Contents" width="32"></A></td>
+<td><img src="icons//blank.gif"
+  border="0" height="32"
+  alt="" width="32"></td>
+<td><img src="icons//blank.gif"
+  border="0" height="32"
+  alt="" width="32"></td>
+</tr></table>
+<b class="navlabel">Previous:</b> <a class="sectref" HREF="node45.html">7.4 Plotting</A>
+<b class="navlabel">Up:</b> <a class="sectref" HREF="node41.html">7. Drawing and Plotting</A>
+<b class="navlabel">Next:</b> <a class="sectref" HREF="node47.html">7.6 Plot objects</A>
+<hr>
+
+</DIV>
+<!--End of Navigation Panel-->
+<ADDRESS>
+<tt>alex@alexsamuel.net</tt>
+</ADDRESS>
+</BODY>
+</HTML>

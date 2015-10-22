@@ -1,0 +1,195 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+<title>2.2 Creating histograms</title>
+<META NAME="description" CONTENT="2.2 Creating histograms">
+<META NAME="keywords" CONTENT="pyhep">
+<META NAME="resource-type" CONTENT="document">
+<META NAME="distribution" CONTENT="global">
+<link rel="STYLESHEET" href="pyhep.css">
+<link rel="first" href="pyhep.html">
+<link rel="contents" href="contents.html" title="Contents">
+
+<LINK REL="next" HREF="node10.html">
+<LINK REL="previous" HREF="node5.html">
+<LINK REL="up" HREF="node4.html">
+<LINK REL="next" HREF="node7.html">
+</head>
+<body>
+<DIV CLASS="navigation">
+<table align="center" width="100%" cellpadding="0" cellspacing="2">
+<tr>
+<td><A HREF="node5.html"><img src="icons//previous.gif"
+  border="0" height="32"
+  alt="Previous Page" width="32"></A></td>
+<td><A HREF="node4.html"><img src="icons//up.gif"
+  border="0" height="32"
+  alt="Up One Level" width="32"></A></td>
+<td><A HREF="node7.html"><img src="icons//next.gif"
+  border="0" height="32"
+  alt="Next Page" width="32"></A></td>
+<td align="center" width="100%"> PyHEP Tutorial</td>
+<td><A href="contents.html"><img src="icons//contents.gif"
+  border="0" height="32"
+  alt="Contents" width="32"></A></td>
+<td><img src="icons//blank.gif"
+  border="0" height="32"
+  alt="" width="32"></td>
+<td><img src="icons//blank.gif"
+  border="0" height="32"
+  alt="" width="32"></td>
+</tr></table>
+<b class="navlabel">Previous:</b> <a class="sectref" HREF="node5.html">2.1 Introductory example</A>
+<b class="navlabel">Up:</b> <a class="sectref" HREF="node4.html">2. Histograms</A>
+<b class="navlabel">Next:</b> <a class="sectref" HREF="node7.html">2.2.1 Axis type</A>
+<br><hr>
+</DIV>
+<!--End of Navigation Panel-->
+
+<H1><A NAME="SECTION004200000000000000000">
+2.2 Creating histograms</A>
+</H1>
+
+<P>
+The class <tt class="class">hep.hist.Histogram</tt> provides an arbitrary-dimensional
+histogram with binned axes.  Optionally, a histogram can store errors
+(uncertainties) of the contents of each bin, or can compute these
+automatically from the bin contents.
+
+<P>
+To construct a <tt class="class">Histogram</tt>, provide a specification of each axis,
+one for each dimension.  You can specify an <code>Axis</code> object for each
+axis (described later), but the easiest way to specify an evenly-binned
+axis is with a tuple containing the number of bins, and a '(lo, hi)'
+pair specifying the low edge of the first bin and the high edge of the
+last bin.  For example,
+<dl><dd><pre class="verbatim">
+&gt;&gt;&gt; import hep.hist
+&gt;&gt;&gt; one_d_histogram = hep.hist.Histogram((20, (0, 100)))
+</pre></dl>
+creates a one-dimensional histogram with 20 bins between values 0
+and 100.  Why all the parentheses?  The outermost pair are for the function
+call; the next pair group parameters of the (single) axis; the innermost
+group the low and high boundaries of the axis range.
+
+<P>
+Similarly,
+<dl><dd><pre class="verbatim">
+&gt;&gt;&gt; two_d_histogram = hep.hist.Histogram((20, (-1.0, 1.0)), (100, (0.0, 10.0)))
+</pre></dl>
+creates a two-dimensional histograms with 20 bins on the first axis and
+100 bins on the second axis.
+
+<P>
+To create a one-dimensional histogram you may use
+<tt class="function">Histogram1D</tt>, which is equivalent except the axis's
+parameters are specified directly as arguments instead of wrapped in a
+sequence, so that one pair of parentheses may be omitted.  Thus, the
+first example above may be written,
+<dl><dd><pre class="verbatim">
+&gt;&gt;&gt; one_d_histogram = hep.hist.Histogram1D(20, (0, 100))
+</pre></dl>
+
+<P>
+You can access the sequence of axes for a histogram from its <code>axes</code>
+attribute.  You'll see that the tuple arguments you specified have been
+converted into <code>EvenlyBinnedAxis</code> objects.
+<dl><dd><pre class="verbatim">
+&gt;&gt;&gt; two_d_histogram.axes
+(EvenlyBinnedAxis(20, (-1.0, 1.0)), EvenlyBinnedAxis(100, (0.0, 10.0)))
+</pre></dl>
+For one-dimensional histograms, you may also use the <code>axis</code> attribute.
+<dl><dd><pre class="verbatim">
+&gt;&gt;&gt; one_d_histogram.axis
+EvelyBinnedAxis(20, (0, 100))
+</pre></dl>
+
+<P>
+For evenly-binned axes such as these, the <code>range</code> and
+<code>number_of_bins</code> attributes contain the axis parameters.  The
+<code>dimensions</code> attribute contains the number of dimensions of the 
+histogram.  This is always equal to the length of the <code>axes</code>
+attribute.
+<dl><dd><pre class="verbatim">
+&gt;&gt;&gt; one_d_histogram.axis.number_of_bins
+20
+&gt;&gt;&gt; one_d_histogram.axis.range
+(0, 100)
+&gt;&gt;&gt; one_d_histogram.dimensions
+1
+</pre></dl>
+
+<P>
+If you specify additional keyword arguments when creating the histogram,
+they are added as attributes to the new histogram object.  For example,
+<dl><dd><pre class="verbatim">
+&gt;&gt;&gt; histogram = hep.hist.Histogram(
+...   (40, (0.0, 10.0), "momentum", "GeV/c"),
+...   (32, (0, 32), "track hits"),
+...   title="drift chamber tracks")
+&gt;&gt;&gt; histogram.title
+'drift chamber tracks'
+</pre></dl>
+This creates a two-dimensional histogram of 40 bins of track energy
+between 0 and 10 GeV/c, and 32 integer bins counting track hits.  Note
+that this histogram has <!-- MATH
+ $(40 + 2) \times (32 + 2) = 1428$
+ -->
+<SPAN CLASS="MATH"><IMG
+ WIDTH="188" HEIGHT="32" ALIGN="MIDDLE" BORDER="0"
+ SRC="img1.gif"
+ ALT="$(40 + 2) \times (32 + 2) = 1428$"></SPAN> bins,
+including overflow and underflow bins on each axis.  The histogram has
+an additional attribute <tt class="member">title</tt> whose value is
+<code>"drift chamber tracks"</code>.  You can, of course, set or modify
+additional attributes like <tt class="member">title</tt> after creating the histogram.
+
+<P>
+
+<p><hr>
+<!--Table of Child-Links-->
+<A NAME="CHILD_LINKS"><STRONG>Subsections</STRONG></a>
+
+<UL CLASS="ChildLinks">
+<LI><A href="node7.html">2.2.1 Axis type</a>
+<LI><A href="node8.html">2.2.2 Additional axis parameters</a>
+<LI><A href="node9.html">2.2.3 Bin type and error model</a>
+</ul>
+<!--End of Table of Child-Links-->
+
+<DIV CLASS="navigation">
+<p><hr>
+<table align="center" width="100%" cellpadding="0" cellspacing="2">
+<tr>
+<td><A HREF="node5.html"><img src="icons//previous.gif"
+  border="0" height="32"
+  alt="Previous Page" width="32"></A></td>
+<td><A HREF="node4.html"><img src="icons//up.gif"
+  border="0" height="32"
+  alt="Up One Level" width="32"></A></td>
+<td><A HREF="node7.html"><img src="icons//next.gif"
+  border="0" height="32"
+  alt="Next Page" width="32"></A></td>
+<td align="center" width="100%"> PyHEP Tutorial</td>
+<td><A href="contents.html"><img src="icons//contents.gif"
+  border="0" height="32"
+  alt="Contents" width="32"></A></td>
+<td><img src="icons//blank.gif"
+  border="0" height="32"
+  alt="" width="32"></td>
+<td><img src="icons//blank.gif"
+  border="0" height="32"
+  alt="" width="32"></td>
+</tr></table>
+<b class="navlabel">Previous:</b> <a class="sectref" HREF="node5.html">2.1 Introductory example</A>
+<b class="navlabel">Up:</b> <a class="sectref" HREF="node4.html">2. Histograms</A>
+<b class="navlabel">Next:</b> <a class="sectref" HREF="node7.html">2.2.1 Axis type</A>
+<hr>
+
+</DIV>
+<!--End of Navigation Panel-->
+<ADDRESS>
+<tt>alex@alexsamuel.net</tt>
+</ADDRESS>
+</BODY>
+</HTML>

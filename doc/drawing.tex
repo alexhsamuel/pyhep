@@ -1,0 +1,292 @@
+\chapter{Drawing}
+
+\pyhep includes a drawing layer that provides device-independent output
+for simple two-dimensional figures and line drawings.  Classes and
+functions for producing plots use the drawing layer; these are described
+in the next chapter.  The drawing layer is in the module
+\module{hep.draw}.
+
+Drawings, plots, and the like are represented in \pyhep by
+\textit{figures}.  A figure is a device-independent memory
+representation of a drawing in a rectangular region, including all
+visual attributes---the \textit{style}---of the drawing.  
+
+A \textit{renderer} produces output by rendering a figure.  Each
+renderer represents a particular output channel, such as a display
+window or an output file.  The drawing layer supports output to an X11
+window, and generation of PostScript files, enhanced Windows metafiles,
+and bitmap files.
+
+%-----------------------------------------------------------------------
+
+\section{Units and types}
+
+The unit of measurement in the \pyhep drawing layer is meters,
+regardless of the output device; \pyhep attempts to preserve the scale
+of output.  All measurements are given as 'float' values.
+
+The module \module{hep.draw} includes the conversion factors
+\code{point} and \code{inch} to help you use these units.  For instance,
+the length \code{12 * point} is about 17 cm, or a sixth of an inch.
+
+Colors are represented by the \class{Color} class.  Its constructor
+arguments are red, green, and blue color components, each between zero
+and one.  The function \function{Gray} produces a shade of gray; it
+produces a color with the same value for all three components.  The
+function \function{HSV} constructs a color from hue, saturation, and
+value components.  For example,
+\begin{verbatim}
+>>> from hep.draw import *
+>>> dark_red = Color(0.6, 0.1, 0.1)
+>>> medium_gray = Gray(0.6)
+>>> print medium_gray
+Color(0.600000, 0.600000, 0.600000)
+>>> aqua = HSV(0.5, 0.8, 0.5)
+>>> print aqua
+Color(0.100000, 0.500000, 0.500000)
+\end{verbatim}
+Also, \module{hep.draw} includes the constants \code{black} and
+\code{white}.
+
+The appearance of a line is given by its color, thickness, and dash
+pattern.  Specify the thickness in meters as with any other length.  A
+dash pattern is a tuple of lengths, that specifies the lengths of
+alternating ``on'' and ``off'' segments.  For instance, this dash
+pattern produces a line with alternating long (2 mm) and short (1 mm)
+dashes, with a fixed small distance (0.5 mm) between the dashes.
+\begin{verbatim}
+>>> dash = (0.002, 0.0005, 0.001, 0.0005)
+\end{verbatim}
+For a solid line, specify \code{None} as the dash pattern.  You can also
+use these constants for predefined dash patterns: \code{"solid"},
+\code{"dot"}, \code{"dash"}, \code{"dot-dash"}, and
+\code{"dot-dot-dash"}.
+
+%-----------------------------------------------------------------------
+
+\section{Canvases}
+
+Not documented yet.
+
+%-----------------------------------------------------------------------
+
+\section{Renderers}
+
+A renderer draws a figure to a display or to an output file.  Call the
+\method{render} method, passing the figure to render.
+
+\pyhep provides renderers for generating PostScript files, for enhanced
+Windows metafiles, bitmap files, and for displaying in X windows.
+
+\subsection{PostScript renderers}
+
+The module \module{hep.draw.postscript} provides renderers for
+PostScript files.  
+
+An instance of class \class{PSFile} generates a multi-page ADSC
+PostScript file.  Pass the constructor the path to the output file.  
+
+You may specify the page size using the \code{page_size} keyword
+argument.  The page size is either a \code{(width, height)} pair.  You
+can also specify a page size by name, such as \code{"letter"} or
+\code{"A4"}.  Named pages sizes are stored in the dictionary
+\code{hep.draw.page_size}.  If the page size is omitted, letter is
+assumed.
+
+Each time you invoke the \method{render} method of a \class{PSFile}
+object, you generate a new page in the PostScript.  When you are done,
+simply delete the \class{PSFile} object to close the file.
+
+This example shows the generatation of a two-page PostScript file.
+\begin{verbatim}
+>>> import hep.draw.postscript
+>>> ps_file = hep.draw.postscript.PSFile("output.ps", page_size="letter")
+>>> ps_file.render(figure1)
+>>> ps_file.render(figure2)
+>>> del ps_file
+\end{verbatim}
+
+The class \class{EPSFile} generates an encapsulated PostScript file.
+Specify the bounding box size of the image using the \code{size} keyword
+argument.  You should only invoke the \method{render} method
+once per \class{EPSFile} object.
+
+\subsection{Enhanced metafile renderer}
+
+The module \module{hep.draw.metafile} provides a render for files in the
+enhanced Windows metafile (EMF) format.  This is a vector file format
+widely supported by Windows applications.  An EMF file essentially
+contains a recording of the Windows graphics system calls required to
+draw a figure.  The standard file extension for EMF files is
+``\code{.emf}''.
+
+The \class{EnhancedMetafile} class renders figures into EMF files.  As
+with \class{PSFile}, specify the path to the output file and the image
+size when creating an \class{EnhancedMetafile} object.  The
+\method{render} method should only be invoked once.
+
+This is how you can quickly save a figure as an EMF file.
+\begin{verbatim}
+>>> from hep.draw.metafile import EnhancedMetafile
+>>> EnhancedMetafile("figure.emf", (0.06, 0.04)).render(figure)
+\end{verbatim}
+
+\subsection{Bitmap file renderer}
+
+The module \module{hep.draw.imagefile} provides a function
+\function{render} to render a figure as a bitmap image file.  The bitmap
+is written using the Imlib library, and all bitmap file types supported
+by Imlib can be used.  Depending on how Imlib is installed on your
+system, different image file formats will be supported, but at least
+PNG, JPG, and TIFF are generally available.  PNG is the recommended
+format for line art such as plots of histograms.
+
+Call \function{render} specifying the figure to render and save, the image
+file name, and the size of the image in pixels.  The file format is
+determined automatically from the file extension.  For example,
+\begin{verbatim}
+>>> from hep.draw import imagefile
+>>> imagefile.render(figure, "figure.png", (640, 480))
+\end{verbatim}
+You may also specify the virtual size in which to render the figure,
+using the \code{virtual_size} argument.
+
+If you specify only the size or only the virtual size, the image other
+is computed using the resolution specified by the \code{resolution}
+argument, which defaults to 75 dpi.  For example, if you want the image
+file to be 5 cm square, assuping 96 dpi,
+\begin{verbatim}
+>>> imagefile.render(figure, "figure.dpi", virtual_size=(0.05, 0.05),
+...                resolution=96/inch)
+\end{verbatim}
+
+\subsection{X window renderer}
+
+The class \class{hep.draw.xwindow.Window} is a window that can render
+figures in an X window.  Each instance creates a new window.  
+
+When you create a new \class{Window} instance, provide the desired
+window size \textit{in meters} when creating a new window.  You can
+resize an existing window with its \method{resize} method, or simply by
+resizing the window through your window manager.  When creating a
+\class{Window}, you may also provide a title for the title bar provided
+by your window manager, or set this later by assigning the
+\member{title} attribute.
+
+Each time you call the \method{render} method, the window's contents are
+replaced by the specified figure.  Note that if the window's contents
+are destroyed (for example, if you resize the window), you will have to
+call \method{render} again to restore the window's contents.  Also, if
+you modify the figure, the window contents do not reflect the changes
+until you call \method{render} again.
+
+\class{Window} uses anti-aliasing and subpixel interpolation when
+rendering its contents.
+
+The \class{Window} class renders figures in memory and then transfers
+the rendered image to your display.  This allows the renderer to use
+advanced anti-aliasing and subpixel rendering, and makes sure fonts are
+handled uniformly regardless of the configuration of the X server
+displaying the window.  However, this means that when you run \pyhep in
+a remote X session, the contents of the window are transferred over the
+network as a bitmap, which can be slow.  If you tunnel your X connection
+through SSH, you will probably find that using compression
+(``\code{-C}'' on the \code{ssh} command line) improves display
+performance.
+
+\subsection{Figure windows}
+
+A \class{hep.draw.xwindow.FigureWindow} provides a more convenient way
+of displaying a figure in a window.  The \class{FigureWindow} knows the
+figure it is rendering, and redraws its contents when necessary (when
+the window is exposed or resized).
+
+Using a \class{FigureWindow}, it's easy to display a figure.  The second
+argument is the window size.
+\begin{verbatim}
+>>> from hep.draw.xwindow import FigureWindow
+>>> window = FigureWindow(figure, (0.16, 0.10))
+\end{verbatim}
+
+You can change the figure displayed in the window by setting the
+\member{figure} attribute.  If the value is \code{None}, nothing is
+drawn in the window.  If the figure changes, call the \method{redraw}
+method to force the window to redraw it.
+
+%-----------------------------------------------------------------------
+
+\section{Layouts}
+
+A \textit{layout} is a composite figure that arranges several other
+figures.  A layout object is itself a figure, so it can be rendered
+directly by renderers, and included in other layouts.  The layout
+objects described here are in the \module{hep.draw} module.
+
+A simple layout class is \class{SplitLayout}.  It arranges two figures
+next to each other, either horizontally or vertically.  A
+\class{SplitLayout} allows you to specify the fractions of the entire
+drawing region in which to draw each of the two figures.  When you
+create a split layout, specify the orientation of the split, either
+\code{"vertical"} or \code{"horizontal"}, and the two figures.  Either
+figure may be \code{None}.  You may also specify the fraction of the
+first figure (the default is 0.5); the remainder is used to draw the
+second figure.
+
+For example, this code creates a layout displaying \code{fig1} on the
+left, occupying three-quarters of the layout, and \code{fig2} on the
+right, occypting the remaining quarter.
+\begin{verbatim}
+>>> from hep.draw import *
+>>> layout = SplitLayout("vertical", fig1, fig2, fraction=0.75)
+\end{verbatim}
+
+You can create more flexible layouts with a \class{BrickLayout} object.
+A \textit{brick layout} resembles a row of bricks: the region is divided
+into equally-spaced rows, each of which is divided into equally-spaced
+cells.  Each row may have a different number of cells.  To specify the
+arrangement of cells, provide a sequence containing the number of cells
+in each row.  The number of elements in the sequence is the number of
+rows.  For instance, to create a layout with three rows, of which the
+first and third are divided in half and the middle is divided into
+thirds,
+\begin{verbatim}
+>>> layout = BrickLayout((2, 3, 2))
+\end{verbatim}
+You may also specify style attributes as keyword arguments; as with
+other figures, a layout's style attributes are stored in a dictionary
+attribute \member{style}.  For example, the \code{margin} style
+attribute controls the size of an empty margin inserted between rows and
+cells in a row.
+\begin{verbatim}
+>>> layout = BrickLayout((2, 3, 2), margin=12*point)
+\end{verbatim}
+
+You can index the figures in a brick layout by column and row index, for
+instance 
+\begin{verbatim}
+>>> layout[0, 0] = fig1
+>>> layout[1, 2] = fig2
+\end{verbatim}
+Any entry that contains \code{None} (the default) is left empty.
+
+A \class{GridLayout} is a subclass of \class{BrickLayout} in which all
+rows have the same number of cells.  This produces a grid of
+evenly-sized cells.  Specify the number of columns and rows when
+creating an instance.
+\begin{verbatim}
+>>> layout = GridLayout(2, 3)
+\end{verbatim}
+
+%% All layout classes also have an attribute \member{figures}, which is a
+%% list of figures displayed in the layout.  The order of figures depends
+%% on the layout.  Also, the \member{appender} method provides convenient
+%% way to set figures sequentially in a complex layout.  It produces a
+%% function that, when called repeated, sets sequential positions of
+%% \member{figures} to its argument.  Each \member{appender} filles the
+%% figures starting from index zero, so you should hang on to it and call
+%% the same one repeatedly.  For example,
+%% \begin{verbatim}
+%% >>> append_figure = layout.appender
+%% >>> append_figure(fig1)
+%% >>> append_figure(fig2)
+%% \end{verbatim}

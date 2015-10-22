@@ -1,0 +1,6 @@
+*.pyc
+*.pyo
+*.out
+*.table
+*.xml
+*.metadata

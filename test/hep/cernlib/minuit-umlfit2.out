@@ -1,0 +1,8 @@
+Traceback (most recent call last):
+  File "minuit-umlfit2.py", line 22, in ?
+    table)
+  File "/home/samuel/dev/pyhep/py/hep/cernlib/minuit.py", line 239, in maximumLikelihoodFit
+    parameters = normalizeParameters(parameters)
+  File "/home/samuel/dev/pyhep/py/hep/minimize.py", line 42, in normalizeParameters
+    bound_lo, bound_hi = map(float, parameter[3])
+TypeError: argument 2 to map() must support iteration

@@ -1,0 +1,30 @@
+import hep.cuts
+import random
+
+signal = [ random.normalvariate(0, 1) for i in xrange(10000) ]
+background = [ random.normalvariate(-1, 1) for i in xrange(10000) ]
+
+cut, sense, fom = hep.cuts.optimizeCut(signal, background)
+print cut, sense, fom
+
+#-----------------------------------------------------------------------
+
+import hep.hist
+import hep.hist.ezplot
+from   hep.draw import *
+import hep.draw.postscript
+
+signal_hist = hep.hist.Histogram1D(45, -4, 5, float,
+                                   title=r"gauss$(\mu,\sigma)$")
+map(signal_hist.accumulate, signal)
+background_hist = hep.hist.Histogram1D(45, -4, 5, float)
+map(background_hist.accumulate, background)
+
+plot, draw = \
+      hep.hist.ezplot.plot1("cut1.eps", signal_hist, background_hist)
+hep.hist.ezplot.drawLegend(
+    plot, draw, r"$\mu=0$, $\sigma=1$", r"$\mu=-1$, $\sigma=1$")
+layout = plot.buildLayout(draw)
+y_min, y_max = plot.y_range
+layout.data_draw.drawLine(cut, y_min, cut, y_max,
+                          LineStyle(color=Color(0.7, 0.7, 0.7)))

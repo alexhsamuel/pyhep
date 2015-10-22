@@ -1,0 +1,125 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+<title>7.3 Drawing accessories</title>
+<META NAME="description" CONTENT="7.3 Drawing accessories">
+<META NAME="keywords" CONTENT="pyhep">
+<META NAME="resource-type" CONTENT="document">
+<META NAME="distribution" CONTENT="global">
+<link rel="STYLESHEET" href="pyhep.css">
+<link rel="first" href="pyhep.html">
+<link rel="contents" href="contents.html" title="Contents">
+
+<LINK REL="next" HREF="node45.html">
+<LINK REL="previous" HREF="node43.html">
+<LINK REL="up" HREF="node41.html">
+<LINK REL="next" HREF="node45.html">
+</head>
+<body>
+<DIV CLASS="navigation">
+<table align="center" width="100%" cellpadding="0" cellspacing="2">
+<tr>
+<td><A HREF="node43.html"><img src="icons//previous.gif"
+  border="0" height="32"
+  alt="Previous Page" width="32"></A></td>
+<td><A HREF="node41.html"><img src="icons//up.gif"
+  border="0" height="32"
+  alt="Up One Level" width="32"></A></td>
+<td><A HREF="node45.html"><img src="icons//next.gif"
+  border="0" height="32"
+  alt="Next Page" width="32"></A></td>
+<td align="center" width="100%"> PyHEP Tutorial</td>
+<td><A href="contents.html"><img src="icons//contents.gif"
+  border="0" height="32"
+  alt="Contents" width="32"></A></td>
+<td><img src="icons//blank.gif"
+  border="0" height="32"
+  alt="" width="32"></td>
+<td><img src="icons//blank.gif"
+  border="0" height="32"
+  alt="" width="32"></td>
+</tr></table>
+<b class="navlabel">Previous:</b> <a class="sectref" HREF="node43.html">7.2 Drawing Primitives</A>
+<b class="navlabel">Up:</b> <a class="sectref" HREF="node41.html">7. Drawing and Plotting</A>
+<b class="navlabel">Next:</b> <a class="sectref" HREF="node45.html">7.4 Plotting</A>
+<br><hr>
+</DIV>
+<!--End of Navigation Panel-->
+
+<H1><A NAME="SECTION009300000000000000000">
+7.3 Drawing accessories</A>
+</H1>
+
+<P>
+The <tt class="module">hep.draw</tt> module provides these convenience functions:
+
+<P>
+
+<UL>
+<LI><tt class="function">drawFrame(draw, range, line_style)</tt> draws a rectangular
+ frame; <var>range</var> is a sequence <code>(x0, y0, x1, y1)</code>.
+
+<P>
+</LI>
+<LI><tt class="function">addBorder(draw, width, frame_style)</tt> returns a
+ transformed <tt class="class">Draw</tt> object obtained by adding a blank margin of
+ specified <var>width</var> around <var>draw</var>.  If <var>frame_style</var> is
+ provided, a border is drawn inside the margin as well.
+
+<P>
+</LI>
+<LI><tt class="function">divide(draw, columns, rows, frame_style, gutter)</tt>
+ divides a <tt class="class">Draw</tt> into a rectangular array of smaller drawing
+ regions.  The arguments <var>columns</var> and <var>rows</var> specify the number
+ of drawing regions in the array.  If <var>frame_style</var> is provied, each
+ drawing region is framed by a rectangle drawn with that line style.  If
+ <var>gutter</var> is specified, the array includes blank space of this
+ thickness between drawing regions.
+
+<P>
+The return value is an array of arrays of <tt class="class">Draw</tt> objects
+ simulating a two-dimensional array indexed by column number and row
+ number.
+
+<P>
+</LI>
+</UL>
+
+<P>
+
+<DIV CLASS="navigation">
+<p><hr>
+<table align="center" width="100%" cellpadding="0" cellspacing="2">
+<tr>
+<td><A HREF="node43.html"><img src="icons//previous.gif"
+  border="0" height="32"
+  alt="Previous Page" width="32"></A></td>
+<td><A HREF="node41.html"><img src="icons//up.gif"
+  border="0" height="32"
+  alt="Up One Level" width="32"></A></td>
+<td><A HREF="node45.html"><img src="icons//next.gif"
+  border="0" height="32"
+  alt="Next Page" width="32"></A></td>
+<td align="center" width="100%"> PyHEP Tutorial</td>
+<td><A href="contents.html"><img src="icons//contents.gif"
+  border="0" height="32"
+  alt="Contents" width="32"></A></td>
+<td><img src="icons//blank.gif"
+  border="0" height="32"
+  alt="" width="32"></td>
+<td><img src="icons//blank.gif"
+  border="0" height="32"
+  alt="" width="32"></td>
+</tr></table>
+<b class="navlabel">Previous:</b> <a class="sectref" HREF="node43.html">7.2 Drawing Primitives</A>
+<b class="navlabel">Up:</b> <a class="sectref" HREF="node41.html">7. Drawing and Plotting</A>
+<b class="navlabel">Next:</b> <a class="sectref" HREF="node45.html">7.4 Plotting</A>
+<hr>
+
+</DIV>
+<!--End of Navigation Panel-->
+<ADDRESS>
+<tt>alex@alexsamuel.net</tt>
+</ADDRESS>
+</BODY>
+</HTML>

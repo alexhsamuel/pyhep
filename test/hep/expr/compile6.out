@@ -1,0 +1,6 @@
+Traceback (most recent call last):
+  File "compile6.py", line 28, in ?
+    compiled = hep.expr.asExpression(
+  File "/home/samuel/dev/pyhep/py/hep/expr/__init__.py", line 67, in asExpression
+    raise expr_parser.ParseError, \
+hep.expr.expr_parser.ParseError: unknown symbol testlist_gexp, while parsing "(i1)"

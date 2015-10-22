@@ -1,0 +1,12 @@
+*.pyc
+*.pyo
+*.out
+*.ps
+*.eps
+*.hbook
+*.root
+*.pickle
+*.aux
+*.dvi
+*.log
+*.tex

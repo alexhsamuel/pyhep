@@ -1,0 +1,125 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+<title>4.1 Building and evaluating expressions</title>
+<META NAME="description" CONTENT="4.1 Building and evaluating expressions">
+<META NAME="keywords" CONTENT="pyhep">
+<META NAME="resource-type" CONTENT="document">
+<META NAME="distribution" CONTENT="global">
+<link rel="STYLESHEET" href="pyhep.css">
+<link rel="first" href="pyhep.html">
+<link rel="contents" href="contents.html" title="Contents">
+
+<LINK REL="next" HREF="node28.html">
+<LINK REL="previous" HREF="node26.html">
+<LINK REL="up" HREF="node26.html">
+<LINK REL="next" HREF="node28.html">
+</head>
+<body>
+<DIV CLASS="navigation">
+<table align="center" width="100%" cellpadding="0" cellspacing="2">
+<tr>
+<td><A HREF="node26.html"><img src="icons//previous.gif"
+  border="0" height="32"
+  alt="Previous Page" width="32"></A></td>
+<td><A HREF="node26.html"><img src="icons//up.gif"
+  border="0" height="32"
+  alt="Up One Level" width="32"></A></td>
+<td><A HREF="node28.html"><img src="icons//next.gif"
+  border="0" height="32"
+  alt="Next Page" width="32"></A></td>
+<td align="center" width="100%"> PyHEP Tutorial</td>
+<td><A href="contents.html"><img src="icons//contents.gif"
+  border="0" height="32"
+  alt="Contents" width="32"></A></td>
+<td><img src="icons//blank.gif"
+  border="0" height="32"
+  alt="" width="32"></td>
+<td><img src="icons//blank.gif"
+  border="0" height="32"
+  alt="" width="32"></td>
+</tr></table>
+<b class="navlabel">Previous:</b> <a class="sectref" HREF="node26.html">4. Expressions</A>
+<b class="navlabel">Up:</b> <a class="sectref" HREF="node26.html">4. Expressions</A>
+<b class="navlabel">Next:</b> <a class="sectref" HREF="node28.html">4.2 Compiling expressions</A>
+<br><hr>
+</DIV>
+<!--End of Navigation Panel-->
+
+<H1><A NAME="SECTION006100000000000000000">
+4.1 Building and evaluating expressions</A>
+</H1>
+
+<P>
+To parse an expression into a Python expression object representing its
+parse tree, use <tt class="function">hep.expr.asExpression</tt>.
+<dl><dd><pre class="verbatim">
+&gt;&gt;&gt; import hep.expr
+&gt;&gt;&gt; ex = hep.expr.asExpression("p_x ** 2 + p_y ** 2")
+</pre></dl>
+The expression object's string representation looks similar to the
+original formula:
+<dl><dd><pre class="verbatim">
+&gt;&gt;&gt; print ex
+(p_x ** 2) + (p_y ** 2)
+</pre></dl>
+The expression objects's <tt class="function">repr</tt> shows its tree structure:
+<dl><dd><pre class="verbatim">
+&gt;&gt;&gt; print repr(ex)
+Add(Power(Symbol('p_x', None), Constant(2)), Power(Symbol('p_y', None), Constant(2)))
+</pre></dl>
+
+<P>
+To evaluate an expression, you must provide the values of all symbols.
+For the expression above, the symbols <var>p_x</var> and <var>p_y</var> must be
+specified.  You may either call the expression object directly, passing
+symbol values as keyword arguments:
+<dl><dd><pre class="verbatim">
+&gt;&gt;&gt; ex(p_x=1, p_y=2)
+5.0
+</pre></dl>
+or you may call its <tt class="method">evaluate</tt> method with a map providing values
+of the symbols mentioned in the expression:  
+<dl><dd><pre class="verbatim">
+&gt;&gt;&gt; ex.evaluate({"p_x": 1, "p_y": 2})
+5.0
+</pre></dl>
+
+<P>
+
+<DIV CLASS="navigation">
+<p><hr>
+<table align="center" width="100%" cellpadding="0" cellspacing="2">
+<tr>
+<td><A HREF="node26.html"><img src="icons//previous.gif"
+  border="0" height="32"
+  alt="Previous Page" width="32"></A></td>
+<td><A HREF="node26.html"><img src="icons//up.gif"
+  border="0" height="32"
+  alt="Up One Level" width="32"></A></td>
+<td><A HREF="node28.html"><img src="icons//next.gif"
+  border="0" height="32"
+  alt="Next Page" width="32"></A></td>
+<td align="center" width="100%"> PyHEP Tutorial</td>
+<td><A href="contents.html"><img src="icons//contents.gif"
+  border="0" height="32"
+  alt="Contents" width="32"></A></td>
+<td><img src="icons//blank.gif"
+  border="0" height="32"
+  alt="" width="32"></td>
+<td><img src="icons//blank.gif"
+  border="0" height="32"
+  alt="" width="32"></td>
+</tr></table>
+<b class="navlabel">Previous:</b> <a class="sectref" HREF="node26.html">4. Expressions</A>
+<b class="navlabel">Up:</b> <a class="sectref" HREF="node26.html">4. Expressions</A>
+<b class="navlabel">Next:</b> <a class="sectref" HREF="node28.html">4.2 Compiling expressions</A>
+<hr>
+
+</DIV>
+<!--End of Navigation Panel-->
+<ADDRESS>
+<tt>alex@alexsamuel.net</tt>
+</ADDRESS>
+</BODY>
+</HTML>

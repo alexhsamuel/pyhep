@@ -1,0 +1,10 @@
+#!/bin/bash
+
+EXTMODULE=$1
+shift
+
+rm -f $EXTMODULE.profile
+
+time LD_PROFILE_OUTPUT=/ LD_PROFILE=$EXTMODULE python2 $@
+/usr/bin/sprof $EXTMODULE $EXTMODULE.profile | c++filt > ./profile
+echo "profile of $EXTMODULE written to ./profile"

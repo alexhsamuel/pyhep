@@ -1,0 +1,150 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+<title>3.6 Using expressions with tables</title>
+<META NAME="description" CONTENT="3.6 Using expressions with tables">
+<META NAME="keywords" CONTENT="pyhep">
+<META NAME="resource-type" CONTENT="document">
+<META NAME="distribution" CONTENT="global">
+<link rel="STYLESHEET" href="pyhep.css">
+<link rel="first" href="pyhep.html">
+<link rel="contents" href="contents.html" title="Contents">
+
+<LINK REL="next" HREF="node25.html">
+<LINK REL="previous" HREF="node21.html">
+<LINK REL="up" HREF="node15.html">
+<LINK REL="next" HREF="node23.html">
+</head>
+<body>
+<DIV CLASS="navigation">
+<table align="center" width="100%" cellpadding="0" cellspacing="2">
+<tr>
+<td><A HREF="node21.html"><img src="icons//previous.gif"
+  border="0" height="32"
+  alt="Previous Page" width="32"></A></td>
+<td><A HREF="node15.html"><img src="icons//up.gif"
+  border="0" height="32"
+  alt="Up One Level" width="32"></A></td>
+<td><A HREF="node23.html"><img src="icons//next.gif"
+  border="0" height="32"
+  alt="Next Page" width="32"></A></td>
+<td align="center" width="100%"> PyHEP Tutorial</td>
+<td><A href="contents.html"><img src="icons//contents.gif"
+  border="0" height="32"
+  alt="Contents" width="32"></A></td>
+<td><img src="icons//blank.gif"
+  border="0" height="32"
+  alt="" width="32"></td>
+<td><img src="icons//blank.gif"
+  border="0" height="32"
+  alt="" width="32"></td>
+</tr></table>
+<b class="navlabel">Previous:</b> <a class="sectref" HREF="node21.html">3.5 Projecting histograms from</A>
+<b class="navlabel">Up:</b> <a class="sectref" HREF="node15.html">3. Tables</A>
+<b class="navlabel">Next:</b> <a class="sectref" HREF="node23.html">3.6.1 Caching expressions in</A>
+<br><hr>
+</DIV>
+<!--End of Navigation Panel-->
+
+<H1><A NAME="SECTION005600000000000000000">
+3.6 Using expressions with tables</A>
+</H1>
+
+<P>
+Expressions are described in more detail in a later chapter.  This
+section presents techniques for optimizing expressions used with tables.
+
+<P>
+As described above, you can use Python expressions encoded in character
+strings with <tt class="method">select</tt> method and <tt class="function">hep.hist.project</tt>
+function.  When such an expressions are evaluated, unbound symbols
+(<i>i.e.</i> variables) are bound to the value of the corresponding
+column.
+
+<P>
+Since a table row satisfies the Python mapping protocol, you can pass a
+table row directly to an expression's <tt class="method">evaluate</tt> method.  For
+example, this constructs an expression object to compute the transverse
+momentum of a track in the tracks table constructed above.
+<dl><dd><pre class="verbatim">
+&gt;&gt;&gt; import hep.expr
+&gt;&gt;&gt; p_t = hep.expr.asExpression("hypot(p_x, p_y)")
+</pre></dl>
+Its <tt class="method">evaluate</tt> method computes transverse momentum for a track by
+binding <var>p_x</var> and <var>p_y</var> to the corresponding values of the table
+row. 
+<dl><dd><pre class="verbatim">
+&gt;&gt;&gt; print p_t.evaluate(tracks[0])
+0.92102783203
+</pre></dl>
+To find the largest transverse momentum in the track table,
+<dl><dd><pre class="verbatim">
+&gt;&gt;&gt; print max(map(p_t.evaluate, tracks))
+2.44177757441
+</pre></dl>
+
+<P>
+The chapter on expressions, below, describes how to compile an
+expression into a format for faster evaluation.  When the expression is
+used with a table, you can produce an even faster version by compiling
+it with the table's <tt class="method">compile</tt> method.  This sets the symbol types
+correctly based on the table's schema, and applies additional
+optimizations specific to tables.  For example,
+<dl><dd><pre class="verbatim">
+&gt;&gt;&gt; p_t = tracks.compile("hypot(p_x, p_y)")
+&gt;&gt;&gt; print p_t.evaluate(tracks[0])
+0.92102783203
+</pre></dl>
+When you evaluate an expression on many rows of a large table,
+performance will be substantially better if you compile the expression
+first for that table.  Note that an expression compiled for a table
+should only be used with that table.
+
+<P>
+
+<p><hr>
+<!--Table of Child-Links-->
+<A NAME="CHILD_LINKS"><STRONG>Subsections</STRONG></a>
+
+<UL CLASS="ChildLinks">
+<LI><A href="node23.html">3.6.1 Caching expressions in tables</a>
+<LI><A href="node24.html">3.6.2 Row types</a>
+</ul>
+<!--End of Table of Child-Links-->
+
+<DIV CLASS="navigation">
+<p><hr>
+<table align="center" width="100%" cellpadding="0" cellspacing="2">
+<tr>
+<td><A HREF="node21.html"><img src="icons//previous.gif"
+  border="0" height="32"
+  alt="Previous Page" width="32"></A></td>
+<td><A HREF="node15.html"><img src="icons//up.gif"
+  border="0" height="32"
+  alt="Up One Level" width="32"></A></td>
+<td><A HREF="node23.html"><img src="icons//next.gif"
+  border="0" height="32"
+  alt="Next Page" width="32"></A></td>
+<td align="center" width="100%"> PyHEP Tutorial</td>
+<td><A href="contents.html"><img src="icons//contents.gif"
+  border="0" height="32"
+  alt="Contents" width="32"></A></td>
+<td><img src="icons//blank.gif"
+  border="0" height="32"
+  alt="" width="32"></td>
+<td><img src="icons//blank.gif"
+  border="0" height="32"
+  alt="" width="32"></td>
+</tr></table>
+<b class="navlabel">Previous:</b> <a class="sectref" HREF="node21.html">3.5 Projecting histograms from</A>
+<b class="navlabel">Up:</b> <a class="sectref" HREF="node15.html">3. Tables</A>
+<b class="navlabel">Next:</b> <a class="sectref" HREF="node23.html">3.6.1 Caching expressions in</A>
+<hr>
+
+</DIV>
+<!--End of Navigation Panel-->
+<ADDRESS>
+<tt>alex@alexsamuel.net</tt>
+</ADDRESS>
+</BODY>
+</HTML>

@@ -1,0 +1,426 @@
+\chapter{Plotting}
+
+\pyhep includes classes and function for producing plots of histograms,
+functions, and scatter plots.  The \class{hep.hist.plot.Plot} class is
+the basic class used for producing plots.  An instance of \class{Plot}
+is a figure object and can be used with renderers and layouts, as
+described in the previous chapter.
+
+Here's a basic example.  First, create a histogram:
+\begin{verbatim}
+>>> import hep.hist
+>>> hist = hep.hist.makeSample1D("flat", 500)
+\end{verbatim}
+Now create a \class{Plot} object, which is a figure depicting the
+histogram.
+\begin{verbatim}
+>>> from hep.hist.plot import Plot
+>>> plot = Plot(1, hist)
+\end{verbatim}
+When creating the plot, you specified the number of dimensions
+(independent variables) that are depicted in the plot, and the histogram
+we want to plot.  Finally, create a window, and render the plot in
+the window.
+\begin{verbatim}
+>>> from hep.draw.xwindow import Window
+>>> window = Window((0.2, 0.1))
+>>> window.render(plot)
+\end{verbatim}
+The argument to \class{Window} is the width and height of the window in
+meters. 
+
+By default, a bin of a one-dimensional histograms is drawn as crosses.
+The horizontal line shows the bin value and bin width, and the vertical
+line shows the range of errors on the bin content.  On the left and
+right sides are displayed the underflow and overflow bins, labelled
+``UF'' and ``OF'' respectively.
+
+You can just as easily generate a PostScript file containing the plot.
+Just use a PostScript renderer instead of the \code{Window} object.
+\begin{verbatim}
+>>> from hep.draw.postscript import PSFile
+>>> ps_file = PSFile("plot.ps")
+>>> ps_file.render(plot)
+>>> del ps_file
+\end{verbatim}
+By deleting the \class{PSFile} object, you generate the output and close
+the file. 
+
+%-----------------------------------------------------------------------
+
+\section{Plots and series}
+
+A \class{hep.hist.plot.Plot} object is a figure that displays a plot of
+histograms, functions, and similar data.  A plot can display either data
+with one independent variable, such as one-dimensional histograms and
+functions of one variable, or data with two independent variables, such
+as two-dimensional histograms and scatter plots.  More than one
+histogram, function, or scatter plot can be shown at the same time; each
+is called a \textit{series}.  All series in the same plot share the same
+vertical and horizontal axes (and z range, for two-dimensional plots).
+
+To create a plot object, specify the number of dimensions in the plot,
+either 1 or 2.  You may specify the series to plot as additional
+arguments.  For example, to create a plot overlaying a histogram and a
+function,
+\begin{verbatim}
+>>> from hep.hist.plot import Plot
+>>> plot = Plot(1, histogram, function)
+\end{verbatim}
+You can also use the \method{append} method to add a series to a plot,
+so the following code is equivalent:
+\begin{verbatim}
+>>> plot = Plot(1)
+>>> plot.append(histogram)
+>>> plot.append(function)
+\end{verbatim}
+
+A \class{Plot} object has a \member{series} attribute, which is a list
+of series in the plot.  The series are not the histograms and functions
+themselves, but figure objects representing the series.  (Generally, you
+wouldn't to render these figures directly.)  
+\begin{verbatim}
+>>> plot.series[0]
+<hep.hist.plot.Histogram1DPlot object at 0xf6d01fcc>
+\end{verbatim}
+The plot object for a histogram references the histogram itself in its
+\member{histogram} attribute.
+\begin{verbatim}
+>>> plot.series[0].histogram
+Histogram(EvenlyBinnedAxis(20, (0.0, 1.0)), bin_type=int, error_model='poisson')
+\end{verbatim}
+
+You can remove series from a plot simply by removing the corresponding
+element from the \member{series} list.  Similarly, you can reorder
+elements in the list to change the stacking order of series in the
+plot. 
+
+%-----------------------------------------------------------------------
+
+\section{Plot styles}
+
+\textit{Styles} control the visual attributes of plots.  Style
+information is not stored in a histogram, which only contains
+statistical data and annotations (such as units).  Instead, style is
+stored in a plot.
+
+Each plot has a \member{style} attribute, which is a dictionary
+containing style items.  Keys in the style dictionary are names of style
+attributes.  Any style attributes may be stored in the style dictionary;
+different plot types use different style attributes to control their
+output.
+
+A \class{Plot} object has a \member{style} attribute; in addition, the
+plot object representing each series in a plot has a \member{style}
+attribute as well.  This allows different styles to be used for each
+series in a plot (for instance, to assign a different color to each
+series).  If a particular style attribute is missing from a series's
+style dictionary, it uses the value from the parent \class{Plot}
+object's style dictionary.  Thus, if you set a style attribute in a
+\class{Plot}, it will apply to each series in that plot, except for a
+series which overrides it in its own style dictionary.
+
+Suppose you have a plot showing two histograms.
+\begin{verbatim}
+>>> plot = Plot(1, histogram1, histogram2)
+\end{verbatim}
+To draw 2 mm dots at bin contents for both series in the plot, set the
+\code{"marker"} and \code{"marker size"} attributes in the plot's
+style dictionary.
+\begin{verbatim}
+>>> plot.style["marker"] = "filled dot"
+>>> plot.style["marker_size"] = 0.002
+\end{verbatim}
+To draw the second series (but not the first) in red, set the
+\code{"color"} attribute in that series's style dictionary.
+\begin{verbatim}
+>>> plot.series[1].style["color"] = hep.draw.Color(0.7, 0, 0)
+\end{verbatim}
+
+You can set style attributes for a \class{Plot} when you create it, by
+adding keyword arguments.  Similarly, you can set style attributes for a
+series by adding keyword arguments to \method{append}.  For example,
+this code produces the same plot as the code above does:
+\begin{verbatim}
+>>> plot = Plot(1, marker="filled dot", marker_size=0.002)
+>>> plot.append(histogram1)
+>>> plot.append(histogram2, color=Color(0.7, 0, 0))
+\end{verbatim}
+
+The sections below list style attributes used by \pyhep's plot classes
+to determine the visual style of plots.  For an explanation of how to
+specify fonts, colors, marker styles, \textit{etc.}, see the chapter on
+drawing. 
+
+\subsection{Styles for plot objects}
+
+These style attributes control the visual style of \code{Plot} objects.
+
+\begin{itemize}
+ \item \code{"bottom_margin"}: The size of the margin on the bottom of
+ the plot.
+
+ \item \code{"color"}: Specifies the color for the entire plot,
+ including axes and labels.
+
+ \item \code{"font"}: Specifies the font to use for titles and labels
+ on the plot.
+
+ \item \code{"font_size"}: Specifies the font size to use for titles and
+ labels on the plot.
+
+ \item \code{"left_margin"}: The size of the margin on the left side of
+ the plot.
+
+ \item \code{"log_scale"}: If true, a logarithmic scale is used for the
+ dependent axis (the y axis in one-dimensional plots, the z range in
+ two-dimensional plots).
+
+ \item \code{"normalize_bin_size"}: How to normalize bin contents to a
+ common bin size.  The contents of bins of different sizes are
+ normalized to a common effective bin width (for one-dimensional
+ histograms) or bin area (for two-dimensional histograms) to facilitate
+ the interpretation of bin contents as an approximation of probability
+ density.  The contents of overflow bins are never normalized.
+
+ If the value of this style attribute is a number, the content of each
+ bin is normalized to this bin size.  If the value is \code{"auto"} (the
+ default), a bin size is automatically chosen (for a histogram with
+ evenly-binned axes, the histogram's actual bin size is used).  If the
+ value is \code{None}, bins are not normalized, and the actual values of
+ bin contents are plotted.
+
+ \item \code{"overflows"}: If true, show underflow and overflow bins for
+ the x axis (for one-dimensional plots) or the x and y axis (for
+ two-dimensional plots).  For two-dimensional plots, underflow and
+ overflow bins can be enabled for the x and y axes individually with the
+ \code{"x_axis_overflows"} and \code{"y_axis_overflows"} style
+ attributes.
+
+ \item \code{"overflow_line"}, \code{"overflow_line_color"},
+ \code{"overflow_line_dash"}, \code{"overflow_line_thickness"}: Whether
+ to draw lines separating the overflow bins from the rest of the bin
+ data, and the color, dash pattern, and thickness of the line.
+
+ \item \code{"right_margin"}: The size of the margin on the right side
+ of the plot.
+
+ \item \code{"title"}: A title to draw on the plot.
+
+ \item \code{"top_margin"}: The size of the margin on the top of the
+ plot.
+
+ \item \code{"x_axis_font"}, \code{"x_axis_font_size"}: The font and
+ font size to use for labelling the x axis and its ticks.  Likewise for
+ the y axis.
+
+ \item \code{"x_axis_line"}, \code{"x_axis_color"}, 
+ \code{"x_axis_thickness"}: Whether to draw the x axis, and its color
+ and thickness.  Likewise for the y axis.
+
+ \item \code{"x_axis_offset"}: The distance between the x axis and the
+ edge of the bin data.  Likewise for the y axis.
+
+ \item \code{"x_axis_position"}, \code{"y_axis_position"}: The position
+ of the axes on the plot.  For the x axis, the value may be either
+ \code{"bottom"} or \code{"top"}; for the y axis, either \code{"left"}
+ or \code{"right"}.
+
+ \item \code{"x_axis_range"}: The range of values to display along the x
+ axis, as a \code{(lo, hi)} pair.  Likewise for the y axis.
+
+ \item \code{"x_axis_ticks"}: Specifies the tick marks to draw along the
+ x axis.  The value may be the approximate number of tick marks to use
+ (chosen heuristally from the axis range); or a sequence of tick
+ positions; or \code{None}.  Likewise for the y axis.
+
+ \item \code{"x_axis_tick_size"}, \code{"x_axis_tick_thickness"}: The
+ length and thickness of tick marks on the x axis.  Likewise for the y
+ axis. 
+
+ \item \code{"z_range"}: For two-dimensional plots, the range of values
+ to display on the (virtual) z axis, as a \code{(lo, hi)} pair.
+
+ \item \code{"zero_line"}, \code{"zero_line_color"},
+ \code{"zero_line_thickness"}: In one-dimensional plots, whether to draw
+ the zero line, and the zero line's color and thickness.
+
+\end{itemize}
+
+In addition, the style attributes that control the border, aspect ratio,
+and size of layouts can be specified for plot objects as well.  See the
+section on layout styles in the chapter on drawing.
+
+\subsection{Styles for all plot series}
+
+These style attribute control the visual styles of individual series in
+plots.  If a series's style dictionary doesn't contain a particular
+attribute, the value from the parent \code{Plot} object's style
+dictionary is used.  Certain style attributes are used only for some bin
+styles.
+
+\begin{itemize}
+ \item \code{"color"}: The color in which to draw this series.  
+
+ \item \code{"dash"}: The dash pattern to use for lines.
+
+ \item \code{"errors"}: If true, display bin errors for histograms that
+ contain error information.  The representation of bin errors depends on
+ the bin style.
+
+ \item \code{"marker"}: The marker to use when drawing points at bin
+ contents.  If \code{None}, no markers are drawn.
+
+ \item \code{"marker_size"}: The marker size to use when drawing points
+ at bin contents.
+
+ \item \code{"thickness"}: The line thickness to use.
+
+ \item \code{"suppress_zero_bins"}: If true, a bins with zero contents
+ will not be drawn.
+
+\end{itemize}
+
+
+\subsection{Styles for 1D histograms plot series}
+
+These style attributes are specific to plot series of one-dimensional
+histograms.
+
+\begin{itemize}
+ \item \code{"bins"}: The style to use to draw bins.  These bin styles
+ may be used:
+ \begin{itemize}
+  \item \code{"points"} (the default): Draws a marker and/or cross at
+  the value of each bin.
+
+  \item \code{"skyline"}: Draws the traditional outline or filled region
+  representing bin contents.
+
+ \end{itemize}
+
+ \item \code{"bin_center"}: In the \code{"points"} bin style, the
+ fractional horizontal location within the bin to draw the marker and
+ the vertical error bar.  The value should be between zero and one.  The
+ default is 0.5, which centers the marker and error bar in the bin.
+ When superimposing two series with identical binning and similar bin
+ contents, it is useful to offset the error bars of one or both to
+ prevent them from overlapping.
+
+ \item \code{"cross"}: In the \code{"points"} bin style, whether to
+ draw a horizontal line in each bin.  The position of the line shows the
+ bin contents, and the length of the line shows the bin width.
+
+ \item \code{"error_hatch_color"}, \code{"error_hatch_pitch"},
+ \code{"error_hatch_thickness"}: In the \code{"skyline"} bin style, bin
+ errors are depicted with a 45-degree hatch pattern.  These style
+ attributes control the color, spacing, and thickness of the hacth
+ pattern.  If the color is \code{None}, the hatch pattern uses the fill
+ pattern for errors above the bin contents, and the background color
+ below the bin contents.
+
+ \item \code{"fill_color"}: In the \code{"skyline"} bin style, the color
+ with which to fill the bins.  If \code{None}, the bins are not filled.
+
+ \item \code{"line_color"}: In the \code{"skyline"} bin style, the color
+ for the outline of the bin contetns.  If \code{None}, no outline is
+ drawn.
+
+\end{itemize}
+
+
+\subsection{Styles for 2D histograms plot series}
+
+These style attributes are specific to plot series of two-dimensional
+histograms.
+
+\begin{itemize}
+ \item \code{"bins"}: The style to use to draw bins.  These bin styles
+ may be used:
+ \begin{itemize}
+  \item \code{"box"}: Draws a box for each bin with area proportional to
+  the value of the bin content.
+
+  \item \code{"density"}: Shades each bin with a color reprenting the
+  bin content.
+ \end{itemize}
+
+ \item \code{"negative_color"}: If a color is specified, an empty bin
+ represents zero bin contents, and this color is used to draw the
+ contents of negative bins.  If this style attribute is \code{None}, an
+ empty bin represents the low end of the z range, and all values are
+ represented relative to this value.
+
+ \item \code{"overrun_color"}, \code{"underrun_color"}: Colors to use to
+ draw bins whose values are outside the z range of the plot.
+\end{itemize}
+
+
+\subsection{Styles for function plot series}
+
+These style attributes are specific to plot series of one-dimensional
+functions.  
+
+\begin{itemize}
+ \item \code{"bins"}: The style to use to draw bins.  These bin styles
+ may be used:
+ \begin{itemize}
+  \item \code{"curve"}: Draw the function value as a curve.
+ \end{itemize}
+
+ \item \code{"number_of_samples"}: The number of points at which to
+ sample the function.
+
+\end{itemize}
+
+%-----------------------------------------------------------------------
+
+\section{Annotations and decorations}
+
+Using the class \class{hep.hist.plot.Annotation}, you can add textual
+annotations to a plot.  The annotation contains one or more lines of
+text.  You may specify the text when constructing the object, or
+incrementally using the \method{append} method or left-shift operator.
+If the text contains newline characters, it is split into multiple
+lines.
+
+The annotations are drawn left-justified in the upper-left corner of the
+plot, or right-justified in the upper-right corner of the plot.  Specify
+the position with the \code{"position"} style, which may be either
+\code{"left"} or \code{"right"}.  The styles \code{"annotation_font"},
+\code{"annotation_font_size"}, \code{"annotation_color"}, and
+\code{"annotation_leading"} control how the text is drawn.
+
+Simply add the \class{Annotation} object as a series to the plot.
+
+For example, this code makes a plot of a histogram with an annotation
+describing its bin and axis type
+\begin{verbatim}
+>>> plot = hep.hist.plot.Plot(1, histogram)
+>>> annotation = hep.hist.plot.Annotation("title: %s" % histogram.title)
+>>> annotation << "bin type: %s" % histogram.bin_type.__name__
+>>> annotation << "axis type: %s" % histogram.axis.type.__name__
+>>> plot.append(annotation)
+\end{verbatim}
+
+The class \class{hep.hist.plot.Statistics} is a subclass of
+\class{Annotation} which annotates histogram statistics.  To create one,
+provide a sequence of statistic names to include, and one or more
+histograms.  Statistic names can be \code{"sum"}, \code{"mean"},
+\code{"variance"}, \code{"sd"}, and \code{"overflows"}.  Then simply add
+the statistics annotation object as a series to the plot.
+
+For example, to plot a histogram and display its sum (integral), mean,
+and standard deviation,
+\begin{verbatim}
+>>> plot = hep.hist.plot.Plot(1, histogram)
+>>> plot.append(hep.hist.plot.Statistics(("sum", "mean", "sd"), histogram))
+\end{verbatim}
+
+If you want to include the statistics with other annotations, you can
+generate the text of the statistics annotation with the function
+\function{hep.hist.plot.formatStatistics}.
+
+%-----------------------------------------------------------------------
+
+\section{Prepackaged plot functions}

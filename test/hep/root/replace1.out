@@ -1,0 +1,22 @@
+Traceback (most recent call last):
+  File "replace1.py", line 16, in ?
+    del cwd["replace1.root"]
+  File "/home/samuel/dev/pyhep/py/hep/fs.py", line 111, in __delitem__
+    subdir.__del(key)
+  File "/home/samuel/dev/pyhep/py/hep/fs.py", line 410, in __del
+    directory = self.get(key, **args)
+  File "/home/samuel/dev/pyhep/py/hep/fs.py", line 162, in get
+    return subdir._get(key, **kw_args)
+  File "/home/samuel/dev/pyhep/py/hep/fs.py", line 632, in _get
+    return type[3](self, key, **kw_args)
+  File "/home/samuel/dev/pyhep/py/hep/fs.py", line 772, in __get_root_file
+    return hep.root.open(path, writable, purge_cycles, with_metadata)
+  File "/home/samuel/dev/pyhep/py/hep/root/__init__.py", line 667, in open
+    return file.root
+  File "/home/samuel/dev/pyhep/py/hep/root/__init__.py", line 541, in <lambda>
+    root = property(lambda self:
+  File "/home/samuel/dev/pyhep/py/hep/root/__init__.py", line 65, in __init__
+    for tkey in [ _cast(tlist[i]) for i in range(len(tlist)) ]:
+  File "/home/samuel/dev/pyhep/py/hep/root/__init__.py", line 600, in _cast
+    parts = object.this.split("_")
+AttributeError: 'PySwigObject' object has no attribute 'split'

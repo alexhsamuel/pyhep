@@ -1,0 +1,200 @@
+<?xml version='1.0' encoding='ISO-8859-1'?>
+<!DOCTYPE schema>
+<schema>
+ <description>
+  StdHep generator-level Monte Carlo output.
+ </description>
+ <column>
+  <name>parent</name>
+  <type>reference</type>
+  <table>self</table>
+ </column>
+ <column>
+  <name>id</name>
+  <type>int16</type>
+  <description>PDG particle type code</description>
+ </column>
+ <column>
+  <name>momentum_en</name>
+  <type>float32</type>
+  <units>GeV</units>
+ </column>
+ <column>
+  <name>momentum_px</name>
+  <type>float32</type>
+  <units>GeV/c</units>
+ </column>
+ <column>
+  <name>momentum_py</name>
+  <type>float32</type>
+  <units>GeV/c</units>
+ </column>
+ <column>
+  <name>momentum_pz</name>
+  <type>float32</type>
+  <units>GeV/c</units>
+ </column>
+ <expression>
+  <name>momentum</name>
+  <formula>
+   FourMomentum(momentum_en, momentum_px, momentum_py, momentum_pz)
+  </formula>
+ </expression>
+ <expression>
+  <name>mass</name>
+  <formula>momentum.norm</formula>
+ </expression>
+</schema>  
+
+#-----------------------------------------------------------------------
+
+schema = hep.table.Schema()
+schema.add("id", type="int16")
+schema.add("parent", reference="self")
+schema.add("p4", type="four_momentum")
+schema.add("p", expression="p4.momentum.norm")
+
+def fillParticle(table, particle, parent_index=-1):
+    row = table.newRow()
+    row["id"] = particle.species
+    row["parent_index"] = parent_index
+    row["p4_en"] = particle.momentum[0]
+    row["p4_px"] = particle.momentum[1]
+    row["p4_py"] = particle.momentum[2]
+    row["p4_pz"] = particle.momentum[3]
+    index = table.append(row)
+    for child in particle.decay_products:
+        fill_particle(table, child, index)
+
+decay_file = sys.argv[1]
+initial_particle = sys.argv[2]
+
+generator = hep.evtgen.Generator(decay_file, "evt.pdl")
+mass = pdt[initial_particle].mass
+table = hep.table.create("stdhep.table", schema)
+for i in range(0, 20):
+    particle = hep.evtgen.Particle(initial_particle, (mass, 0., 0., 0.))
+    generator.decay(particle)
+    fillParticle(table, particle)
+
+#-----------------------------------------------------------------------
+
+join(_table, "other")
+Call(<function join>, (Symbol(_table), Constant("other"), ))
+
+OBJECT_SYMBOL "_table"
+OBJECT_JOIN "other"
+
+------------------------------------------------------------------------
+
+_table.join("other")
+Call(GetAttr(Symbol("_table"), Constant("join")), (Constant("other"), ))
+
+OBJECT_SYMBOL #"_table"
+OBJECT_GET_ATTR_CONSTANT "join"
+CONSTANT "other"
+OBJECT_SIMPLE_CALL 1
+
+or
+
+OBJECT_JOIN "other"
+
+  if (is_row)
+    PUSH(row->table_->join(ARG1_OBJECT));
+  else 
+    // something complicated
+
+------------------------------------------------------------------------
+
+_table.join("pi0")[pi0_index].energy
+GetAttr(GetItem(t, Symbol("pi0_index")), Constant("energy"))
+t = Call(GetAttr(Symbol("_table"), Constant("join")), (Constant("other"), ))
+
+OBJECT_JOIN "pi0"
+LONG_SYMBOL "pi0_index"
+OBJECT_GETITEM
+OBJECT_GET_ATTR_CONSTANT "energy"
+
+or
+
+LONG_SYMBOL "pi0_index"
+OBJECT_JOIN_ROW "pi0"
+OBJECT_GET_ATTR_CONSTANT "energy"
+
+but what if energy = 
+  Call(Constant(<function sqrt>), (Symbol("momentum"), Symbol("mass")))
+?
+
+well, teach GET_ATTR_CONST to identify if the object is a PyRow, and if
+it is, use the same logic as OBJECT_SYMBOL
+
+AND-- teach OBJECT_SYMBOL, with the help of PyTable, to handle
+expression names quickly (using a lookup from name indices to PyExpr
+objects)... right now, it probably ignores expression, which is a bug!
+
+BUT a question: what if an expression is added to the schema after the
+table is created?  is this lookup updated?  is it allowed at all?  is
+there a safe way to do it?
+
+ugh, kind of tricky but I think we can do it
+
+Perhaps the stuff below is better.  That way, we don't have to duplicate
+the OBJECT_SYMBOL logic in GET_ATTR and friends.
+
+  LONG_SYMBOL "pi0_index"
+  OBJECT_JOIN_ROW "pi0"
+  OBJECT_DICT
+  PUSH_SYMBOLS
+  OBJECT_SYMBOL "energy"
+  POP_SYMBOLS
+
+OTOH we can probably do this just as easily in PyExpr using the
+appropriate subroutines to do the actual name lookup... so probably
+never mind
+
+------------------------------------------------------------------------
+
+foo.bar.baz
+
+GetAttr(GetAttr(Symbol("foo"), Symbol("bar")), Symbol("baz"))
+
+  OBJECT_SYMBOL "foo"
+  OBJECT_GET_ATTR_CONST "bar"
+  OBJECT_GET_ATTR_CONST "baz"
+
+  OBJECT_SYMBOL "foo"
+  PUSH_SYMBOL_TABLE 
+  OBJECT_SYMBOL "bar"
+  POP_SYMBOL_TABLE
+  PUSH_SYMBOL_TABLE
+  OBJECT_SYMBOL "baz"
+  POP_SYMBOL_TABLE
+
+  OBJECT_CONSTANT CompiledExpression(OBJECT_SYMBOL "baz").evaluate
+  OBJECT_CONSTANT CompiledExpression(OBJECT_SYMBOL "bar").evaluate
+  OBJECT_SYMBOL "foo"
+  OBJECT_DICT
+  OBJECT_CALL
+  OBJECT_DICT
+  OBJECT_CALL
+
+or (slightly more efficient -- saves lookup of 'evaluate' method, and
+better ordering of opcodes)
+
+  OBJECT_SYMBOL "foo"
+  OBJECT_DICT
+  OBJECT_CONSTANT CompiledExpression(OBJECT_SYMBOL "baz")
+  OBJECT_EVALUATE_EXPRESSION
+  OBJECT_DICT
+  OBJECT_CONSTANT CompiledExpression(OBJECT_SYMBOL "bar")
+  OBJECT_EVALUATE_EXPRESSION
+
+------------------------------------------------------------------------
+
+NOTE TO SELF:  
+
+  - How about allowing you to set function types, in the case that the
+    function's return value is always the same type?  e.g. a 'type'
+    attribute on functions, or specifying a function's name in the type
+    map, etc.
+

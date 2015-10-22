@@ -1,0 +1,138 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+<title>5.2 Loading and saving histograms</title>
+<META NAME="description" CONTENT="5.2 Loading and saving histograms">
+<META NAME="keywords" CONTENT="pyhep">
+<META NAME="resource-type" CONTENT="document">
+<META NAME="distribution" CONTENT="global">
+<link rel="STYLESHEET" href="pyhep.css">
+<link rel="first" href="pyhep.html">
+<link rel="contents" href="contents.html" title="Contents">
+
+<LINK REL="next" HREF="node36.html">
+<LINK REL="previous" HREF="node34.html">
+<LINK REL="up" HREF="node33.html">
+<LINK REL="next" HREF="node36.html">
+</head>
+<body>
+<DIV CLASS="navigation">
+<table align="center" width="100%" cellpadding="0" cellspacing="2">
+<tr>
+<td><A HREF="node34.html"><img src="icons//previous.gif"
+  border="0" height="32"
+  alt="Previous Page" width="32"></A></td>
+<td><A HREF="node33.html"><img src="icons//up.gif"
+  border="0" height="32"
+  alt="Up One Level" width="32"></A></td>
+<td><A HREF="node36.html"><img src="icons//next.gif"
+  border="0" height="32"
+  alt="Next Page" width="32"></A></td>
+<td align="center" width="100%"> PyHEP Tutorial</td>
+<td><A href="contents.html"><img src="icons//contents.gif"
+  border="0" height="32"
+  alt="Contents" width="32"></A></td>
+<td><img src="icons//blank.gif"
+  border="0" height="32"
+  alt="" width="32"></td>
+<td><img src="icons//blank.gif"
+  border="0" height="32"
+  alt="" width="32"></td>
+</tr></table>
+<b class="navlabel">Previous:</b> <a class="sectref" HREF="node34.html">5.1 Creating, opening, and</A>
+<b class="navlabel">Up:</b> <a class="sectref" HREF="node33.html">5. Working with HBOOK</A>
+<b class="navlabel">Next:</b> <a class="sectref" HREF="node36.html">5.3 Ntuples</A>
+<br><hr>
+</DIV>
+<!--End of Navigation Panel-->
+
+<H1><A NAME="SECTION007200000000000000000">
+5.2 Loading and saving histograms</A>
+</H1>
+
+<P>
+To load a histogram from an HBOOK directory, simply obtain it by name
+using the subscript operator or <tt class="method">get</tt>.  This returns a Python
+object representing the histogram, which may be modified freely.  Note
+that unlike HBOOK itself, where histograms are always stored in a global
+``PAWC'' memory region,  PyHEP constructs ordinary Python objects for
+histograms.  There is no need to manage ``PAWC'' explicitly.
+
+<P>
+To save a histogram to an HBOOK file, simply assign it to the
+subdirectory in which you wish to store it, using subscript notation or
+the <tt class="method">set</tt> method.  
+
+<P>
+Not all histogram features supported in HBOOK are also supported in
+ PyHEP, and visa versa.  Therefore, if a histogram is saved to an HBOOK
+file and later loaded, it may differ in some of its characteristics.
+The basic histogram binning, and bin contents and errors (including
+overflow and underflow bins), are stored correctly, however.  Note that
+PyHEP currently does not provide profile histograms.
+
+<P>
+The following script copies histograms from an HBOOK file to a new HBOOK
+file, preserving directory structure.  Ntuples are ignored.
+<dl><dd><pre class="verbatim">from   hep.cernlib import hbook
+
+def copy(src_dir, dest_dir):
+    # Loop over directory elements in 'path'.
+    for name in src_dir.keys():
+        info = src_dir.getInfo(name)
+        if info.is_directory:
+            # It's a directory.  Make the destination directory, and
+            # call ourselves recursively to copy its contents.
+            copy(src_dir[name], dest_dir.mkdir(name))
+        elif info.type in ("1D histogram", "2D histogram"):
+            # It's a histogram.  Load it, and save it to the destination. 
+            dest_dir[name] = src_dir[name]
+        # Ignore other types of entries.
+
+if __name__ == "__main__":
+    import sys
+    copy(hbook.open(sys.argv[1]), hbook.create(sys.argv[2]))
+</pre>
+<div class="verbatiminput-footer">
+<a href="hbookcp.txt" type="text/plain">Download as text.</a>
+</div>
+</dd></dl>
+
+<P>
+
+<DIV CLASS="navigation">
+<p><hr>
+<table align="center" width="100%" cellpadding="0" cellspacing="2">
+<tr>
+<td><A HREF="node34.html"><img src="icons//previous.gif"
+  border="0" height="32"
+  alt="Previous Page" width="32"></A></td>
+<td><A HREF="node33.html"><img src="icons//up.gif"
+  border="0" height="32"
+  alt="Up One Level" width="32"></A></td>
+<td><A HREF="node36.html"><img src="icons//next.gif"
+  border="0" height="32"
+  alt="Next Page" width="32"></A></td>
+<td align="center" width="100%"> PyHEP Tutorial</td>
+<td><A href="contents.html"><img src="icons//contents.gif"
+  border="0" height="32"
+  alt="Contents" width="32"></A></td>
+<td><img src="icons//blank.gif"
+  border="0" height="32"
+  alt="" width="32"></td>
+<td><img src="icons//blank.gif"
+  border="0" height="32"
+  alt="" width="32"></td>
+</tr></table>
+<b class="navlabel">Previous:</b> <a class="sectref" HREF="node34.html">5.1 Creating, opening, and</A>
+<b class="navlabel">Up:</b> <a class="sectref" HREF="node33.html">5. Working with HBOOK</A>
+<b class="navlabel">Next:</b> <a class="sectref" HREF="node36.html">5.3 Ntuples</A>
+<hr>
+
+</DIV>
+<!--End of Navigation Panel-->
+<ADDRESS>
+<tt>alex@alexsamuel.net</tt>
+</ADDRESS>
+</BODY>
+</HTML>

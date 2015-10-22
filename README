@@ -1,0 +1,39 @@
+------------------------------------------------------------------------
+
+			     PyHEP library
+		  by Alex Samuel <alex@alexsamuel.net>
+
+		see COPYRIGHT for copyright information
+
+------------------------------------------------------------------------
+      <<<  Please report bugs, problems, etc. to the author!  >>>
+------------------------------------------------------------------------
+
+To build PyHEP (express version):
+
+  ./configure --with-root=/path/to/root --with-cernlib=/path/to/cernlib
+  make
+  make install
+
+Configure with --with-python to specify the Python installation to use.
+
+By default, libraries are installed in the system-wide module directory
+for the Python installation, "/usr/lib/python<version>/hep".
+
+Use the "make-dist" script to build source and binary distribution. 
+
+The "test" subdirectory contains regression tests.  Set your PYTHONPATH
+to the "py" subdirectory of your build, and invoke "./test" to run
+regression tests.  Specify the --stress option to include stress tests. 
+
+------------------------------------------------------------------------
+
+For usage information, see documentation generated in
+
+  doc/pyhep.pdf
+  doc/html/pyhep/index.html 
+
+Documentation is installed by default in 
+"/usr/share/doc/pyhep-<version>".
+
+------------------------------------------------------------------------

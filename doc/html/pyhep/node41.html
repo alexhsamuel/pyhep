@@ -1,0 +1,126 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+<title>7. Drawing and Plotting</title>
+<META NAME="description" CONTENT="7. Drawing and Plotting">
+<META NAME="keywords" CONTENT="pyhep">
+<META NAME="resource-type" CONTENT="document">
+<META NAME="distribution" CONTENT="global">
+<link rel="STYLESHEET" href="pyhep.css">
+<link rel="first" href="pyhep.html">
+<link rel="contents" href="contents.html" title="Contents">
+
+<LINK REL="next" HREF="node48.html">
+<LINK REL="previous" HREF="node37.html">
+<LINK REL="up" HREF="pyhep.html">
+<LINK REL="next" HREF="node42.html">
+</head>
+<body>
+<DIV CLASS="navigation">
+<table align="center" width="100%" cellpadding="0" cellspacing="2">
+<tr>
+<td><A HREF="node40.html"><img src="icons//previous.gif"
+  border="0" height="32"
+  alt="Previous Page" width="32"></A></td>
+<td><A HREF="pyhep.html"><img src="icons//up.gif"
+  border="0" height="32"
+  alt="Up One Level" width="32"></A></td>
+<td><A HREF="node42.html"><img src="icons//next.gif"
+  border="0" height="32"
+  alt="Next Page" width="32"></A></td>
+<td align="center" width="100%"> PyHEP Tutorial</td>
+<td><A href="contents.html"><img src="icons//contents.gif"
+  border="0" height="32"
+  alt="Contents" width="32"></A></td>
+<td><img src="icons//blank.gif"
+  border="0" height="32"
+  alt="" width="32"></td>
+<td><img src="icons//blank.gif"
+  border="0" height="32"
+  alt="" width="32"></td>
+</tr></table>
+<b class="navlabel">Previous:</b> <a class="sectref" HREF="node40.html">6.3 Trees</A>
+<b class="navlabel">Up:</b> <a class="sectref" HREF="pyhep.html">PyHEP Tutorial</A>
+<b class="navlabel">Next:</b> <a class="sectref" HREF="node42.html">7.1 Creating Draw objects</A>
+<br><hr>
+</DIV>
+<!--End of Navigation Panel-->
+
+<H1><A NAME="SECTION009000000000000000000">
+7. Drawing and Plotting</A>
+</H1>
+
+<P>
+PyHEP includes a drawing layer, designed to provide device-independent
+output for simple two-dimensional figures and line drawings.  Routines
+for producing plots are based on this.  Currently, the drawing layer
+supports on-screen output using the GTK library, and PostScript output
+to a file.  The drawing layer is in the module <tt class="module">hep.draw</tt>.
+
+<P>
+In  PyHEP, a drawing surface is represented by a <tt class="class">Draw</tt> object.
+The setup procedure for a draw object depends on what kind of output it
+will create (in a window or to a file, the whole page or a subsection of
+it, etc.) but all <tt class="class">Draw</tt> objects satisfy the same protocol.
+
+<P>
+In the standard coordinate system used by <tt class="module">hep.draw</tt>, the
+positive X axis extends rightward and the positive Y axis extends
+upward; the origin is in the lower-left corner of the drawing region.
+The default units of measurement are meters, regardless of the output
+device.  The constants <tt class="module">hep.draw.pt</tt> and <tt class="module">hep.draw.inch</tt>
+are conversion factors from standard points (1/72'') and inches,
+respectively, to meters.
+
+<P>
+
+<p><hr>
+<!--Table of Child-Links-->
+<A NAME="CHILD_LINKS"><STRONG>Subsections</STRONG></a>
+
+<UL CLASS="ChildLinks">
+<LI><A href="node42.html">7.1 Creating <tt class="class">Draw</tt> objects</a>
+<LI><A href="node43.html">7.2 Drawing Primitives</a>
+<LI><A href="node44.html">7.3 Drawing accessories</a>
+<LI><A href="node45.html">7.4 Plotting</a>
+<LI><A href="node46.html">7.5 Plotting Styles</a>
+<LI><A href="node47.html">7.6 <tt class="class">Plot</tt> objects</a>
+</ul>
+<!--End of Table of Child-Links-->
+
+<DIV CLASS="navigation">
+<p><hr>
+<table align="center" width="100%" cellpadding="0" cellspacing="2">
+<tr>
+<td><A HREF="node40.html"><img src="icons//previous.gif"
+  border="0" height="32"
+  alt="Previous Page" width="32"></A></td>
+<td><A HREF="pyhep.html"><img src="icons//up.gif"
+  border="0" height="32"
+  alt="Up One Level" width="32"></A></td>
+<td><A HREF="node42.html"><img src="icons//next.gif"
+  border="0" height="32"
+  alt="Next Page" width="32"></A></td>
+<td align="center" width="100%"> PyHEP Tutorial</td>
+<td><A href="contents.html"><img src="icons//contents.gif"
+  border="0" height="32"
+  alt="Contents" width="32"></A></td>
+<td><img src="icons//blank.gif"
+  border="0" height="32"
+  alt="" width="32"></td>
+<td><img src="icons//blank.gif"
+  border="0" height="32"
+  alt="" width="32"></td>
+</tr></table>
+<b class="navlabel">Previous:</b> <a class="sectref" HREF="node40.html">6.3 Trees</A>
+<b class="navlabel">Up:</b> <a class="sectref" HREF="pyhep.html">PyHEP Tutorial</A>
+<b class="navlabel">Next:</b> <a class="sectref" HREF="node42.html">7.1 Creating Draw objects</A>
+<hr>
+
+</DIV>
+<!--End of Navigation Panel-->
+<ADDRESS>
+<tt>alex@alexsamuel.net</tt>
+</ADDRESS>
+</BODY>
+</HTML>

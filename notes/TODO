@@ -1,0 +1,37 @@
+Bugs:
+  - Race condition in PyX11Window.
+  - No XCloseDisplay in PyX11Window.
+
+Features:
+  - File locking for tables?
+
+  - int64 column types.
+
+  - 3d histograms in Root
+
+  - load and save unevenly-binned histograms in Root
+
+  - fix Euler angles
+
+  - how to handle exceptions thrown from expressions?
+
+  - enumerated table column type and hist axes
+
+  - fix the horrible SWIG pointer manipulation stuff used in hep.root
+
+  - keep is_modified flag on histograms?
+
+  - some rational and configurable handling of math exceptions in
+    expressions
+
+Cleanups:
+  - clean up Particle interface and its uses (STDHEP, EvtGen, elsewhere)
+
+  - clean up return value from getBinError etc.
+
+  - clean up hep.fs.getdir and setdefault(..., {}) stuff
+
+------------------------------------------------------------------------
+Local variables:
+mode: text
+End:

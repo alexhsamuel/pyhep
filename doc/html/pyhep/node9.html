@@ -1,0 +1,185 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+<title>2.2.3 Bin type and error model</title>
+<META NAME="description" CONTENT="2.2.3 Bin type and error model">
+<META NAME="keywords" CONTENT="pyhep">
+<META NAME="resource-type" CONTENT="document">
+<META NAME="distribution" CONTENT="global">
+<link rel="STYLESHEET" href="pyhep.css">
+<link rel="first" href="pyhep.html">
+<link rel="contents" href="contents.html" title="Contents">
+
+<LINK REL="previous" HREF="node8.html">
+<LINK REL="up" HREF="node6.html">
+<LINK REL="next" HREF="node10.html">
+</head>
+<body>
+<DIV CLASS="navigation">
+<table align="center" width="100%" cellpadding="0" cellspacing="2">
+<tr>
+<td><A HREF="node8.html"><img src="icons//previous.gif"
+  border="0" height="32"
+  alt="Previous Page" width="32"></A></td>
+<td><A HREF="node6.html"><img src="icons//up.gif"
+  border="0" height="32"
+  alt="Up One Level" width="32"></A></td>
+<td><A HREF="node10.html"><img src="icons//next.gif"
+  border="0" height="32"
+  alt="Next Page" width="32"></A></td>
+<td align="center" width="100%"> PyHEP Tutorial</td>
+<td><A href="contents.html"><img src="icons//contents.gif"
+  border="0" height="32"
+  alt="Contents" width="32"></A></td>
+<td><img src="icons//blank.gif"
+  border="0" height="32"
+  alt="" width="32"></td>
+<td><img src="icons//blank.gif"
+  border="0" height="32"
+  alt="" width="32"></td>
+</tr></table>
+<b class="navlabel">Previous:</b> <a class="sectref" HREF="node8.html">2.2.2 Additional axis parameters</A>
+<b class="navlabel">Up:</b> <a class="sectref" HREF="node6.html">2.2 Creating histograms</A>
+<b class="navlabel">Next:</b> <a class="sectref" HREF="node10.html">2.3 Other kinds of</A>
+<br><hr>
+</DIV>
+<!--End of Navigation Panel-->
+
+<H2><A NAME="SECTION004230000000000000000">
+2.2.3 Bin type and error model</A>
+</H2>
+
+<P>
+A histogram stores for each bin the total number of samples, or the sum
+of weights of samples, that have fallen in this bin.  The keyword
+argument <var>bin_type</var> specifies the numerical type used to store these
+totals.  The histogram's <code>bin_type</code> attribute contains this type.
+<dl><dd><pre class="verbatim">
+&gt;&gt;&gt; histogram = hep.hist.Histogram1D(10, (-50, 50))
+&gt;&gt;&gt; histogram.bin_type
+&lt;type 'int'&gt;
+&gt;&gt;&gt; histogram = hep.hist.Histogram1D(10, (-50, 50), bin_type=float)
+&gt;&gt;&gt; histogram.bin_type
+&lt;type 'float'&gt;
+</pre></dl>
+
+<P>
+By default, bin contents are stored as <code>int</code> values.
+<i>Therefore, if you plan to use non-integer weights, you should
+specify <code>bin_type=float</code> when creating the histogram; otherwise,
+weights will be truncated to integers when filling.</i>  
+
+<P>
+A histogram can also esimate the statistical counting uncertainty on
+each bin.  This error is represented by a 68.2% confidence interval
+around the bin value.  The interval is represented by a pair of values
+specifying the sizes of the low and high ``error bars'',
+<i>e.g.</i> if the bin value is <code>20</code> and the errors are
+<code>(5.5, 4.5)</code>, the 68.2% confidence interval is the range (14.5,
+24.5).
+
+<P>
+Several models are available are available that control how the errors
+are stored or computed:
+
+<UL>
+<LI><code>"none"</code>: Each bin is assumed to have zero uncertainty.
+
+<P>
+</LI>
+<LI><code>"gaussian"</code>: The errors are computed assuming symmetrical
+ Gaussian counting errors.  The bin value is interpreted as a number of
+ counts, and the low and high errors are both the square root of the bin
+ content.
+
+<P>
+</LI>
+<LI><code>"poisson"</code>: The errors are computed assuming Poisson
+ counting errors.  The bin value is interpreted as a number of counts,
+ and the low and high errors are chosen to cover 68.2% of the Poisson
+ cumulative distribution around the bin value.  The confidence interval
+ is chosen to cover 34.1% on either side of the central value where
+ possible.  However, for a central value of zero, one, or two counts,
+ this would produce a confidence interval with a lower edge below zero,
+ so the lower edge is fixed at zero and the upper edge is chosen to
+ capture 68.2%.
+
+<P>
+</LI>
+<LI><code>"symmetric"</code>: For each bin, the histogram stores a single
+ value representing both the lower and upper errors.  The error value
+ may be specified explicitly for each bin with the <tt class="method">setError</tt>
+ method.  When a sample is accumulated into the histogram, the sample
+ weight is added in quadrature to the bin error.
+
+<P>
+</LI>
+<LI><code>"asymmetric"</code>: For each bin, the histogram stores two
+ values representing the lower and upper errors.  The two error values
+ may be specified explicitly for each bin with the <tt class="method">setError</tt>
+ method.  When a sample is accumulated into the histogram, the sample
+ weight is added in quadrature to both bin errors.
+</LI>
+</UL>
+
+<P>
+Specify the error model for a histogram with the <var>error_model</var>
+keyword argument.  The default is <tt class="constant">"poisson"</tt> if the bin type is
+<code>int</code> or <code>long</code>, or <tt class="constant">"gaussian"</tt> otherwise.  If you will
+specify bin errors explicitly using the <tt class="method">setError</tt> method, you
+must specify the <tt class="constant">"symmetric"</tt> or the <tt class="constant">"asymmetric"</tt>
+error model.  The <tt class="constant">error_model</tt> attribute contains a histogram's
+error model.
+
+<P>
+For example,
+<dl><dd><pre class="verbatim">
+&gt;&gt;&gt; histogram = hep.hist.Histogram1D(10, (-50, 50))
+&gt;&gt;&gt; histogram.error_model
+'poisson'
+&gt;&gt;&gt; histogram = hep.hist.Histogram1D(10, (-50, 50), bin_type=float)
+&gt;&gt;&gt; histogram.error_model
+'gaussian'
+&gt;&gt;&gt; histogram = hep.hist.Histogram1D(10, (-50, 50), error_model="symmetric")
+&gt;&gt;&gt; histogram.error_model
+'symmetric'
+</pre></dl>
+
+<P>
+
+<DIV CLASS="navigation">
+<p><hr>
+<table align="center" width="100%" cellpadding="0" cellspacing="2">
+<tr>
+<td><A HREF="node8.html"><img src="icons//previous.gif"
+  border="0" height="32"
+  alt="Previous Page" width="32"></A></td>
+<td><A HREF="node6.html"><img src="icons//up.gif"
+  border="0" height="32"
+  alt="Up One Level" width="32"></A></td>
+<td><A HREF="node10.html"><img src="icons//next.gif"
+  border="0" height="32"
+  alt="Next Page" width="32"></A></td>
+<td align="center" width="100%"> PyHEP Tutorial</td>
+<td><A href="contents.html"><img src="icons//contents.gif"
+  border="0" height="32"
+  alt="Contents" width="32"></A></td>
+<td><img src="icons//blank.gif"
+  border="0" height="32"
+  alt="" width="32"></td>
+<td><img src="icons//blank.gif"
+  border="0" height="32"
+  alt="" width="32"></td>
+</tr></table>
+<b class="navlabel">Previous:</b> <a class="sectref" HREF="node8.html">2.2.2 Additional axis parameters</A>
+<b class="navlabel">Up:</b> <a class="sectref" HREF="node6.html">2.2 Creating histograms</A>
+<b class="navlabel">Next:</b> <a class="sectref" HREF="node10.html">2.3 Other kinds of</A>
+<hr>
+
+</DIV>
+<!--End of Navigation Panel-->
+<ADDRESS>
+<tt>alex@alexsamuel.net</tt>
+</ADDRESS>
+</BODY>
+</HTML>

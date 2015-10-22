@@ -1,0 +1,6 @@
+Traceback (most recent call last):
+  File "fisherplot1.py", line 5, in ?
+    from   hep.cuts import FisherDiscriminant, optimize
+  File "/home/samuel/dev/pyhep/py/hep/cuts.py", line 20, in ?
+    from   numarray import *
+ImportError: No module named numarray

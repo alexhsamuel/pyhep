@@ -1,0 +1,200 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+<title>6.1 Opening and examining Root files</title>
+<META NAME="description" CONTENT="6.1 Opening and examining Root files">
+<META NAME="keywords" CONTENT="pyhep">
+<META NAME="resource-type" CONTENT="document">
+<META NAME="distribution" CONTENT="global">
+<link rel="STYLESHEET" href="pyhep.css">
+<link rel="first" href="pyhep.html">
+<link rel="contents" href="contents.html" title="Contents">
+
+<LINK REL="next" HREF="node39.html">
+<LINK REL="previous" HREF="node37.html">
+<LINK REL="up" HREF="node37.html">
+<LINK REL="next" HREF="node39.html">
+</head>
+<body>
+<DIV CLASS="navigation">
+<table align="center" width="100%" cellpadding="0" cellspacing="2">
+<tr>
+<td><A HREF="node37.html"><img src="icons//previous.gif"
+  border="0" height="32"
+  alt="Previous Page" width="32"></A></td>
+<td><A HREF="node37.html"><img src="icons//up.gif"
+  border="0" height="32"
+  alt="Up One Level" width="32"></A></td>
+<td><A HREF="node39.html"><img src="icons//next.gif"
+  border="0" height="32"
+  alt="Next Page" width="32"></A></td>
+<td align="center" width="100%"> PyHEP Tutorial</td>
+<td><A href="contents.html"><img src="icons//contents.gif"
+  border="0" height="32"
+  alt="Contents" width="32"></A></td>
+<td><img src="icons//blank.gif"
+  border="0" height="32"
+  alt="" width="32"></td>
+<td><img src="icons//blank.gif"
+  border="0" height="32"
+  alt="" width="32"></td>
+</tr></table>
+<b class="navlabel">Previous:</b> <a class="sectref" HREF="node37.html">6. Working with Root</A>
+<b class="navlabel">Up:</b> <a class="sectref" HREF="node37.html">6. Working with Root</A>
+<b class="navlabel">Next:</b> <a class="sectref" HREF="node39.html">6.2 Loading and saving</A>
+<br><hr>
+</DIV>
+<!--End of Navigation Panel-->
+
+<H1><A NAME="SECTION008100000000000000000">
+6.1 Opening and examining Root files</A>
+</H1>
+
+<P>
+The functions <tt class="function">hep.root.create</tt> and <tt class="function">hep.root.open</tt>
+create or open Root files.  The argument is the path to the file;
+<tt class="function">open</tt> also takes an optional <var>update</var> argument, which is
+true if the file is to be opened in read-write mode for modification.
+The resulting object represents the top directory of the open Root
+file.
+
+<P>
+A Root directory object acts as a map, whose keys are entries in the
+directory.  You can use the usual map methods to examine and access the
+contents of the directory.  For example, the <tt class="method">keys</tt> method
+returns a sequence of names of items in the directory.
+
+<P>
+This sample demonstrates how you might open a Root file and extract a
+histogram.
+<dl><dd><pre class="verbatim">
+import hep.root
+root_file = hep.root.open("histograms.root")
+energy_hist = root_file["energy"]
+</pre></dl>
+
+<P>
+To load a data item from a Root directory, use the subscript operator
+(square brackets) or the <tt class="function">get</tt> method.  The type of the
+resulting object depends on the class of the object instance in the Root
+file.  Use the same method to descend into subdirectories--the
+resulting object will be a Root directory object corresponding to the
+subdirectory.  
+
+<P>
+As a shortcut to loading subdirectory objects one by one, you may get an
+item in a subdirectory by specifying its path, with directory names
+separated by slashes.  For instance, the code below shows three ways of
+accessing the same item.
+<dl><dd><pre class="verbatim">
+mc_dir = root_file.get("MC")
+batch2_dir = mc_file.get("batch2")
+eff_hist = batch2_dir.get("efficiency")
+
+eff_hist = root_file["MC"]["batch2"]["efficiency"]
+
+eff_hist = root_file["MC/batch2/efficiency"]
+</pre></dl>
+
+<P>
+To find out information about an item in a directory without loading
+it, use the <tt class="method">getInfo</tt> method, passing the item's name.  The
+resulting <tt class="class">Info</tt> object has these attributes, which describe the
+directory entry:
+<dl><dt><b><a name="l2h-11"><tt class="member">name</tt></a></b>
+<dd>
+The entry's name.
+</dl>
+<dl><dt><b><a name="l2h-12"><tt class="member">title</tt></a></b>
+<dd>
+The entry's title.
+</dl>
+<dl><dt><b><a name="l2h-13"><tt class="member">class_name</tt></a></b>
+<dd>
+The name of the Root class of which this entry is an instance.
+</dl>
+<dl><dt><b><a name="l2h-14"><tt class="member">type</tt></a></b>
+<dd>
+A string describing the type of the object: one of <code>"1D
+histogram"</code>, <code>"2D histogram"</code>, <code>"3D histogram"</code>,
+<code>"table"</code> (for a tree), or <code>"directory"</code>.
+</dl>
+<dl><dt><b><a name="l2h-15"><tt class="member">is_directory</tt></a></b>
+<dd>
+True if the entry corresponds to a subdirectory.
+</dl>
+
+<P>
+The following script lists the contents of a Root file specified on the
+command line.  Subdirectory contents are displayed in tree format.  Each
+line shows an entry's name and class name.
+<dl><dd><pre class="verbatim">import hep.root
+
+def ls(root_dir, indent=0):
+    # Loop over directory elements in 'path'.
+    for name in root_dir.keys():
+        info = root_dir.getInfo(name)
+        label = "%s (%s)" % (name, info.title)
+        print (" " * indent) + label &#92;
+              + (" " * (64 - indent - len(label))) + info.class_name
+        # If it's a directory, list its contents recursively.
+        if info.is_directory:
+            ls(root_dir[name], indent + 1)
+
+if __name__ == "__main__":
+    import sys
+    file = hep.root.open(sys.argv[1])
+    ls(file)
+</pre>
+<div class="verbatiminput-footer">
+<a href="rootls.txt" type="text/plain">Download as text.</a>
+</div>
+</dd></dl>
+
+<P>
+To create a directory, use the <tt class="method">mkdir</tt> method, specifying the
+full path to the new directory.
+
+<P>
+Note that a Root file is not closed until the file object is destroyed,
+i.e. all references to it are released.  Especially when writing a Root
+file, be careful to release all references to the file object.
+
+<P>
+
+<DIV CLASS="navigation">
+<p><hr>
+<table align="center" width="100%" cellpadding="0" cellspacing="2">
+<tr>
+<td><A HREF="node37.html"><img src="icons//previous.gif"
+  border="0" height="32"
+  alt="Previous Page" width="32"></A></td>
+<td><A HREF="node37.html"><img src="icons//up.gif"
+  border="0" height="32"
+  alt="Up One Level" width="32"></A></td>
+<td><A HREF="node39.html"><img src="icons//next.gif"
+  border="0" height="32"
+  alt="Next Page" width="32"></A></td>
+<td align="center" width="100%"> PyHEP Tutorial</td>
+<td><A href="contents.html"><img src="icons//contents.gif"
+  border="0" height="32"
+  alt="Contents" width="32"></A></td>
+<td><img src="icons//blank.gif"
+  border="0" height="32"
+  alt="" width="32"></td>
+<td><img src="icons//blank.gif"
+  border="0" height="32"
+  alt="" width="32"></td>
+</tr></table>
+<b class="navlabel">Previous:</b> <a class="sectref" HREF="node37.html">6. Working with Root</A>
+<b class="navlabel">Up:</b> <a class="sectref" HREF="node37.html">6. Working with Root</A>
+<b class="navlabel">Next:</b> <a class="sectref" HREF="node39.html">6.2 Loading and saving</A>
+<hr>
+
+</DIV>
+<!--End of Navigation Panel-->
+<ADDRESS>
+<tt>alex@alexsamuel.net</tt>
+</ADDRESS>
+</BODY>
+</HTML>

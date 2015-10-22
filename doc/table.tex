@@ -1,0 +1,193 @@
+\section{\module{hep.table} --- Tables}
+
+\declaremodule{extension}{hep.table}
+\modulesynopsis{Tables.}
+
+A \pyhep \emph{table} is a flat database table with columns of fixed
+type and storage size.  Tables are append-only: new rows may be added to
+the end of the table, but rows may not be inserted elsewhere, nor can
+rows be modified or deleted.  
+
+Each table has a fixed \emph{schema}, which determines the data items
+stored in the table and their types.  The schema includes an unordered
+set of \emph{columns}, each identified by a name.  Each column has a
+fixed data type.  A schema may also include \emph{expressions}, which
+are derived quantities which are computed for each row from values of
+columns and other expressions for that row.  
+
+The table's data is an ordered sequence of \emph{rows}, each of which
+contains exactly one value for each column in the table's schema.
+
+Multiple table implementations are provided.  Implementations provide
+different interfaces for creating and opening tables.  However, objects
+representing tables and rows satisfy the same protocol across all
+implementations.
+
+
+\subsection{Schema objects}
+
+An instance of \class{hep.table.Schema} represents a table schema.  
+
+\begin{memberdesc}{columns}
+ \readonly A sequence of columns in the schema.  Each element is a
+ \class{Column} instance.  The order of the columns is unspecified.
+\end{memberdesc}
+
+\begin{memberdesc}{expressions}
+ \readonly A sequence of expressions in the schema.  Each element is
+ expression object (see \module{hep.expr}).  The order of the
+ expressions is unspecified.
+\end{memberdesc}
+
+\begin{methoddesc}{addColumn}{name, type\optional{, **attributes}}
+ Add a column to the sequence.  \var{name} is a character string, and
+ \var{type} is a column type (see below).  If additional keyword
+ arguments are provided, they are added to the column as attributes.
+ New columns should not be added to a schema after the schema has been
+ used to create a table.
+\end{methoddesc}
+
+\begin{methoddesc}{addExpression}{name, expression\optional{, **attributes}}
+ Add an expression to the sequence.  \var{name} is a character string,
+ and \var{expression} is an expression as a string or expression object.
+ If additional keyword arguments are provided, they are added to the
+ expression object as attributes.
+\end{methoddesc}
+
+An instance of \class{hep.table.Column} describes a column in a schema.
+Do not instantiate this class directly; instead, use the
+\method{addColumn} memthod of class \class{Schema}.
+
+\begin{memberdesc}{name}
+ \readonly The column's name.
+\end{memberdesc}
+
+\begin{memberdesc}{type}
+ \readonly The column's data type.
+\end{memberdesc}
+
+The column's data type is specified by one of these names:
+\begin{tableiii}{ccc}{code}{name}{C type}{Python Type}
+  \lineiii{"int8"}{\code{signed char}}{\code{int}}
+  \lineiii{"int16"}{\code{signed short}}{\code{int}}
+  \lineiii{"int32"}{\code{signed int}}{\code{int}}
+  \lineiii{"float32"}{\code{float}}{\code{float}}
+  \lineiii{"float64"}{\code{double}}{\code{float}}
+\end{tableiii}
+
+
+An instance of \class{hep.table.Expression} describes a column in a
+schema.  Do not instantiate this class directly; instead, use the
+\method{addExpression} memthod of class \class{Schema}.
+
+\begin{memberdesc}{name}
+ \readonly The expressions's name.
+\end{memberdesc}
+
+\begin{memberdesc}{expression}
+ \readonly An \class{Expression} instance; see \module{hep.expr}.
+\end{memberdesc}
+
+\begin{memberdesc}{formula}
+ \readonly A string representation of the expression.
+\end{memberdesc}
+
+
+
+\subsection{Table objects}
+
+A table object represents an in-memory table or a connection to an
+externally-stored table.  In the former case, the table is erased when
+the table object is deleted.  In the latter case, the connection is
+closed but the table persists when the table object is deleted.
+
+A table object satisfies the Python read-only sequence protocol.  The
+sequence elements are the rows of the sequence.  Thus, the
+\function{len} function returns the number of rows in the table, and
+the \method{__getitem__} method extracts a row by its position in the
+sequence. 
+
+In addition, these methods are provided:
+
+\begin{methoddesc}{append}{row\optional{, **kw_args}}
+ (Read-write tables only.)  Appends a row to the end of the table.  The
+ \var{row} must is a dictionary or other mapping object which maps
+ column names to values.  Additional column values may be specified as
+ keyword arguments.  If a column is specified both in \var{row} and in
+ \var{**kw_args}, the value from latter is used.  A value must be
+ specified for each column, and no other names may be specified.
+ Returns the row index of the new row.
+\end{methoddesc}
+
+\begin{methoddesc}{__iter__}{}
+ Returns an iterator over all rows in the table.
+\end{methoddesc}
+
+\begin{memberdesc}{rows}
+ An interator over all rows in the table.
+\end{memberdesc}
+
+\begin{methoddesc}{select}{expr}
+ Returns an iterator over rows in the table for which expression
+ \var{expr} is true.  \var{expr} may be a string expression formula or
+ an expression object.
+\end{methoddesc}
+
+
+\subsection{Row objects}
+
+A row object may represent a row in a table, or a row that is compatible
+with a table's schema (but not one of the rows in that table).
+
+The row object satisfies the Python map protocol.  Each key is the name
+of a column in the table's schema.  The corresponding map value is the
+row's value for that column.  Row objects should be treated as
+read-only; it is not possible to modify a table row by changing values
+in a row object.
+
+In addition, a row object provides these members and methods:
+
+\begin{methoddesc}{asDict}{}
+ Return a new Python dictionary of the column names and corresponding
+ values in the row.
+\end{methoddesc}
+
+\begin{memberdesc}{index}
+ \readonly The index of the row in the table.  The value of this
+ attribute is undefined if the row was obtained from the table's
+ \method{newRow} method and has not yet been passed to \method{append}.
+\end{memberdesc}
+
+\begin{memberdesc}{table}
+ \readonly The table to which the row belongs.
+\end{memberdesc}
+
+
+\subsection{Standard implementation}
+
+\pyhep's standard table implementation, in \module{hep.table}, uses a
+simple, binary, on-disk representation of the table's data.  Table rows
+are automatically loaded from disk as needed.
+
+The \module{hep.table} module provides functions \function{create} and
+\function{open} to create and open new tables, respectively.
+
+\begin{funcdesc}{create}{filename, schema}
+ Create a new table.  The table is stored in a file named by
+ \var{filename}, which is created or overwritten.  The \var{schema}
+ argument is a map from column names to \class{Column} instances,
+ specifying the columns in the table.
+
+ The return value is a table object, which is opened to the new, empty
+ in write mode.
+\end{funcdesc}
+
+\begin{funcdesc}{open}{filename\optional{, mode="r"}}
+ Open an existing table stored in the file named by \var{filename}.  The
+ \var{mode} argument specifies the mode in which to open the table:
+ \constant{"r"} to open the table in read-only mode, or \constant{"w"}
+ to open the table in read-write mode.
+
+ The return value is a table object.
+\end{funcdesc}
+

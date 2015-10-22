@@ -1,0 +1,148 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+<title>3. Tables</title>
+<META NAME="description" CONTENT="3. Tables">
+<META NAME="keywords" CONTENT="pyhep">
+<META NAME="resource-type" CONTENT="document">
+<META NAME="distribution" CONTENT="global">
+<link rel="STYLESHEET" href="pyhep.css">
+<link rel="first" href="pyhep.html">
+<link rel="contents" href="contents.html" title="Contents">
+
+<LINK REL="next" HREF="node26.html">
+<LINK REL="previous" HREF="node4.html">
+<LINK REL="up" HREF="pyhep.html">
+<LINK REL="next" HREF="node16.html">
+</head>
+<body>
+<DIV CLASS="navigation">
+<table align="center" width="100%" cellpadding="0" cellspacing="2">
+<tr>
+<td><A HREF="node14.html"><img src="icons//previous.gif"
+  border="0" height="32"
+  alt="Previous Page" width="32"></A></td>
+<td><A HREF="pyhep.html"><img src="icons//up.gif"
+  border="0" height="32"
+  alt="Up One Level" width="32"></A></td>
+<td><A HREF="node16.html"><img src="icons//next.gif"
+  border="0" height="32"
+  alt="Next Page" width="32"></A></td>
+<td align="center" width="100%"> PyHEP Tutorial</td>
+<td><A href="contents.html"><img src="icons//contents.gif"
+  border="0" height="32"
+  alt="Contents" width="32"></A></td>
+<td><img src="icons//blank.gif"
+  border="0" height="32"
+  alt="" width="32"></td>
+<td><img src="icons//blank.gif"
+  border="0" height="32"
+  alt="" width="32"></td>
+</tr></table>
+<b class="navlabel">Previous:</b> <a class="sectref" HREF="node14.html">2.7 Scatter plots</A>
+<b class="navlabel">Up:</b> <a class="sectref" HREF="pyhep.html">PyHEP Tutorial</A>
+<b class="navlabel">Next:</b> <a class="sectref" HREF="node16.html">3.1 Table implementations</A>
+<br><hr>
+</DIV>
+<!--End of Navigation Panel-->
+
+<H1><A NAME="SECTION005000000000000000000">
+3. Tables</A>
+</H1>
+
+<P>
+PyHEP provides a flat-format database facility, similar to ``ntuples''
+in other HEP analysis systems.  
+
+<P>
+A  PyHEP table is similar to a table in a typical database system.  A
+table is a sequence of rows, each of which has the same number of
+columns and values for each column of the same type.  The number and
+types of columns constitutes the table's schema.  
+
+<P>
+PyHEP's tables are subject to the following restrictions:
+
+<P>
+
+<UL>
+<LI>A table's schema is set when it is created, and cannot
+ subsequently be changed.  (Creating another table with a different
+ schema using the same data is straightforward.)
+
+<P>
+</LI>
+<LI>The size in bytes of each table row is a constant.  This limits
+ the types of table columns, but allows the implementation of fast seeks
+ in a large table.
+
+<P>
+</LI>
+<LI>Rows are appended to the table.  An entire row must be appended
+ at one time.  Rows may not be inserted into the middle of a table,
+ modified, or removed.
+
+<P>
+</LI>
+</UL>
+
+<P>
+
+<p><hr>
+<!--Table of Child-Links-->
+<A NAME="CHILD_LINKS"><STRONG>Subsections</STRONG></a>
+
+<UL CLASS="ChildLinks">
+<LI><A href="node16.html">3.1 Table implementations</a>
+<LI><A href="node17.html">3.2 Creating and filling tables</a>
+<UL>
+<LI><A href="node18.html">3.2.1 Example: creating a table from a text file</a>
+</ul>
+<LI><A href="node19.html">3.3 Using tables</a>
+<LI><A href="module-hep.lorentz.html">3.4 Iterating over rows</a>
+<LI><A href="node21.html">3.5 Projecting histograms from tables</a>
+<LI><A href="module-hep.histogram.html">3.6 Using expressions with tables</a>
+<UL>
+<LI><A href="node23.html">3.6.1 Caching expressions in tables</a>
+<LI><A href="node24.html">3.6.2 Row types</a>
+</ul>
+<LI><A href="node25.html">3.7 More table functions</a>
+</ul>
+<!--End of Table of Child-Links-->
+
+<DIV CLASS="navigation">
+<p><hr>
+<table align="center" width="100%" cellpadding="0" cellspacing="2">
+<tr>
+<td><A HREF="node14.html"><img src="icons//previous.gif"
+  border="0" height="32"
+  alt="Previous Page" width="32"></A></td>
+<td><A HREF="pyhep.html"><img src="icons//up.gif"
+  border="0" height="32"
+  alt="Up One Level" width="32"></A></td>
+<td><A HREF="node16.html"><img src="icons//next.gif"
+  border="0" height="32"
+  alt="Next Page" width="32"></A></td>
+<td align="center" width="100%"> PyHEP Tutorial</td>
+<td><A href="contents.html"><img src="icons//contents.gif"
+  border="0" height="32"
+  alt="Contents" width="32"></A></td>
+<td><img src="icons//blank.gif"
+  border="0" height="32"
+  alt="" width="32"></td>
+<td><img src="icons//blank.gif"
+  border="0" height="32"
+  alt="" width="32"></td>
+</tr></table>
+<b class="navlabel">Previous:</b> <a class="sectref" HREF="node14.html">2.7 Scatter plots</A>
+<b class="navlabel">Up:</b> <a class="sectref" HREF="pyhep.html">PyHEP Tutorial</A>
+<b class="navlabel">Next:</b> <a class="sectref" HREF="node16.html">3.1 Table implementations</A>
+<hr>
+
+</DIV>
+<!--End of Navigation Panel-->
+<ADDRESS>
+<tt>alex@alexsamuel.net</tt>
+</ADDRESS>
+</BODY>
+</HTML>

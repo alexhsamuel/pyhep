@@ -1,0 +1,125 @@
+\chapter{Particle properties}
+
+The \module{hep.pdt} module provides code to access a \emph{particle
+data table}, which contains measured properties of particles studied in
+high energy physics.  
+
+\pyhep includes a particle data table in \code{hep.pdt.default}.  This
+table contains particle data from the XXXX edition of the \textit{Review
+of Particle Properties} published by the Particle Data Group (PDG).  The
+function \function{hep.pdt.loadPdtFile} can be used to load particle
+data from a file in the PDG's text file format.
+
+A particle data table is represented by a \class{hep.pdt.Table}
+instance, which acts as a dictionary keyed with the plain-text names of
+particles.  The text (ASCII) names are set by the PDG.  These names are
+generally the same as the conventional particle designations, with Greek
+letters spelled out and underscores used to denote subscripts.  For
+particle names associated with more than one charge state, the charge
+muse be indicated.  Neutral antiparticles conventionally designated with
+an overbar are denoted by the ``\code{anti-}'' prefix.  For example, a
+positron is spelled ``\code{e+}'', and the short-lived kaon eigenstate
+``\code{K_S0}''.  The usual \method{keys} method will return the
+plain-text names of all particles in the table.  A particle's name may
+have alternate common text spellings; these are stored as aliases, and a
+particle may be accessed in the table by any of its aliases.
+
+The values in a particle data table are \class{hep.pdt.Particle}
+instances.  Each represents a single species of particle, with unique
+quantum numbers.  (Some special particle codes representing bound
+states, particles that have not been established, Monte Carlo internal
+constructs, etc. are also included.)  
+
+A \class{Particle} object has these attributes.  Central values are
+given for measured properties.
+
+\begin{itemize}
+
+  \item \member{name} is the particle's text name.
+
+  \item \member{aliases} is a sequence of alternate text names for the
+  particle.
+
+  \item \member{charge_conjugate} is the \class{Particle} object for the
+  particle's charge conjugate.
+
+  \item \member{mass} is the particle's nominal mass, in GeV.
+
+  \item \member{width} is the particle's width, in GeV.
+
+  \item \member{charge} is the particle's electric charge.
+
+  \item \member{spin} is the particle's spin, in units of half h-bar.
+
+  \item \member{is_stable} is true if the particle is considered
+  stable. 
+
+  \item \member{id} is the particle's Monte Carlo ID number in the PDG's
+  numbering scheme.
+
+\end{itemize}
+
+The \class{Table} object also as a method \method{findId}, which returns
+the particle corresponding to a Monte Carlo ID number.
+
+The following is a demonstration of using the default particle data
+table to look up some particle properties.
+\begin{verbatim}
+>>> from hep.pdt import default as particle_data
+>>> print particle_data["e-"].mass
+0.000510999
+>>> print particle_data["J/psi"].spin
+1.0
+>>> print particle_data.findId(22).name
+gamma
+\end{verbatim}
+
+%-----------------------------------------------------------------------
+
+\chapter{Using \evtgen}
+
+\pyhep provides a simple interface to the \evtgen event generator.
+You can easily generate randomized decays of particles, and examine the
+decay products.  The \evtgen interface is in the \module{hep.evtgen}
+module.
+
+To create a particle decay, follow these steps:
+\begin{enumerate}
+
+ \item Create a \class{Generator} instance.  The two arguments to its
+ constructor are the path to the particle data listing file, which
+ contains particle property information, and the path to the main decay
+ file, which contains decays and branching fractions.  The default
+ \evtgen particle data and decay files are used if these arguments are
+ omitted.  You may specify paths to user decay files, which override the
+ main decay file, as additional arguments.  See the \evtgen
+ documentation for information about these files.
+
+ \item Create a \class{Particle} object to represent the initial-state
+ particle.  Specify the name of the particle, as listed in the particle
+ data file, as the argument.  The particle is originally at rest at the
+ origin of the lab frame.
+
+ \item Produce the decay by calling the generator's \method{decay}
+ method on the particle object.
+
+\end{enumerate}
+
+A \class{Particle} object's momentum is stored in its \member{momentum}
+attribute, as a \class{hep.lorentz.FourMomentum} object.  Use
+\method{hep.lorentz.lab.coordinatesOf} to obtain its lab-frame
+coordinates.  Similarly, its production position is stored in its
+\member{position} attribute, as a \class{hep.lorentz.FourVector}.
+The name of the Particle's species is in its \member{species} attribute.
+
+Use the \member{decay_products} attribute to access the decay products
+of a decayed particle.  That value is a sequence of \class{Particle}
+objects representing the particle's decay products.
+
+The following script produces a single decay of an Upsilon(4S), using
+a particle data listing file and a decay file in the current directory.
+It prints out the decay tree of the Upsilon(4S), with the lab components
+of each product's momentum, using the \function{printParticleTree}
+function.
+\codesample{evtgen1.py}
+

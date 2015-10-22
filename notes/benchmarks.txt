@@ -1,0 +1,196 @@
+2002 Aug 6
+  - before PyTableExpr, still using old compiled expressions
+        real    6m36.712s
+        user    6m31.450s
+        sys     0m5.020s
+
+------------------------------------------------------------------------
+2002 Aug 7
+  - implemented PyTableExpr
+  - compiled -O2 
+        real    4m55.417s
+        user    4m49.050s
+        sys     0m5.890s
+  - compiled -g
+        real	6m33.652s
+        user	6m26.860s
+        sys	0m6.170s
+
+TableExpr(
+  SYMBOL 'm_ES', 
+  PUSH 5.000000, 
+  BOOL_LESS_THAN_DOUBLE,
+  BOOL_AND_LAZY 4, 
+  PUSH 0.500000, 
+  SYMBOL 'Delta_E', 
+  DOUBLE_ABS,
+  BOOL_LESS_THAN_DOUBLE, 
+  BOOL_AND_LAZY 10, 
+  PUSH 0.150000, 
+  SYMBOL 'pi2_index', 
+  OBJECT_INDEX_JOIN_EXPR <Table object at 0x8506bc0>
+    <built-in method evaluate of TableExpr object at 0x8553988>,
+  OBJECT_GET_ATTR_CONST 'mass', 
+  DOUBLE_CAST_FROM_OBJECT, 
+  PUSH 0.110000,
+  BOOL_IN_RANGE_DOUBLE, 
+  BOOL_AND_LAZY 2, 
+  OBJECT_EXPRESSION <bound method LessThan.evaluate of
+    LessThan(
+      GetAttribute(
+        Add(
+          Add(
+            GetAttribute(IndexJoin('piplus', Symbol('pi1_index', int)), 
+                         Constant('p4')), 
+            GetAttribute(IndexJoin('Ks', Symbol('K_index', int)), 
+                         Constant('p4'))), 
+            GetAttribute(IndexJoin('pi0', Symbol('pi2_index', int)), 
+                         Constant('p4'))), 
+        Constant('mass')),
+      Constant(2))>, 
+  BOOL_CAST_FROM_OBJECT, 
+  BOOL_AND_LAZY 2, 
+  OBJECT_EXPRESSION <bound method SimpleCall.evaluate of 
+    SimpleCall(<function mcTruth at 0x84c604c>, 
+               [ IndexJoin('Ks', Symbol('K_index', int)),
+                 IndexJoin('piplus', Symbol('pi1_index', int)), 
+                 IndexJoin('pi0', Symbol('pi2_index', int)), 
+                 IndexJoin('gamma', Symbol('gamma_index', int))])>, 
+  BOOL_CAST_FROM_OBJECT) 
+
+------------------------------------------------------------------------
+To profile an extension module, see "scripts/profile".
+
+------------------------------------------------------------------------
+
+  - implemented arithemtic on objects (but this should be avoided)
+  - compiled -O2
+        real	4m26.259s
+        user	4m20.840s
+        sys	0m4.750s
+
+TableExpr(
+  SYMBOL 'm_ES', 
+  PUSH 5.000000, 
+  BOOL_LESS_THAN_DOUBLE,
+  BOOL_AND_LAZY 4, 
+  PUSH 0.500000, 
+  SYMBOL 'Delta_E', 
+  DOUBLE_ABS,
+  BOOL_LESS_THAN_DOUBLE, 
+  BOOL_AND_LAZY 20, 
+  PUSH 0.150000, 
+  SYMBOL 'pi2_index', 
+  OBJECT_INDEX_JOIN_EXPR <Table object at 0x8540630>
+    <built-in method evaluate of TableExpr object at 0x857dea0>,
+  OBJECT_GET_ATTR_CONST 'mass', 
+  DOUBLE_CAST_FROM_OBJECT, 
+  PUSH 0.110000,
+  BOOL_IN_RANGE_DOUBLE, 
+  BOOL_AND_LAZY 12, 
+  PUSH 2.000000, 
+  SYMBOL 'pi2_index', 
+  OBJECT_INDEX_JOIN_EXPR <Table object at 0x853e468>
+    <built-in method evaluate of TableExpr object at 0x858c4f8>, 
+  SYMBOL 'K_index', 
+  OBJECT_INDEX_JOIN_EXPR <Table object at 0x8543200> 
+    <built-in method evaluate of TableExpr object at 0x85829f0>, 
+  SYMBOL 'pi1_index',
+  OBJECT_INDEX_JOIN_EXPR <Table object at 0x857d7e0> 
+    <built-in method evaluate of TableExpr object at 0x851f6a8>, 
+  OBJECT_ADD, 
+  OBJECT_ADD,
+  OBJECT_GET_ATTR_CONST 'mass', 
+  DOUBLE_CAST_FROM_OBJECT,
+  BOOL_LESS_THAN_DOUBLE, 
+  BOOL_AND_LAZY 2, 
+  OBJECT_EXPRESSION 
+    <bound method SimpleCall.evaluate of SimpleCall(
+      <function mcTruth at 0x812f85c>,
+      [  IndexJoin('Ks', Symbol('K_index', int)), 
+         IndexJoin('piplus', Symbol('pi1_index', int)), 
+         IndexJoin('pi0', Symbol('pi2_index', int)),
+         IndexJoin('gamma', Symbol('gamma_index', int))])>,
+  BOOL_CAST_FROM_OBJECT)
+
+------------------------------------------------------------------------
+2003 Aug 12
+OK, stuff is much better.
+
+  - Compiled -g -O2.
+  - Using hep.mctruth.match, implemented in Python.
+        real	2m49.678s
+        user	2m44.000s
+        sys	0m5.490s
+    Second run:
+        real	0m5.277s
+        user	0m4.690s
+        sys	0m0.090s
+
+  - Using old k1g.mcTruth (MC truth for this mode implemented directly).
+        real	2m43.280s
+        user	2m38.980s
+        sys	0m3.910s
+    Second run:
+        real	0m5.094s
+        user	0m4.670s
+        sys	0m0.090s
+
+  - Root version writtin in C++ (anal.C):
+        real	1m33.412s
+        user	1m31.390s
+        sys	0m1.880s
+
+------------------------------------------------------------------------
+2003 Aug 13
+Now using lorentz.Vector as an extension class.
+        real	2m23.650s
+        user	2m17.540s
+        sys	0m5.740s
+
+And with a slightly optimized lorentz.Momentum,
+        real	2m15.056s
+        user	2m9.160s
+        sys	0m5.570s
+
+
+========================================================================
+11/4: benchmarking summarize2
+(hacked to run over mode ccc only)
+
+time ../bin/summarize2 -b 000 -o scrap -c 20000f SP-1453-Run4
+
+before (compiled -g -O2):
+24.220u 0.820s 0:35.11 71.3%    0+0k 0+0io 1848pf+0w
+24.360u 0.740s 0:34.97 71.7%    0+0k 0+0io 1848pf+0w
+
+with findId rewrite for binary search:
+24.930u 0.850s 0:34.47 74.7%    0+0k 0+0io 1848pf+0w
+24.550u 0.960s 0:35.28 72.3%    0+0k 0+0io 1848pf+0w
+
+compiled -O3:
+23.560u 0.760s 0:33.91 71.7%    0+0k 0+0io 1856pf+0w
+24.450u 0.580s 0:25.39 98.5%    0+0k 0+0io 1856pf+0w
+
+gprof output:
+Each sample counts as 0.01 seconds.
+  %   cumulative   self              self     total           
+ time   seconds   seconds    calls   s/call   s/call  name    
+ 25.18      0.35     0.35    93994     0.00     0.00  
+    Kxg::Batch::get(Kxg::Mode, int, Kxg::BEntry*)
+ 19.42      0.62     0.27    93994     0.00     0.00  
+    Kxg::Batch::getMcTruth(Kxg::BEntry*)
+ 16.55      0.85     0.23  3680466     0.00     0.00  
+    Kxg::Batch::get(int, Kxg::McTruthEntry*)
+ 15.11      1.06     0.21    93994     0.00     0.00  
+    Kxg::Batch::get(int, Kxg::EventEntry*)
+  4.32      1.12     0.06  2067868     0.00     0.00  
+    Kxg::evaluateCut(Kxg::Cut, Kxg::BEntry*)
+  4.32      1.18     0.06    93994     0.00     0.00  
+    Kxg::(anonymous namespace)::getKxEventType(Kxg::McTruthEntry*)
+  2.88      1.22     0.04   134087     0.00     0.00  
+    Kxg::Batch::get(int, Kxg::GammaEntry*)
+  2.88      1.26     0.04    20786     0.00     0.00  
+    GTLCorrectionTable::operator()(double, double, double, double) const
+  2.16      1.29     0.03   187988     0.00     0.00  
+    Kxg::Batch::get(int, Kxg::PiplusEntry*)

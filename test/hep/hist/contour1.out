@@ -1,0 +1,6 @@
+Traceback (most recent call last):
+  File "contour1.py", line 12, in ?
+    ps.render(graph)
+  File "/home/samuel/dev/pyhep/py/hep/draw/postscript.py", line 345, in render
+    figure._render(self, (0, 0, sx, sy))
+AttributeError: _Graph instance has no attribute '_render'

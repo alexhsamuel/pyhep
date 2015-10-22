@@ -1,0 +1,6 @@
+(x * 2) == _table.join('join')[join_index]['y']
+time per row: 26.9 usec
+instances of Table: 
+0x2a9876c510 0x2a9876c510 (1 refs)
+0x2a9876c5e0 0x2a9876c5e0 (10000 refs)
+

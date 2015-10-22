@@ -1,0 +1,11 @@
+(               1.0                 0                 0                 0 )
+(                 0 6.12303176911e-17               0.0              -1.0 )
+(                 0              -0.0               1.0               0.0 )
+(                 0               1.0               0.0 6.12303176911e-17 )
+
+Traceback (most recent call last):
+  File "lorentz4.py", line 14, in ?
+    test.compare(lab.coordinatesOf(x2), (4.0, 2.0, 0.0, 0.0), precision=1e-8)
+  File "/home/samuel/dev/pyhep/py/hep/test.py", line 59, in compare
+    raise TestFailure, \
+hep.test.TestFailure: expected (4.0, 2.0, 0.0, 0.0); got (4.0, -2.0, 0.0, 1.2246063538223773e-16)

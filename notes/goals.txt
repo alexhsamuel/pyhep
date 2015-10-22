@@ -1,0 +1,20 @@
+
+  - Provide tools to enable Python use in HEP.
+
+  - Establish Python protocols for common HEP objects.
+
+  - Experiment with visual styles for plots based on Tufte's principles.
+
+  - Ntuple analysis in a functional programming style.
+
+  - Experiment with declarative paragidms for stuff: self-documentation,
+    validity checking, optimizations, etc.
+
+  - Using relational DB terminology, concepts, and software for ntuple
+    storage.
+
+  - Experiment with frame-based Lorentz geometry.
+
+  - Use commercial-style software engineering pratices: self-contained
+    releases; regression testing; bug tracking.
+

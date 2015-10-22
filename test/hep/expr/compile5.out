@@ -1,0 +1,2 @@
+Call(Constant(<function if_then at 0xb7c493e4>), (LessThan(Symbol('x', None), Symbol('y', None)), Symbol('x', None), Symbol('y', None)), {})
+if_then(x < y, x, y)

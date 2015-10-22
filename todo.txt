@@ -1,0 +1,5 @@
+1. Get it at least somewhat working on OS/X.
+2. Get CERNLIB and Root built-in on OS/X.
+3. Test it.
+4. Upload to SourceForge.
+5. Cairo?

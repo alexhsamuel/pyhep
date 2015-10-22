@@ -1,0 +1,3 @@
+timer 'timer 1'                 : incl    1.500 s, excl    0.900 s
+timer 'timer 2'                 : incl    0.200 s, excl    0.200 s
+timer 'timer 3'                 : incl    0.400 s, excl    0.400 s

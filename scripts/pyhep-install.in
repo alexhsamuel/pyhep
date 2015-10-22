@@ -1,0 +1,10 @@
+#!/bin/bash
+
+prefix=$(echo $0 | @PYTHON@ -c "import os.path; print os.path.dirname(os.path.dirname(os.path.realpath(raw_input())))")
+
+pyhep_libdir="${prefix}/lib/python@PYTHONVERSION@"
+
+export PYTHONPATH="${pyhep_libdir}:${PYTHONPATH}"
+export PYTHONSTARTUP="${pyhep_libdir}/hep/interactive.py"
+
+@PYTHON@ "$@"

@@ -1,0 +1,5 @@
+PyHEP version 0.2.13 in /home/samuel/dev/pyhep/py.
+Traceback (most recent call last):
+  File "interactive1.py", line 37, in ?
+    idivide(2, 2)
+NameError: name 'idivide' is not defined

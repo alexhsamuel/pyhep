@@ -1,0 +1,11 @@
+#!/bin/bash
+
+prefix=$(echo $0 | /usr/bin/python2 -c \
+    "from os.path import *; print dirname(dirname(realpath(raw_input())))")
+
+pyhep_libdir="${prefix}/lib/python2.3"
+
+export PYTHONPATH="${pyhep_libdir}:${PYTHONPATH}"
+export PYTHONSTARTUP="${pyhep_libdir}/hep/interactive.py"
+
+/usr/bin/python2 "$@"

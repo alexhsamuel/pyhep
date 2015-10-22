@@ -1,0 +1,614 @@
+\chapter{Files and directories}
+
+\pyhep provides a uniform interface for accessing and manipulating
+directories and their contents.  The same interface can be used not only
+with file system directories, but directories in Root and HBOOK files as
+well.  
+
+Directory objects satisfy Python's map protocol, very similar to
+built-in \code{dict} objects.  The keys in a directory are the names of
+items in the directory.  To find the names in a directory, simply call
+the \method{keys} method.  For supported file types (discussed below),
+the corresponding values are the contents of the files.  To load a file,
+simply get the value using the subscript operator (square brackets) or
+\method{get} method.
+
+Here are some examples of using \pyhep's directory objects.  Suppose we
+are in a directory with these contents, which are various types of files
+containing 
+\begin{verbatim}
+> ls -l
+total 16
+-rw-r-----  1 samuel samuel 1257 Dec  6 15:39 histogram.pickle
+-rw-r-----  1 samuel samuel 3980 Dec  6 15:39 plot.pickle
+-rw-r-----  1 samuel samuel   50 Dec  7 19:11 readme.txt
+drwxr-x---  2 samuel samuel 4096 Dec  6 15:43 recodata
+> ls -l recodata/
+total 12
+-rw-r-----  1 samuel samuel 4384 Dec  6 15:43 reco.root
+-rw-r-----  1 samuel samuel  683 Dec  6 15:34 tracks.table
+\end{verbatim}
+
+Now, let's start Python.  First, we import the file system directory
+module, \module{hep.fs}, and construct a directory object, an instance
+of \class{FileSystemDirectory}, for the current working directory.
+\begin{verbatim}
+>>> import hep.fs
+>>> cwd = hep.fs.getdir(".")
+>>> cwd
+FileSystemDirectory('/home/samuel/data', writable=True)
+\end{verbatim}
+
+Using the \method{keys} method, we can get the names of files in the
+directory.
+\begin{verbatim}
+>>> print cwd.keys()
+['readme.txt', 'plot.pickle', 'recodata', 'histogram.pickle']
+\end{verbatim}
+
+Directory objects have an additional \method{list} method, which prints
+out directory entries and their types.
+\begin{verbatim}
+>>> cwd.list()
+histogram.pickle    : pickle
+plot.pickle         : pickle
+readme.txt          : text
+recodata            : directory
+\end{verbatim}
+
+Directory methods that produce or operate on the keys in the directory
+can be given extra arguments.  For instance, the \code{recursive} option
+will show keys in subdirectories as well.
+\begin{verbatim}
+>>> cwd.list(recursive=True)
+histogram.pickle            : pickle
+plot.pickle                 : pickle
+readme.txt                  : text
+recodata                    : directory
+recodata/reco.root          : Root file
+recodata/reco.root/hist1    : 1D histogram
+recodata/reco.root/hist2    : 1D histogram
+recodata/tracks.table       : table
+\end{verbatim}
+Notice here that \method{list} now lists the contents of the
+\file{recodata} subdirectory.  One of the files in that directory is a
+Root file named \file{reco.root}.  Since a Root file has an internal
+directory structure, \pyhep treats it as a directory itself and the
+listing descends into that file too.
+
+Retrieving an object is as simple as looking up a key in a dictionary.
+\pyhep determines the file type from its extension, and loads the object
+into memory, creating a Python object of the appropriate type to
+represent it.  For instance, a file with the extension \file{.pickle} is
+assumed to contain a Python pickle (see the documentation for the
+standard \module{pickle} and \module{cPickle} for details).  For
+example, to retrieve the contents of \file{histogram.pickle},
+\begin{verbatim}
+>>> histogram = cwd["histogram.pickle"]
+>>> histogram
+Histogram(EvenlyBinnedAxis(30, (0.0, 30.0), name='energy', units='GeV'), bin_type=float, error_model='asymmetric')
+\end{verbatim}
+
+Obtain an object representing a subdirectory, whether an actual file
+system subdirectory or a virtual subdirectory in a Root or HBOOK file,
+in the same way.
+\begin{verbatim}
+>>> subdir = cwd["recodata"]
+>>> print subdir.keys()
+['reco.root', 'tracks.table']
+>>> rootfile = subdir["reco.root"]
+>>> print rootfile.keys()
+['hist1', 'hist2']
+\end{verbatim}
+Likewise for retrieving an object from inside a Root file.
+\begin{verbatim}
+>>> histogram = rootfile["hist2"]
+\end{verbatim}
+
+You don't have to hang on to the intermediate directory objects if you
+only want one object deep in a hierarchy of subdirectories, Root, and
+HBOOK files.
+\begin{verbatim}
+>>> histogram = cwd["recodata"]["reco.root"]["hist2"]
+\end{verbatim}
+Even simpler, you can specify multiple levels with a single indexing
+operation by separating keys with forward slashes.
+\begin{verbatim}
+>>> histogram = cwd["recodata/reco.root/hist2"]
+\end{verbatim}
+Note that you \emph{can not} use \file{..} to move up in the directory
+tree, or specify absolute paths, as these operations break the model of
+nested map objects.
+
+To store an object to disk, simply assign a new item to the directory
+object as you would with a dictionary.
+\begin{verbatim}
+>>> cwd["reco-hist.pickle"] = histogram
+>>> print cwd.keys()
+['readme.txt', 'plot.pickle', 'reco-hist.pickle', 'recodata', 'histogram.pickle']
+\end{verbatim}
+Of course, the file type inferred from the key's extension must support
+storing the type of the value object you provide.  Python pickles can
+store most Python objects, including collections such as tuples and
+dictionaries, and most \pyhep objects.
+
+Generally, the Python object is not associated with the file once it's
+loaded.  If you change the Python object and want the changes reflected
+in the file, you must store it back.  Directories are an exception to
+this: if you add a new item to the directory, it goes immediately on
+disk.  Tables are also an exception to this.
+
+%-----------------------------------------------------------------------
+
+\section{File types}
+
+When you retrieve a key from a file system directory (\textit{i.e.} a
+directory object corresponding to an actual directory in the file
+system, not a directory in a Root or HBOOK file), \pyhep examines the
+key's extension to determines how to handle the value.  
+
+Each type has an associated type name.  When retrieving or storing items
+in a directory, you may override the determination of the file type with
+the keyword argument \code{type}, specifying the type name.  For
+example, if you have a Root file named \file{histograms.dat} in a
+directory, you may retrieve it using
+\begin{verbatim}
+>>> histograms = directory.get("histograms.dat", type="Root file")
+\end{verbatim}
+
+The file types understood by \pyhep, and their corresponding extensions,
+are listed below.
+
+\begin{itemize}
+ \item \code{"directory"} (no extension): A directory.  The value is a
+ directory object.  
+
+ \item \code{"HBOOK file"} (extension \file{.hbook}): An HBOOK file.
+ The value is a directory object representing the root of the RZ
+ directory tree inside the file.  Additional information about HBOOK
+ files is presented below.
+
+ \item \code{"pickle"} (extension \file{.pickle}): A file containing a
+ Python pickle.  The value is whatever Python object was pickled.
+
+ \item \code{"Root file"} (extension \file{.root}): A Root file.  The
+ value is a directory object representing the root of the directory tree
+ inside the file.  Additional information about Root files is presented
+ below.
+
+ \item \code{"symlink"} (no extension): A symbolic link.  The value is a
+ string containing the target of the link.  Since this type has no
+ associated extension, it can only be used with the \code{type} keyword
+ argument described above.
+
+ \item \code{"table"} (extension \file{.table}): A \pyhep table.  The
+ value is a handle to the open table.  In contrast to how other file
+ types are handled, the table is not loaded into memory.  Changes to the
+ table are reflected in the table file.
+
+ \item \code{"text"} (extension \file{.txt}): A text file.  The value is
+ a character string of the file's contents.
+
+ \item \code{"unknown"} (all other extensions): Represents all file
+ types not recognized by \pyhep.
+\end{itemize}
+
+Keys in Root and HBOOK directories are handled differently.  The file
+types corresponding to these keys is determined from metadata stored in
+the files themselves, not from an extension.  Additional file types are
+support in these directories, including \code{"1D histogram"} and
+\code{"2D histogram"}.
+
+To determine the file type of a key, use the directory's
+\method{getinfo}, method described below.
+
+%-----------------------------------------------------------------------
+
+\section{Methods for accessing keys and values}
+
+As we say above, the \method{keys} method lists all keys in the
+directory.  Directory objects also support the standard \method{values}
+and \method{items} methods, as well as \method{iterkeys},
+\method{itervalues}, and \method{iteritems}.  
+
+For all of these, you may use these keyword arguments to restrict the
+keys, values, or items that are returned:
+\begin{itemize}
+ \item \code{recursive}: If true, include recursively the contents of
+ subdirectories. 
+
+ \item \code{not_dir}: If true, don't include items that are directories
+ (either in the file system or inside Root or HBOOK files).  
+
+ \item \code{pattern}: Only include items whose keys match the specified
+ regular expression.  See the \module{re} module for a description of
+ Python's regular expression syntax.
+
+ \item \code{glob}: Only include items whose keys match the specified
+ glob pattern.  See the \module{glob} module for a description of
+ Python's glob syntax.
+
+ \item \code{only_type}: Only include an item if its type is as
+ specified.  Item types are specified by strings; see below for more
+ information.
+
+ \item \code{known_types}: True by default, which specifies that only
+ items of known types are included.  If you set this to false, all items
+ are included.  Note that \pyhep will raise an exception if you try to
+ access the value corresponding to a key of unknown type.
+
+\end{itemize}
+
+These options can also be used with \method{list}, which prints a
+listing of keys in a directory and their types.
+
+For example,
+\begin{verbatim}
+>>> print cwd.keys(only_type="pickle")
+['plot.pickle', 'reco-hist.pickle', 'histogram.pickle']
+>>> cwd.list(glob="hist*", recursive=True)
+histogram.pickle            : pickle
+recodata/reco.root/hist1    : 1D histogram
+recodata/reco.root/hist2    : 1D histogram
+\end{verbatim}
+
+As with a dictionary, the \function{len} function returns the number of
+keys in the directory.  
+\begin{verbatim}
+>>> print len(cwd)
+5
+\end{verbatim}
+Iterating over a directory object iterates over its keys.  
+\begin{verbatim}
+>>> for key in cwd:
+...   print key
+...
+readme.txt
+plot.pickle
+reco-hist.pickle
+recodata
+histogram.pickle
+\end{verbatim}
+The \code{has_key} method and \code{in} operator return true if the
+specified key is in the directory.
+\begin{verbatim}
+>>> print cwd.has_key("readme.txt")
+True
+>>> print "missing.pickle" in cwd
+False
+\end{verbatim}
+
+To retrieve an object, use the Python indexing notation (square
+brackets) or the \method{get} method.  If the key is not found in the
+dictionary, indexing will raise \class{KeyError}; the \method{get}
+method will return a default value, which you can specify as the second
+argument (the default is \code{None}).
+\begin{verbatim}
+>>> print cwd["missing.pickle"]
+Traceback (most recent call last):
+...
+KeyError: 'missing.pickle'
+>>> print cwd.get("missing.pickle")
+None
+>>> print cwd.get("missing.pickle", 42)
+42
+\end{verbatim}
+
+Use the \function{hep.fs.getdir} function to return a directory object
+for an arbitrary path.  The path may be absolute or relative to the
+current working directory.  The path may descend into Root and HBOOK
+files.  For example,
+\begin{verbatim}
+>>> data_dir = hep.fs.getdir("/nfs/data")
+>>> histograms = hep.fs.getir("histograms.root/reco")
+\end{verbatim}
+You can also use \function{hep.fs.get} to load files of other types by
+specifying the path to the file.
+
+%-----------------------------------------------------------------------
+
+\section{Accessing file information}
+
+A directory object's \method{getinfo} method returns an \class{Info}
+object containing information about the file.  The \class{Info} object
+is constructed without loading the file.
+
+All \class{Info} objects have an attribute \member{type}, which is the
+file type for that file.  See above for a discussion of file types.  An
+\class{Info} object may have additional attributes, depending on the
+type of directory object it was obtained from.
+
+File system \class{Info} objects also contain attributes \member{path},
+\member{file_size}, \member{user_id}, \member{group_id},
+\member{access_mode}, and \member{modification_time}.
+
+The code below demonstrates the use of \method{getinfo} to print a
+listing of a file system directory.
+\begin{verbatim}
+>>> def listFSDir(directory):
+...   for key in directory.keys(known_types=False):
+...     info = directory.getinfo(key)
+...     print ("%-24s (%-12s)  %8d bytes, mode %06o, owner %4d"
+...            % (key, info.type, info.file_size, info.access_mode, info.user_id))
+...
+>>> listFSDir(cwd) 
+readme.txt               (text        )        50 bytes, mode 000640, owner  500
+plot.pickle              (pickle      )      3980 bytes, mode 000640, owner  500
+reco-hist.pickle         (pickle      )      1252 bytes, mode 000640, owner  500
+recodata                 (directory   )      4096 bytes, mode 000750, owner  500
+histogram.pickle         (pickle      )      1257 bytes, mode 000640, owner  500
+\end{verbatim}
+
+%-----------------------------------------------------------------------
+
+\section{Storing data}
+
+To store data in a file, simply set a key in the dictionary object.  For
+file system directories, the file type is determined from the key's
+extension.  The file type must support the data type you provide.  For
+example,
+\begin{verbatim}
+>>> text = "Hello, world."
+>>> cwd["hello.txt"] = text
+>>> cwd["hello.pickle"] = text
+>>> cwd["hello.root"] = text
+Traceback (most recent call last):
+...
+AttributeError: 'str' object has no attribute 'keys'
+\end{verbatim}
+Here, the first assignment stores the text in a plain text file, and the
+second stores it as a pickled Python string.  The third assignment
+fails, since it doesn't make sense to create a Root file with a string.
+
+You can also use the \method{set} method to set keys.  With
+\method{set}, you can specify keyword arguments.  For example, you can
+override the file type determination with the \code{type} argument.
+For example, this assignment tell \pyhep to store a plain text file,
+even though the extension \file{.log} is not known.
+\begin{verbatim}
+>>> cwd.set("hello.log", text,type="text")
+\end{verbatim}
+
+You can other standard map methods to modify the directory's contents as
+well: \method{setdefault}, \method{update}, and \method{popitem}.  To
+delete files, use the \code{del} statement or the directory's
+\method{delete} method.  The \method{clear} method empties the
+directory.
+
+These methods can take additional keyword arguments that controls how
+directories are modified:
+\begin{itemize}
+ \item \code{deldirs} (true by default): Allow automatic recursive
+ deletion of directories and their contents.
+
+ \item \code{makedirs} (true by default): Create missing intermediate
+ subdirectories automatically when setting a key (like ``\code{mkdir
+ -p}''). 
+
+ \item \code{replace} (true by default): If true, allow keys to be
+ replaced.  Otherwise, raise an exception when setting a key that
+ already exists.
+
+ \item \code{replacedirs} (false by default): Like \code{replace} but
+ applies to subdirectories.
+\end{itemize}
+
+You can also create a directory by setting a key.  Since a directory is
+represented by a map, it looks like this:
+\begin{verbatim}
+>>> cwd["subdir"] = {}
+\end{verbatim}
+You may populate the map you assign; the items are stored as files in
+the new directory.
+\begin{verbatim}
+>>> cwd["subdir"] = { "contents.txt": "calibration constants", 
+...                   "constants.pickle": (10, 11, 12) }
+\end{verbatim}
+To create a directory if it doesn't exist, or obtain it if it does, use
+\method{setdefault}:
+\begin{verbatim}
+>>> output_dir = cwd.setdefault("output", {})
+\end{verbatim}
+
+%-----------------------------------------------------------------------
+
+\section{Working with HBOOK files}
+
+You can use directory objects, as described above, to access contents of
+HBOOK files.  An HBOOK file is represented by a directory object, as is
+a subdirectory in an HBOOK file.
+
+For example, to create a new HBOOK file in the directory represented by
+\code{data_dir} containing two histograms,
+\begin{verbatim}
+>>> data_dir["histograms.hbook"] = { "hist1": histogram1,
+...                                  "hist2": histogram2 }
+\end{verbatim}
+To create a new, empty HBOOK file or return the existing one if it
+exists,
+\begin{verbatim}
+>>> hbook_file = data_dir.setdefault("histograms.hbook", {})
+\end{verbatim}
+
+\subsection{The \module{hep.cernlib.hbook} module}
+
+The \module{hep.cernlib.hbook} module contains \pyhep's implementation
+of HBOOK file access.  HBOOK is a part of the CERNLIB library, and
+provides a structured file format containing histograms and n-tuples.
+Note that not all HBOOK features are supported.
+
+Some details particular to HBOOK directory objects:
+\begin{itemize}
+ \item \pyhep's module \module{hep.cernlib.hbook} is linked statically
+ against CERNLIB 2002.
+
+ \item HBOOK's names are case-insensitive.  \pyhep always uses lower
+ case for names in HBOOK files.
+
+ \item To load a histogram from an HBOOK directory, simply obtain it by
+ name using the subscript operator or \method{get}.  This returns a
+ Python object representing the histogram, which may be modified freely.
+ Note that unlike HBOOK itself, where histograms are always stored in a
+ global ``PAWC'' memory region, \pyhep constructs ordinary Python
+ objects for histograms.  There is no need to manage ``PAWC''
+ explicitly.
+
+ \item Not all histogram features supported in HBOOK are also supported
+ in \pyhep, and visa versa.  Therefore, if a histogram is saved to an
+ HBOOK file and later loaded, it may differ in some of its
+ characteristics.  The basic histogram binning, and bin contents and
+ errors (including overflow and underflow bins), are stored correctly,
+ however.  Note that \pyhep does not provide profile histograms.
+
+ \item An HBOOK file is not closed until the file object is destroyed,
+ i.e. all references to it are released.  Especially when writing an
+ HBOOK file, be careful to release all references to the file object.
+
+ \item When \pyhep closes an HBOOK file, it ``purges cycles'',
+ \textit{i.e.} removes old revisions of all entries stored in the file.
+ To disable this behavior, specify \code{purge_cycles=False} as a
+ keyword argument when creating or accessing the HBOOK file.
+
+ \item In an HBOOK file, each object is given not only a name
+ identifying it in the directory that contains it, but a numerical RZ
+ identification as well.  When you retrieve an object from an HBOOK file,
+ \pyhep stores this value in the object's \member{rz_id} attribute.
+ When you store an objet from an HBOOK file, you may specify the value
+ to use either by setting the object's \member{rz_id} attribute or by
+ using an \code{rz_id} keyword argument; otherwise, \pyhep chooses an
+ available value.  An info object obtained from an HBOOK directory's
+ \method{getinfo} method also has an \member{rz_id} attribute.
+
+\end{itemize}
+
+
+\subsection{N-tuples}
+
+An HBOOK n-tuple is represented in \pyhep by a table.  The table
+satisfies the same protocol as the default table implementation (see
+\module{hep.table}), except in the method to create or open tables.
+Note that because of HBOOK's limitations, certain table features are not
+supported.
+
+To access an n-tuple in an HBOOK file, use the file object's subscript
+operator or \method{get} method, just access the n-tuple's name, just as
+you would for a histogram.  Unlike a histogram, the table object is
+still connected to the n-tuple in the HBOOK file.  A new row appended to
+the table is incorporated immediately into the n-tuple.  Also, the table
+object carries a reference to the HBOOK file, in its \member{file}
+attribute, so the HBOOK file is not closed as long as there is an
+outstanding table object for an n-tuple in the file.
+
+To create a new n-tuple in an HBOOK file, use the
+\function{hep.cernlib.hbook.createTable} function.  The arguments are the
+name of the n-tuple, the HBOOK directory object in which to create the
+n-tuple, and the schema (as for \function{hep.table.create}).  You may
+use the optional \var{rz_id} argument to specify the n-tuple's RZ ID.
+
+By default, a column-wise n-tuple is used for the table; to create a
+row-wise n-tuple, pass a false value for the optional \var{column_wise}
+argument to \function{createTable}.  When creating a column-wise n-tuple,
+the schema may only contain columns of types \constant{"int32"},
+\constant{"int64"}, \constant{"float32"}, and \constant{"float64"}.  The
+schema for a row-wise n-tuple may use only \constant{"float32"} columns.
+
+This program creates an HBOOK file containing a row-wise n-tuple filled
+with random values.  It then re-opens the file, creates a histogram from
+the values, and stores it in the file.
+\codesample{hbook1.py}
+
+%-----------------------------------------------------------------------
+
+\section{Working with Root files}
+
+Root set of libraries and programs for high energy physics analysis.
+Among other things, Root provides a file format for histograms, n-tuples
+(which are called ``trees'' in Root), and other data objects.  \pyhep
+provides partial data and file compatibility with Root.
+
+You can use directory objects, as described above, to access contents of
+Root files.  An Root file is represented by a directory object, as is a
+subdirectory in an Root file.
+
+For example, to create a new Root file in the directory represented by
+\code{data_dir} containing two histograms,
+\begin{verbatim}
+>>> data_dir["histograms.root"] = { "hist1": histogram1,
+...                                 "hist2": histogram2 }
+\end{verbatim}
+To create a new, empty Root file or return the existing one if it
+exists,
+\begin{verbatim}
+>>> root_file = data_dir.setdefault("histograms.root", {})
+\end{verbatim}
+
+The API and capabilities of \module{hep.root} are very similar to those
+of \module{hep.cernlib.hbook}.  A program written for one can be used
+with the other with minimal modification, and it is easy to write
+functions, scripts, or programs that can work files from either format.
+
+
+\subsection{The \module{hep.root} module}
+
+The \module{hep.root} contains \pyhep's implementation of Root file
+access.  
+
+\pyhep's module \module{hep.root} is built and linked against Root shared
+libraries which are distributed with \pyhep.  The module does not depend
+on any other version of Root installed on your system.
+
+Some details particular to Root directory objects:
+\begin{itemize}
+ \item A Root file is not closed until the file object is destroyed,
+ i.e. all references to it are released.  Especially when writing a Root
+ file, be careful to release all references to the file object.
+
+ \item Not all histogram features supported in Root are also supported
+ in \pyhep, and visa versa.  Therefore, if a histogram is saved to a
+ Root file and later loaded, it may differ in some of its
+ characteristics.  For instance, any additional attributes added to the
+ histogram will be lost.  The basic histogram binning, and bin contents
+ and errors (including overflow and underflow bins), are stored
+ correctly, however.
+
+ \item In a Root file, each object is given not only a name identifying
+ it in the directory that contains it, but a title.  When you retrieve
+ an object from an Root file, \pyhep stores this value in the object's
+ \member{title} attribute.  When you store an object from an Root file,
+ you may specify the title to use either by setting the object's
+ \member{title} attribute or by using an \code{title} keyword argument.
+ An info object obtained from an Root directory's \method{getinfo}
+ method also has an \member{title} attribute.
+
+\end{itemize}
+
+
+\subsection{Trees}
+
+An Root tree is represented in \pyhep by a table.  The table satisfies
+the same protocol as the default table implementation (see
+\module{hep.table}), except in the method to create or open tables.
+Note that because of Root's limitations, certain table features are not
+supported.
+
+To open a tree in a Root file as a table, use the file object's
+subscript operator or \method{get} method, just as you would for a
+histogram.  Note that unlike a histogram returned from \method{load},
+though, the table object that \method{load} returns is still connected
+to the tree in the Root file.  A new row appended to the table is
+incorporated in the tree.  Also, the table object carries a reference to
+the Root file, in its \member{file} attribute, so the Root file is not
+closed as long as there is an outstanding table object for a tree in the
+file.
+
+To create a new tree in a Root file, use the
+\function{hep.root.createTable} function.  The arguments are the name of
+the new tree, the Root directory in which to create it, and the schema
+(as for \function{hep.table.create}).  You may specify a title for the
+table with the \var{title} argument.
+
+This program creates a Root file containing a row-wise n-tuple filled
+with random values.  It then re-opens the file, creates a histogram from
+the values, and stores it in the file.
+\codesample{root1.py}
+

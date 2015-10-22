@@ -1,0 +1,64 @@
+Traceback (most recent call last):
+  File "/home/samuel/dev/pyhep/py/hep/draw/gtkwin.py", line 412, in drawText
+    raise ValueError, "cannot find X11 font '%s' in size %d" \
+ValueError: cannot find X11 font 'Times' in size 0
+Traceback (most recent call last):
+  File "/home/samuel/dev/pyhep/py/hep/draw/gtkwin.py", line 412, in drawText
+    raise ValueError, "cannot find X11 font '%s' in size %d" \
+ValueError: cannot find X11 font 'Times' in size 0
+Traceback (most recent call last):
+  File "/home/samuel/dev/pyhep/py/hep/draw/gtkwin.py", line 412, in drawText
+    raise ValueError, "cannot find X11 font '%s' in size %d" \
+ValueError: cannot find X11 font 'Times' in size 0
+Traceback (most recent call last):
+  File "/home/samuel/dev/pyhep/py/hep/draw/gtkwin.py", line 412, in drawText
+    raise ValueError, "cannot find X11 font '%s' in size %d" \
+ValueError: cannot find X11 font 'Times' in size 0
+Traceback (most recent call last):
+  File "/home/samuel/dev/pyhep/py/hep/draw/gtkwin.py", line 412, in drawText
+    raise ValueError, "cannot find X11 font '%s' in size %d" \
+ValueError: cannot find X11 font 'Times' in size 0
+Traceback (most recent call last):
+  File "/home/samuel/dev/pyhep/py/hep/draw/gtkwin.py", line 412, in drawText
+    raise ValueError, "cannot find X11 font '%s' in size %d" \
+ValueError: cannot find X11 font 'Times' in size 0
+Traceback (most recent call last):
+  File "/home/samuel/dev/pyhep/py/hep/draw/gtkwin.py", line 412, in drawText
+    raise ValueError, "cannot find X11 font '%s' in size %d" \
+ValueError: cannot find X11 font 'Times' in size 0
+Traceback (most recent call last):
+  File "/home/samuel/dev/pyhep/py/hep/draw/gtkwin.py", line 412, in drawText
+    raise ValueError, "cannot find X11 font '%s' in size %d" \
+ValueError: cannot find X11 font 'Times' in size 0
+/home/samuel/dev/pyhep/py/hep/draw/gtkwin.py:447: DeprecationWarning: integer argument expected, got float
+  round(size) + 1, round(size) + 1, 0, 23040)
+/home/samuel/dev/pyhep/py/hep/draw/gtkwin.py:454: DeprecationWarning: integer argument expected, got float
+  round(size) + 1, round(size) + 1, 0, 23040)
+/home/samuel/dev/pyhep/py/hep/draw/gtkwin.py:459: DeprecationWarning: integer argument expected, got float
+  round(size) + 1, round(size) + 1, 0, 23040)
+/home/samuel/dev/pyhep/py/hep/draw/gtkwin.py:465: DeprecationWarning: integer argument expected, got float
+  round(size), round(size))
+/home/samuel/dev/pyhep/py/hep/draw/gtkwin.py:471: DeprecationWarning: integer argument expected, got float
+  round(size), round(size))
+/home/samuel/dev/pyhep/py/hep/draw/gtkwin.py:476: DeprecationWarning: integer argument expected, got float
+  round(size), round(size))
+/home/samuel/dev/pyhep/py/hep/draw/gtkwin.py:486: DeprecationWarning: integer argument expected, got float
+  pixmap.draw_polygon(gc, gtk.TRUE, points)
+/home/samuel/dev/pyhep/py/hep/draw/gtkwin.py:496: DeprecationWarning: integer argument expected, got float
+  pixmap.draw_polygon(gc, gtk.TRUE, points)
+/home/samuel/dev/pyhep/py/hep/draw/gtkwin.py:498: DeprecationWarning: integer argument expected, got float
+  pixmap.draw_polygon(gc, gtk.FALSE, points)
+/home/samuel/dev/pyhep/py/hep/draw/gtkwin.py:503: DeprecationWarning: integer argument expected, got float
+  pixmap.draw_line(gc, x, y - size / 2, x, y + size / 2 + 1)
+/home/samuel/dev/pyhep/py/hep/draw/gtkwin.py:504: DeprecationWarning: integer argument expected, got float
+  pixmap.draw_line(gc, x - dx, y - dy, x + dx + 1, y + dy + 1)
+/home/samuel/dev/pyhep/py/hep/draw/gtkwin.py:505: DeprecationWarning: integer argument expected, got float
+  pixmap.draw_line(gc, x - dx, y + dy, x + dx + 1, y - dy - 1)
+/home/samuel/dev/pyhep/py/hep/draw/gtkwin.py:509: DeprecationWarning: integer argument expected, got float
+  ceil(x + size / 2), round(y))
+/home/samuel/dev/pyhep/py/hep/draw/gtkwin.py:511: DeprecationWarning: integer argument expected, got float
+  round(x), ceil(y + size / 2))
+/home/samuel/dev/pyhep/py/hep/draw/gtkwin.py:515: DeprecationWarning: integer argument expected, got float
+  pixmap.draw_line(gc, x - d, y - d, x + d + 1, y + d + 1)
+/home/samuel/dev/pyhep/py/hep/draw/gtkwin.py:516: DeprecationWarning: integer argument expected, got float
+  pixmap.draw_line(gc, x + d + 1, y - d - 1, x - d, y + d)

@@ -1,0 +1,76 @@
+class Vector(object):
+    """A Lorentz four-vector.
+
+    Do not instantiate this class directly.  Instead, use the 'Vector'
+    method of a 'Frame' object."""
+
+    # Instances should have a 'coordinates' attribute, which is a tuple
+    # of the four coordinates of the vector in the lab frame.  The
+    # creator of a 'Vector' instance is responsible for setting this
+    # attribute. 
+
+    # We define operations on this class such that if one is invoked on
+    # an instance of a subclass of this class, the type of the result
+    # will be the subclass, rather than the base class 'Vector'.
+
+    def __init__(self, t, x, y, z):
+        self.coordinates = (t, x, y, z)
+
+
+    def __repr__(self):
+        return "%s(%s, %s, %s, %s)" \
+               % ((self.__class__.__name__, )
+                  + tuple(map(repr, self.coordinates)))
+
+
+    def __str__(self):
+        return "(%s, %s, %s, %s)" \
+               % tuple(map(repr, self.coordinates))
+
+
+    def __neg__(self):
+        t, x, y, z = map(lambda c: -c, self.coordinates)
+        return lab.Vector(t, x, y, z, self.__class__)
+
+
+    def __add__(self, other):
+        t, x, y, z = [ self.coordinates[i] + other.coordinates[i]
+                       for i in (0, 1, 2, 3) ]
+        return lab.Vector(t, x, y, z, self.__class__)
+                     
+
+    def __sub__(self, other):
+        t, x, y, z = [ self.coordinates[i] - other.coordinates[i]
+                       for i in (0, 1, 2, 3) ]
+        return lab.Vector(t, x, y, z, self.__class__)
+                     
+
+    def __mul__(self, other):
+        t, x, y, z = [ self.coordinates[i] * other 
+                       for i in (0, 1, 2, 3) ]
+        return lab.Vector(t, x, y, z, self.__class__)
+
+
+    def __rmul__(self, other):
+        return self.__mul__(other)
+
+
+    def __div__(self, other):
+        t, x, y, z = [ self.coordinates[i] / other 
+                       for i in (0, 1, 2, 3) ]
+        return lab.Vector(t, x, y, z, self.__class__)
+
+
+    def __xor__(self, other):
+        """Compute an inner product."""
+
+        return self.coordinates[0] * other.coordinates[0] \
+               - self.coordinates[1] * other.coordinates[1] \
+               - self.coordinates[2] * other.coordinates[2] \
+               - self.coordinates[3] * other.coordinates[3]
+
+
+    norm = property(lambda self: sqrt(self ^ self))
+
+
+

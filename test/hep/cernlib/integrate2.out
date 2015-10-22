@@ -1,0 +1,8 @@
+Traceback (most recent call last):
+  File "integrate2.py", line 15, in ?
+    compare(integrate("(x + y) ** 2", ("x", 0, 1), ("y", 0, 1)),
+  File "/home/samuel/dev/pyhep/py/hep/cernlib/__init__.py", line 45, in integrate
+    function = hep.expr.asExpression(function)
+  File "/home/samuel/dev/pyhep/py/hep/expr/__init__.py", line 67, in asExpression
+    raise expr_parser.ParseError, \
+hep.expr.expr_parser.ParseError: unknown symbol testlist_gexp, while parsing "(x + y) ** 2"

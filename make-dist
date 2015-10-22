@@ -1,0 +1,39 @@
+#!/bin/bash
+
+version=$1
+rpm_release=$2
+cvs_repo=${3:-samuel@cvs.indetermi.net:/cvs}
+
+start_dir=$(pwd)
+cvs_tag=dist-$(echo ${version} | sed s/\\./-/g)
+rpm_src="/usr/src/redhat"
+
+pyhepv=pyhep-${version}
+tarball=${rpm_src}/SOURCES/${pyhepv}.tgz
+spec=${rpm_src}/SPECS/pyhep.spec
+i386_rpm=${rpm_src}/RPMS/i386/${pyhepv}-${rpm_release}.i386.rpm
+src_rpm=${rpm_src}/SRPMS/${pyhepv}-${rpm_release}.src.rpm
+
+# Use a temporary directory.
+temp_dir=$(/bin/mktemp -d /var/tmp/pyhep.make-dist.XXXXXXXX)
+cd ${temp_dir}
+
+# Get the sources from CVS.
+CVS_RSH=ssh cvs -d ${cvs_repo} export -r ${cvs_tag} pyhep
+mv pyhep ${pyhepv}
+
+# Make the spec file.
+sed s/@VERSION@/${version}/ ${pyhepv}/pyhep.spec.in > ${spec}
+
+# Make the source tarball.
+tar zcf ${tarball} ${pyhepv}
+
+# Build the RPMs.
+rpm -ba ${spec} || exit 1
+
+# Clean up.
+cd ..
+rm -rf ${temp_dir}
+
+# Get the products.
+cp ${spec} ${tarball} ${i386_rpm} ${src_rpm} ${start_dir}

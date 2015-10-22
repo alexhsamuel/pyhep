@@ -1,0 +1,127 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+<title>4.2 Compiling expressions</title>
+<META NAME="description" CONTENT="4.2 Compiling expressions">
+<META NAME="keywords" CONTENT="pyhep">
+<META NAME="resource-type" CONTENT="document">
+<META NAME="distribution" CONTENT="global">
+<link rel="STYLESHEET" href="pyhep.css">
+<link rel="first" href="pyhep.html">
+<link rel="contents" href="contents.html" title="Contents">
+
+<LINK REL="next" HREF="node30.html">
+<LINK REL="previous" href="module-hep.table.html">
+<LINK REL="up" HREF="node26.html">
+<LINK REL="next" HREF="node29.html">
+</head>
+<body>
+<DIV CLASS="navigation">
+<table align="center" width="100%" cellpadding="0" cellspacing="2">
+<tr>
+<td><A href="module-hep.table.html"><img src="icons//previous.gif"
+  border="0" height="32"
+  alt="Previous Page" width="32"></A></td>
+<td><A HREF="node26.html"><img src="icons//up.gif"
+  border="0" height="32"
+  alt="Up One Level" width="32"></A></td>
+<td><A HREF="node29.html"><img src="icons//next.gif"
+  border="0" height="32"
+  alt="Next Page" width="32"></A></td>
+<td align="center" width="100%"> PyHEP Tutorial</td>
+<td><A href="contents.html"><img src="icons//contents.gif"
+  border="0" height="32"
+  alt="Contents" width="32"></A></td>
+<td><img src="icons//blank.gif"
+  border="0" height="32"
+  alt="" width="32"></td>
+<td><img src="icons//blank.gif"
+  border="0" height="32"
+  alt="" width="32"></td>
+</tr></table>
+<b class="navlabel">Previous:</b> <a class="sectref" href="module-hep.table.html">4.1 Building and evaluating</A>
+<b class="navlabel">Up:</b> <a class="sectref" HREF="node26.html">4. Expressions</A>
+<b class="navlabel">Next:</b> <a class="sectref" HREF="node29.html">4.2.1 Expression types</A>
+<br><hr>
+</DIV>
+<!--End of Navigation Panel-->
+
+<H1><A NAME="SECTION006200000000000000000">
+4.2 Compiling expressions</A>
+</H1>
+
+<P>
+Expression objects, as well as expression coded directly in Python,
+execute quite a bit slower than similar mathematical expressions
+implemented in a compiled language like C or C++.  However,  PyHEP can
+often execute an expressions much faster, by compiling it to an internal
+binary format and then evaluating it with an optimized, stack-based
+evaluator implemented in C++.
+
+<P>
+To compile an expression to this optimized form, use
+<tt class="function">hep.expr.compile</tt>.  It returns an expression object that can
+be used the same way as the original expression, but which executes
+faster.
+<dl><dd><pre class="verbatim">
+&gt;&gt;&gt; cex = hep.expr.compile(ex)
+&gt;&gt;&gt; cex(p_x=1, p_y=2)
+5.0
+</pre></dl>
+
+<P>
+There is no need to use <code>asExpression</code> before <code>compile</code>; just
+pass it the expression formula directly.
+<dl><dd><pre class="verbatim">
+&gt;&gt;&gt; cex = hep.expr.compile("p_x ** 2 + p_y ** 2")
+&gt;&gt;&gt; cex(p_x=1, p_y=2)
+5.0
+</pre></dl>
+
+<P>
+
+<p><hr>
+<!--Table of Child-Links-->
+<A NAME="CHILD_LINKS"><STRONG>Subsections</STRONG></a>
+
+<UL CLASS="ChildLinks">
+<LI><A href="node29.html">4.2.1 Expression types</a>
+</ul>
+<!--End of Table of Child-Links-->
+
+<DIV CLASS="navigation">
+<p><hr>
+<table align="center" width="100%" cellpadding="0" cellspacing="2">
+<tr>
+<td><A href="module-hep.table.html"><img src="icons//previous.gif"
+  border="0" height="32"
+  alt="Previous Page" width="32"></A></td>
+<td><A HREF="node26.html"><img src="icons//up.gif"
+  border="0" height="32"
+  alt="Up One Level" width="32"></A></td>
+<td><A HREF="node29.html"><img src="icons//next.gif"
+  border="0" height="32"
+  alt="Next Page" width="32"></A></td>
+<td align="center" width="100%"> PyHEP Tutorial</td>
+<td><A href="contents.html"><img src="icons//contents.gif"
+  border="0" height="32"
+  alt="Contents" width="32"></A></td>
+<td><img src="icons//blank.gif"
+  border="0" height="32"
+  alt="" width="32"></td>
+<td><img src="icons//blank.gif"
+  border="0" height="32"
+  alt="" width="32"></td>
+</tr></table>
+<b class="navlabel">Previous:</b> <a class="sectref" href="module-hep.table.html">4.1 Building and evaluating</A>
+<b class="navlabel">Up:</b> <a class="sectref" HREF="node26.html">4. Expressions</A>
+<b class="navlabel">Next:</b> <a class="sectref" HREF="node29.html">4.2.1 Expression types</A>
+<hr>
+
+</DIV>
+<!--End of Navigation Panel-->
+<ADDRESS>
+<tt>alex@alexsamuel.net</tt>
+</ADDRESS>
+</BODY>
+</HTML>

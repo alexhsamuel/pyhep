@@ -1,0 +1,191 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+<title>3.2 Creating and filling tables</title>
+<META NAME="description" CONTENT="3.2 Creating and filling tables">
+<META NAME="keywords" CONTENT="pyhep">
+<META NAME="resource-type" CONTENT="document">
+<META NAME="distribution" CONTENT="global">
+<link rel="STYLESHEET" href="pyhep.css">
+<link rel="first" href="pyhep.html">
+<link rel="contents" href="contents.html" title="Contents">
+
+<LINK REL="next" HREF="node19.html">
+<LINK REL="previous" HREF="node16.html">
+<LINK REL="up" HREF="node15.html">
+<LINK REL="next" HREF="node18.html">
+</head>
+<body>
+<DIV CLASS="navigation">
+<table align="center" width="100%" cellpadding="0" cellspacing="2">
+<tr>
+<td><A HREF="node16.html"><img src="icons//previous.gif"
+  border="0" height="32"
+  alt="Previous Page" width="32"></A></td>
+<td><A HREF="node15.html"><img src="icons//up.gif"
+  border="0" height="32"
+  alt="Up One Level" width="32"></A></td>
+<td><A HREF="node18.html"><img src="icons//next.gif"
+  border="0" height="32"
+  alt="Next Page" width="32"></A></td>
+<td align="center" width="100%"> PyHEP Tutorial</td>
+<td><A href="contents.html"><img src="icons//contents.gif"
+  border="0" height="32"
+  alt="Contents" width="32"></A></td>
+<td><img src="icons//blank.gif"
+  border="0" height="32"
+  alt="" width="32"></td>
+<td><img src="icons//blank.gif"
+  border="0" height="32"
+  alt="" width="32"></td>
+</tr></table>
+<b class="navlabel">Previous:</b> <a class="sectref" HREF="node16.html">3.1 Table implementations</A>
+<b class="navlabel">Up:</b> <a class="sectref" HREF="node15.html">3. Tables</A>
+<b class="navlabel">Next:</b> <a class="sectref" HREF="node18.html">3.2.1 Example: creating a</A>
+<br><hr>
+</DIV>
+<!--End of Navigation Panel-->
+
+<H1><A NAME="SECTION005200000000000000000">
+3.2 Creating and filling tables</A>
+</H1>
+
+<P>
+A table schema is represented by an instance of
+<tt class="class">hep.table.Schema</tt>.  The schema collects together the definitions of the columns in the table.  Each column is identified by a name, which is
+a string composed of letters, digits, and underscores.  
+
+<P>
+A new instance of <tt class="class">Schema</tt> has no columns.  Add columns using the
+<tt class="method">addColumn</tt> method, specifying the column name and type.  For instance, 
+<dl><dd><pre class="verbatim">
+&gt;&gt;&gt; import hep.table
+&gt;&gt;&gt; schema = hep.table.Schema()
+&gt;&gt;&gt; schema.addColumn("energy", "float64")
+&gt;&gt;&gt; schema.addColumn("momentum", "float64")
+&gt;&gt;&gt; schema.addColumn("hits", "int32")
+</pre></dl>
+
+<P>
+The second argument to <tt class="function">addColumn</tt> specifies the storage format
+used for values in that column.  These column types are supported in
+<code>hep.table</code> (note that other table implementations may not support
+all of these):
+
+<UL>
+<LI>three signed integer types: <tt class="constant">"int8"</tt>, <tt class="constant">"int16"</tt>,
+ and <tt class="constant">"int32"</tt>
+
+<P>
+</LI>
+<LI>two floating-point types, <tt class="constant">"float32"</tt> and
+ <tt class="constant">"float64"</tt>
+
+<P>
+</LI>
+<LI>two floating-point complex types, <tt class="constant">"complex64"</tt> and
+ <tt class="constant">"complex128"</tt>
+</LI>
+</UL>
+
+<P>
+More concisely, you may specify columns as keyword arguments, so the
+above schema may be constructed with,
+<dl><dd><pre class="verbatim">
+&gt;&gt;&gt; schema = hep.table.Schema(energy="float64", momentum="float64", hits="int32")
+</pre></dl>
+
+<P>
+You can also load or save schemas in an XML file format using
+<tt class="function">hep.table.loadSchema</tt> and <tt class="function">hep.table.saveSchema</tt>.
+The schema above would be represented by the XML file
+<dl><dd><pre class="verbatim">
+&lt;?xml version="1.0" ?&gt;
+&lt;schema&gt;
+ &lt;column name="energy" type="float64"/&gt;
+ &lt;column name="momentum" type="float64"/&gt;
+ &lt;column name="hits" type="int32"/&gt;
+&lt;/schema&gt;
+</pre></dl>
+
+<P>
+Call the <tt class="function">create</tt> function to create a new table.  The
+parameters will vary for each implementation; for the <tt class="module">hep.table</tt>
+implementation, the parameters are the file name for the new table, and
+the table's schema.  
+<dl><dd><pre class="verbatim">
+&gt;&gt;&gt; table = hep.table.create("test.table", schema)
+</pre></dl>
+The return value is a <i>connection</i> to the newly-created table,
+which resides on disk.
+
+<P>
+To add a row to the table, call the table's <tt class="method">append</tt> method.  You
+may pass it a mapping argument (such as a dictionary) that associates
+column values with column names, and/or you may provide column values as
+keyword arguments.  One way or another, you must specify values for all
+columns in the table.  The return value of <tt class="method">append</tt> is the index
+of the newly-appended row.
+
+<P>
+For instance, to add a row to the table created above,
+<dl><dd><pre class="verbatim">
+&gt;&gt;&gt; row = {
+...   "energy": 2.7746,
+...   "momentum": 1.8725,
+...   "hits": 17,
+&gt;&gt;&gt; }
+&gt;&gt;&gt; table.append(row)
+</pre></dl>
+or equivalently,
+<dl><dd><pre class="verbatim">
+&gt;&gt;&gt; table.append(energy=2.7746, momentum=1.8725, hits=17)
+</pre></dl>
+
+<P>
+
+<p><hr>
+<!--Table of Child-Links-->
+<A NAME="CHILD_LINKS"><STRONG>Subsections</STRONG></a>
+
+<UL CLASS="ChildLinks">
+<LI><A href="node18.html">3.2.1 Example: creating a table from a text file</a>
+</ul>
+<!--End of Table of Child-Links-->
+
+<DIV CLASS="navigation">
+<p><hr>
+<table align="center" width="100%" cellpadding="0" cellspacing="2">
+<tr>
+<td><A HREF="node16.html"><img src="icons//previous.gif"
+  border="0" height="32"
+  alt="Previous Page" width="32"></A></td>
+<td><A HREF="node15.html"><img src="icons//up.gif"
+  border="0" height="32"
+  alt="Up One Level" width="32"></A></td>
+<td><A HREF="node18.html"><img src="icons//next.gif"
+  border="0" height="32"
+  alt="Next Page" width="32"></A></td>
+<td align="center" width="100%"> PyHEP Tutorial</td>
+<td><A href="contents.html"><img src="icons//contents.gif"
+  border="0" height="32"
+  alt="Contents" width="32"></A></td>
+<td><img src="icons//blank.gif"
+  border="0" height="32"
+  alt="" width="32"></td>
+<td><img src="icons//blank.gif"
+  border="0" height="32"
+  alt="" width="32"></td>
+</tr></table>
+<b class="navlabel">Previous:</b> <a class="sectref" HREF="node16.html">3.1 Table implementations</A>
+<b class="navlabel">Up:</b> <a class="sectref" HREF="node15.html">3. Tables</A>
+<b class="navlabel">Next:</b> <a class="sectref" HREF="node18.html">3.2.1 Example: creating a</A>
+<hr>
+
+</DIV>
+<!--End of Navigation Panel-->
+<ADDRESS>
+<tt>alex@alexsamuel.net</tt>
+</ADDRESS>
+</BODY>
+</HTML>

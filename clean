@@ -1,0 +1,35 @@
+#!/usr/bin/python2
+#-----------------------------------------------------------------------
+
+import os
+import os.path
+import sys
+
+
+def fnext(file_name):
+    return os.path.splitext(file_name)[1]
+
+
+def clean(dir, do_unlink):
+    for name in os.listdir(dir):
+        path = os.path.join(dir, name)
+        if name.endswith("~") \
+           or fnext(name) in (".out", ".root", ".hbook", ".table", ".pyc") \
+           or name in ("last.kumac", "last.kumacold", "paw.metafile"):
+            if do_unlink:
+                print "removing %s" % path
+                os.unlink(path)
+            else:
+                print path
+        elif os.path.isdir(path):
+            clean(path, do_unlink)
+
+
+clean(".", len(sys.argv) > 1 and sys.argv[1] == "--do")
+
+
+#-----------------------------------------------------------------------
+# Local variables:
+# mode: python
+# fill-column: 72
+# End:

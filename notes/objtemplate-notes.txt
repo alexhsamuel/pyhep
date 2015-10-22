@@ -1,0 +1,93 @@
+p: LorentzVectorExpr(Sy("p_t"), Sy("p_x"), Sy("p_y"), Sy("p_z"))
+q: LorentzVectorExpr(Sy("q_t"), Sq("q_x"), Sy("q_y"), Sy("q_z"))
+
+LorentzVector.mass =
+  Call(
+   Sy("sqrt"),
+   Subtract(
+    Square(
+     expr[0]),
+    Add(
+     Square(
+      expr[1])
+     Add(
+      Square(
+       expr[2]),
+      Square(
+       expr[3])))))
+
+(p + q).mass
+
+  GetAttr
+   Add
+    Sy("p")
+    Sy("q")
+   Sy("mass")
+
+
+------------------------------------------------------------------------
+During optimization:
+
+> expand expressions from table
+
+  GetAttr
+   Add
+    LorentzVectorExpr(Sy("p_t"), Sy("p_x"), Sy("p_y"), Sy("p_z"))
+    LorentzVectorExpr(Sy("q_t"), Sq("q_x"), Sy("q_y"), Sy("q_z"))
+  Sy("mass")
+
+> apply operations to expression templates
+
+  GetAttr
+   LorentzVectorExpr(Add(Sy("p_t"), Sy("q_t")),
+                     Add(Sy("p_x"), Sy("q_x")),
+                     Add(Sy("p_y"), Sy("q_y")),
+                     Add(Sy("p_z"), Sy("q_z")))
+  Sy("mass")
+
+> expand __getattr__ on expression templates
+
+  Call(
+   Sy("sqrt"),
+   Subtract(
+    Square(
+     Add(
+      Sy("p_t"),
+      Sy("q_t"))),
+    Add(
+     Square(
+      Add(
+       Sy("p_x"),
+       Sy("q_x")))
+     Add(
+      Square(
+       Add(
+        Sy("p_y"),
+        Sy("q_y"))),
+      Square(
+       Add(
+        Sy("p_z"),
+        Sy("q_z")))))))
+
+> compile to
+
+  OP_PUSH_SYMBOL q_z
+  OP_PUSH_SYMBOL p_z
+  OP_DOUBLE_ADD
+  OP_DOUBLE_SQUARE
+  OP_PUSH_SYMBOL q_y
+  OP_PUSH_SYMBOL p_y
+  OP_DOUBLE_ADD
+  OP_DOUBLE_SQUARE
+  OP_DOUBLE_ADD
+  OP_PUSH_SYMBOL q_x
+  OP_PUSH_SYMBOL p_x
+  OP_DOUBLE_ADD
+  OP_DOUBLE_SQUARE
+  OP_DOUBLE_ADD
+  OP_PUSH_SYMBOL q_t
+  OP_PUSH_SYMBOL p_t
+  OP_DOUBLE_ADD
+  OP_DOUBLE_SQUARE
+  OP_DOUBLE_SUBTRACT
+  OP_DOUBLE_SQRT

@@ -1,0 +1,13 @@
+minimum value: 0.000000
+parameter values:
+  a                            =       3.0000 (fixed)
+  b                            =       1.0000 (fixed)
+number of evaluations: 0
+Minuit status: 0
+
+Traceback (most recent call last):
+  File "minuit-umlfit3.py", line 31, in ?
+    compare(result.minuit_status, 3)
+  File "/home/samuel/dev/pyhep/py/hep/test.py", line 59, in compare
+    raise TestFailure, \
+hep.test.TestFailure: expected 3; got 0

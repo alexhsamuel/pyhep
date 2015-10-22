@@ -1,0 +1,8 @@
+root.py
+root_wrap.cc
+root_wrap.doc
+*Dict.cc
+*Dict.h
+*.pyc
+depend.mk
+ROOTSYS

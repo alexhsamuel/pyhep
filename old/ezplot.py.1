@@ -1,0 +1,79 @@
+from   hep.draw import *
+import hep.hist.plot
+import os.path
+
+
+colors = [
+    HSV(0.625, 0.6, 0.4),
+    HSV(0.875, 0.6, 0.4),
+    HSV(0.500, 0.6, 0.4),
+    HSV(0.750, 0.6, 0.4),
+    HSV(0.000, 0.6, 0.4),
+    HSV(0.250, 0.6, 0.4),
+    HSV(0.125, 0.6, 0.4),
+    HSV(0.375, 0.6, 0.4),
+    ]
+
+
+line_styles = [ LineStyle(color) for color in colors ]
+
+
+def makeDraw(draw, aspect=1.414):
+    if draw is None:
+        raise ValueError, "draw is 'None'"
+
+    elif isinstance(draw, str):
+        extension = os.path.splitext(draw)[1]
+        if extension == ".ps":
+            draw = hep.draw.postscript.PSFile(draw, border=0.02)
+            draw = hep.draw.fitRegion(ps, aspect)
+        elif extension == ".eps":
+            draw = hep.draw.postscript.EPSFile(
+                draw, aspect * 0.1, 0.1, border=0.002)
+        else:
+            raise ValueError, "unknown file extension '%s'" % extension
+
+    return draw
+
+
+def plotMany(draw=None, *histograms, **style):
+    if not histograms:
+        raise ValueError, "no histograms specified"
+    draw = makeDraw(draw)
+
+    style["bin_style"] = "skyline"
+    style["data_fill"] = None
+    style["overflow_fill"] = None
+
+    plot = None
+    for histogram, line_style in zip(histograms, line_styles):
+        if plot is None:
+            plot = hep.hist.plot.plot(
+                draw, histogram, line_style=line_style, **style)
+        else:
+            plot.addSeries(
+                histogram, line_style=line_style, **style)
+    plot.draw(draw)
+
+    return plot, draw
+
+
+def drawLegend(plot, draw, *labels):
+    # FIXME: Label the series directly instead of with a legend.
+
+    layout = plot.buildLayout(draw)
+
+    notes_draw = layout.notes_draw
+    font = plot.style["label_font"]
+    x = notes_draw.range[2] - 0.03
+    y = notes_draw.range[3] - font.size
+    # Loop over histograms with titles.
+    for label, line_style in zip(labels, line_styles):
+        if label is None:
+            continue
+        
+        notes_draw.drawLine(x, y + font.size / 4,
+                            x + 0.005, y + font.size / 4, line_style)
+        notes_draw.drawLatex(x + 0.007, y, label, font)
+        y -= font.size * 1.5
+

@@ -1,0 +1,181 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+<title>3.6.2 Row types</title>
+<META NAME="description" CONTENT="3.6.2 Row types">
+<META NAME="keywords" CONTENT="pyhep">
+<META NAME="resource-type" CONTENT="document">
+<META NAME="distribution" CONTENT="global">
+<link rel="STYLESHEET" href="pyhep.css">
+<link rel="first" href="pyhep.html">
+<link rel="contents" href="contents.html" title="Contents">
+
+<LINK REL="previous" HREF="node23.html">
+<LINK REL="up" href="module-hep.histogram.html">
+<LINK REL="next" HREF="node25.html">
+</head>
+<body>
+<DIV CLASS="navigation">
+<table align="center" width="100%" cellpadding="0" cellspacing="2">
+<tr>
+<td><A HREF="node23.html"><img src="icons//previous.gif"
+  border="0" height="32"
+  alt="Previous Page" width="32"></A></td>
+<td><A href="module-hep.histogram.html"><img src="icons//up.gif"
+  border="0" height="32"
+  alt="Up One Level" width="32"></A></td>
+<td><A HREF="node25.html"><img src="icons//next.gif"
+  border="0" height="32"
+  alt="Next Page" width="32"></A></td>
+<td align="center" width="100%"> PyHEP Tutorial</td>
+<td><A href="contents.html"><img src="icons//contents.gif"
+  border="0" height="32"
+  alt="Contents" width="32"></A></td>
+<td><img src="icons//blank.gif"
+  border="0" height="32"
+  alt="" width="32"></td>
+<td><img src="icons//blank.gif"
+  border="0" height="32"
+  alt="" width="32"></td>
+</tr></table>
+<b class="navlabel">Previous:</b> <a class="sectref" HREF="node23.html">3.6.1 Caching expressions in</A>
+<b class="navlabel">Up:</b> <a class="sectref" href="module-hep.histogram.html">3.6 Using expressions with</A>
+<b class="navlabel">Next:</b> <a class="sectref" HREF="node25.html">3.7 More table functions</A>
+<br><hr>
+</DIV>
+<!--End of Navigation Panel-->
+
+<H2><A NAME="SECTION005620000000000000000">
+3.6.2 Row types</A>
+</H2>
+
+<P>
+As we have seen above, the object representing one row of a table
+satisfies Python's read-only mapping protocol: it maps the name of a
+column to the corresponding value in the row.  While in many ways, they
+behave like ordinary Python dictionaries (for instance, they support the
+<tt class="method">keys</tt> and <tt class="method">items</tt> methods), they actually instances of
+the <tt class="class">hep.table.RowDict</tt> class.
+<dl><dd><pre class="verbatim">
+&gt;&gt;&gt; track = tracks[0]
+&gt;&gt;&gt; print type(track)
+&lt;type 'RowDict'&gt;
+</pre></dl>
+If you ever need an actual dictionary object containing the values in a
+row, Python will produce that for you:
+<dl><dd><pre class="verbatim">
+&gt;&gt;&gt; dict(track)
+{'energy': 1.1803040504455566, 'p_z': -0.73052072525024414, 
+ 'p_x': -0.47519099712371826, 'p_y': -0.78897768259048462}
+</pre></dl>
+
+<P>
+For some applications, however, it is more convenient to use a different
+interface to access row data.  You can specify another type to use for
+row objects by setting the table's <tt class="member">row_type</tt> attribute (or with
+the <var>row_type</var> keyword argument to <tt class="function">hep.table.open</tt>).  The
+default value, as you have seen, is <tt class="class">hep.table.RowDict</tt>.
+
+<P>
+PyHEP includes a second row implementation,
+<tt class="class">hep.table.RowObject</tt>, which provides access to row values as
+object attributes instead of items in a map.  The row has an attribute
+named for each column in the table, and the attribute's value is the
+corresponding value in the row.
+
+<P>
+For example,
+<dl><dd><pre class="verbatim">
+&gt;&gt;&gt; tracks.row_type = hep.table.RowObject
+&gt;&gt;&gt; track = tracks[0]
+&gt;&gt;&gt; print track.p_x, track.p_y, track.p_z
+-0.475190997124 -0.78897768259 -0.73052072525
+</pre></dl>
+
+<P>
+You may also derive a subclass from <tt class="class">RowObject</tt> and use that as
+your table's row type.  This is very handy for adding additional
+methods, get-set attributes, etc. to the row, for instance to compute
+derived values.
+
+<P>
+For example, you could create a <tt class="class">Track</tt> class that provides the
+mass and scalar momentum as ``attributes'' that are computed dynamically
+from the row's contents.
+<dl><dd><pre class="verbatim">
+&gt;&gt;&gt; from hep.num import hypot
+&gt;&gt;&gt; from math import sqrt
+&gt;&gt;&gt; class Track(hep.table.RowObject):
+...   momentum = property(lambda self: hypot(self.p_x, self.p_y, self.p_z))
+...   mass = property(lambda self: sqrt(self.energy**2 - self.momentum**2))
+...
+</pre></dl>
+Now set this class as the row type.
+<dl><dd><pre class="verbatim">
+&gt;&gt;&gt; tracks.row_type = Track
+&gt;&gt;&gt; track = tracks[0]
+&gt;&gt;&gt; print type(track)
+&lt;class '__main__.Track'&gt;
+</pre></dl>
+You can now access the members of <tt class="class">Track</tt>:
+<dl><dd><pre class="verbatim">
+&gt;&gt;&gt; print track.momentum
+1.17556488438
+&gt;&gt;&gt; print track.mass
+0.105663873224
+</pre></dl>
+
+<P>
+Setting a table's row type to <tt class="class">RowObject</tt> or a subclass will not
+break evaluation of compiled expressions on row objects.  Expressions
+look for a <tt class="method">get</tt> method, which is provided by both
+<tt class="class">RowDict</tt> and <tt class="class">RowObject</tt>.
+
+<P>
+Note that computing complicated derived values in this way is less
+efficient than using compiled expressions, as described above.  However,
+you can create methods or get-set members that evaluate compiled
+expressions.  
+
+<P>
+Only subclasses of <tt class="class">RowDict</tt> and <tt class="class">RowObject</tt> may be used as
+a table's <tt class="member">row_type</tt>.
+
+<P>
+
+<DIV CLASS="navigation">
+<p><hr>
+<table align="center" width="100%" cellpadding="0" cellspacing="2">
+<tr>
+<td><A HREF="node23.html"><img src="icons//previous.gif"
+  border="0" height="32"
+  alt="Previous Page" width="32"></A></td>
+<td><A href="module-hep.histogram.html"><img src="icons//up.gif"
+  border="0" height="32"
+  alt="Up One Level" width="32"></A></td>
+<td><A HREF="node25.html"><img src="icons//next.gif"
+  border="0" height="32"
+  alt="Next Page" width="32"></A></td>
+<td align="center" width="100%"> PyHEP Tutorial</td>
+<td><A href="contents.html"><img src="icons//contents.gif"
+  border="0" height="32"
+  alt="Contents" width="32"></A></td>
+<td><img src="icons//blank.gif"
+  border="0" height="32"
+  alt="" width="32"></td>
+<td><img src="icons//blank.gif"
+  border="0" height="32"
+  alt="" width="32"></td>
+</tr></table>
+<b class="navlabel">Previous:</b> <a class="sectref" HREF="node23.html">3.6.1 Caching expressions in</A>
+<b class="navlabel">Up:</b> <a class="sectref" href="module-hep.histogram.html">3.6 Using expressions with</A>
+<b class="navlabel">Next:</b> <a class="sectref" HREF="node25.html">3.7 More table functions</A>
+<hr>
+
+</DIV>
+<!--End of Navigation Panel-->
+<ADDRESS>
+<tt>alex@alexsamuel.net</tt>
+</ADDRESS>
+</BODY>
+</HTML>

@@ -1,0 +1,6 @@
+Traceback (most recent call last):
+  File "minuit-min1.py", line 13, in ?
+    compare(fit_result.values["x"], 0.5, precision=1e-6)
+  File "/home/samuel/dev/pyhep/py/hep/test.py", line 59, in compare
+    raise TestFailure, \
+hep.test.TestFailure: expected 0.5; got 0.0

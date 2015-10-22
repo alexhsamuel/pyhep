@@ -1,0 +1,15 @@
+minimum value: 0.000000
+parameter values:
+  a                            =       1.0000 (fixed)
+  b                            =       1.0000 (fixed)
+  c                            =       1.0000 (fixed)
+number of evaluations: 0
+elapsed time: 0.01 sec
+Minuit status: 0
+
+Traceback (most recent call last):
+  File "chisq-fit2.py", line 27, in ?
+    compare(result.minuit_status, 3)
+  File "/home/samuel/dev/pyhep/py/hep/test.py", line 59, in compare
+    raise TestFailure, \
+hep.test.TestFailure: expected 3; got 0

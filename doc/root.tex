@@ -1,0 +1,129 @@
+\section{\module{hep.root} -- Root interface}
+
+\declaremodule{extension}{hep.root}
+\modulesynopsis{Root interface}
+
+The \module{hep.root} module provides access from Python to features in
+Root, a framework for high energy physics data management and analysis.
+The applicable components of Root are included with \pyhep and need not
+be provided separately.
+
+\subsection{Root files}
+
+Root includes an implementation of histograms and ntuples (which are
+called ``trees'' in Root).  It implements a file format for storing
+these in structured disk files.  \pyhep provides read and write access
+to histograms and trees stored in Root files.
+
+The \function{open} function access a Root file:
+
+\begin{funcdesc}{open}{path\optional{, mode="r", purge_cycles=1}}
+ Create or open a Root file at \var{path}.  
+
+ \var{mode} is the access mode, analogous to Python's built-in
+ \function{file} and \function{open} functions.  If \code{"r"}, opens an
+ existing file for reading.  If \code{"r+"}, \code{"w"}, \code{"a"}, or
+ \code{"a+"}, opens an existing file for reading and writing, or creates
+ the file if it doesn't exist.  If \code{"w+"}, creates a file or
+ overwrites an existing file.
+
+ If \var{purge_cycles} is set to a true value and the file is open for
+ writing, the entire file will be purged when it is closed.  
+\end{funcdesc}
+
+The return value from \function{open} is a \class{File} object.  The
+file remains open until it is deleted.  
+
+In \pyhep, all paths in Root files are specified relative to the root
+directory of the Root file.  The root directory itself is represented by
+an empty string, and the path separator is a forward slash.  Note that
+there is no notion of working directory or relative paths.
+
+Root files also support revision cycles; see the Root documentation for
+details.  Unless \function{root.open} is invoked with
+\code{purge_cycles=0} (or the file is opened read-only), \pyhep
+``purges'' the entire file when the file is closed.  This removes cycles
+except the most recent for each object in the file, whether or not the
+object was written or revised in the current session.
+
+\pyhep stores additional information along with tables and histograms in
+Root files.  This information, called \emph{metadata}, consists of
+useful information about histograms and tables that is not handled
+directly by the Root file format.  \pyhep stores metadata in
+subdirectories named ``_pyhep_metadata'' in the Root file.  These
+subdirectories and their contents may be removed safely without injuring
+the primary data in the histograms and tables they are associated with,
+but doing so will delete configuration and annotations accessible from
+\pyhep.
+
+\subsubsection{\class{File} objects}
+
+A \class{File} object has the following methods and attributes:
+
+\begin{memberdesc}{writeable}
+ True if the file is open for writing as well as reading.
+\end{memberdesc}
+
+\begin{methoddesc}{listdir}{\optional{path}}
+ Return the contents of the directory specified by \var{path}.  The
+ return value is a sequence of \code{(name, title, class_name)} tuples,
+ where \var{name} is the object's name, \var{title} is the object's
+ title, and \var{class_name} is the object's class name.
+\end{methoddesc}
+
+\begin{methoddesc}{mkdir}{path\optional{, title}}
+ Create a new directory at \var{path}.  Optionally, a title may be
+ specified in the \var{title} argument.
+\end{methoddesc}
+
+\begin{methoddesc}{rmdir}{path}
+ Remove the directory at \var{path}.
+\end{methoddesc}
+
+\begin{methoddesc}{save}{path, object}
+ Store a histogram \var{object} at \var{path}.  One- and two-dimensional
+ histograms are supported.  
+\end{methoddesc}
+
+\begin{methoddesc}{load}{path}
+ Load a histogram or connect to an ntuple at \var{path}.  If \var{path}
+ is a one- or two-dimensional histogram, returns a histogram object with
+ its contents.  If \var{path} is a tree, returns a table object (see
+ \module{hep.table}) accessing it.
+\end{methoddesc}
+
+\begin{methoddesc}{createTable}{path, schema\optional{, title,
+separate_branches=0, branch_name="default"}}
+ Create a table as a tree at \var{path} in the Root file, using
+ columns from \var{schema}, a \class{hep.table.Schema} instance.  
+
+ By default, column values is stored in a leaves grouped in a single
+ branch, named "default".  Another name may be specified for the branch
+ with the \var{branch_name} argument.  Alternately, if
+ \var{separate_branches} is true, each leaf is placed in a separate
+ branch, whose name is the column name.
+
+ These column types are supported: \constant{"int8"},
+ \constant{"int16"}, \constant{"int32"}, \constant{"float32"}, and
+ \constant{"float64"}.
+\end{methoddesc}
+
+\begin{methoddesc}{remove}{path}
+ Remove the tree or histogram at \var{path}.  Use \method{rmdir} to
+ remove a directory.
+\end{methoddesc}
+
+\begin{methoddesc}{normpath}{path}
+ Return the canonical form of absolute path \var{path} in the Root
+ file.
+\end{methoddesc}
+
+\begin{methoddesc}{join}{*components}
+ Join together \var{components} to form an absolute path.
+\end{methoddesc}
+
+\begin{methoddesc}{split}{path}
+ Return \code{(dir, name)}, where \var{dir} is the portion of \var{path}
+ up to the last directory separator, and \var{name} is the remainder.
+\end{methoddesc}
+

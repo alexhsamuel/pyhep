@@ -1,0 +1,184 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+<title>2.5 Accessing histogram contents</title>
+<META NAME="description" CONTENT="2.5 Accessing histogram contents">
+<META NAME="keywords" CONTENT="pyhep">
+<META NAME="resource-type" CONTENT="document">
+<META NAME="distribution" CONTENT="global">
+<link rel="STYLESHEET" href="pyhep.css">
+<link rel="first" href="pyhep.html">
+<link rel="contents" href="contents.html" title="Contents">
+
+<LINK REL="next" HREF="node13.html">
+<LINK REL="previous" HREF="node11.html">
+<LINK REL="up" HREF="node4.html">
+<LINK REL="next" HREF="node13.html">
+</head>
+<body>
+<DIV CLASS="navigation">
+<table align="center" width="100%" cellpadding="0" cellspacing="2">
+<tr>
+<td><A HREF="node11.html"><img src="icons//previous.gif"
+  border="0" height="32"
+  alt="Previous Page" width="32"></A></td>
+<td><A HREF="node4.html"><img src="icons//up.gif"
+  border="0" height="32"
+  alt="Up One Level" width="32"></A></td>
+<td><A HREF="node13.html"><img src="icons//next.gif"
+  border="0" height="32"
+  alt="Next Page" width="32"></A></td>
+<td align="center" width="100%"> PyHEP Tutorial</td>
+<td><A href="contents.html"><img src="icons//contents.gif"
+  border="0" height="32"
+  alt="Contents" width="32"></A></td>
+<td><img src="icons//blank.gif"
+  border="0" height="32"
+  alt="" width="32"></td>
+<td><img src="icons//blank.gif"
+  border="0" height="32"
+  alt="" width="32"></td>
+</tr></table>
+<b class="navlabel">Previous:</b> <a class="sectref" HREF="node11.html">2.4 Filling histograms</A>
+<b class="navlabel">Up:</b> <a class="sectref" HREF="node4.html">2. Histograms</A>
+<b class="navlabel">Next:</b> <a class="sectref" HREF="node13.html">2.6 More histogram operations</A>
+<br><hr>
+</DIV>
+<!--End of Navigation Panel-->
+
+<H1><A NAME="SECTION004500000000000000000">
+2.5 Accessing histogram contents</A>
+</H1>
+
+<P>
+You may specify a particular bin of a histogram with a ``bin number'',
+which is a sequence of bin positions along successive axes.  The length
+of the sequence is equal to the histogram's number of dimensions.  Each
+item is the index of the bin along the corresponding axis.
+
+<P>
+Along each axis, the coordinate in the bin number ranges between zero
+and one less than the number of bins on the axis.  It may also take the
+values <code>"underflow"</code> and <code>"overflow"</code>, which denote the
+underflow and overflow bins, respectively
+
+<P>
+For example, consider this histogram:
+<dl><dd><pre class="verbatim">
+&gt;&gt;&gt; histogram = hep.hist.Histogram((20, (-1.0, 1.0)), (24, (0, 24)))
+</pre></dl>
+The corner bin numbers are for this histogram <code>(0,&nbsp;0)</code>,
+<code>(9,&nbsp;0)</code>, <code>(0,&nbsp;23)</code>, and <code>(9,&nbsp;23)</code>.  
+The bin whose number is <code>(12,&nbsp;"underflow")</code> is for any samples
+whose first coordinate is between 0.2 and 0.3, and whose second
+coordinate is less than 0.  The bin whose number is
+<code>("underflow",&nbsp;"overflow")</code> is for any sample whose first
+coordinate is less than -1 and whose second coordinate is greater than
+24.
+
+<P>
+To get the bin number corresponding to a sample point, use the
+<tt class="method">map</tt> method, passing the sample coordinates. 
+
+<P>
+Just as with sample coordinates, for a one-dimensional histogram you may
+specify either the bin number as a one-element sequence, or simply the
+bin number along the (only) axis.
+
+<P>
+To obtain the contents of a bin, use the <tt class="method">getBin</tt> method, passing
+the bin number.  To obtain the 68.2% confidence unterval on a bin, use
+the <tt class="method">getError</tt> method, which returns two values specifying how
+far the interval extends below and above the central value.
+
+<P>
+For example,
+<dl><dd><pre class="verbatim">
+&gt;&gt;&gt; histogram = hep.hist.Histogram1D(10, (0.0, 1.0), error_model="gaussian")
+&gt;&gt;&gt; histogram.accumulate(0.64, 17)
+&gt;&gt;&gt; histogram.map(0.64)
+(6,)
+&gt;&gt;&gt; histogram.getBin((6, ))
+17
+&gt;&gt;&gt; histogram.getError((6, ))
+(4.1231056256176606, 4.1231056256176606)
+</pre></dl>
+In the <code>"gaussian"</code> error model, the errors on the bin are the
+square root of the bin contents, here, <SPAN CLASS="MATH"><IMG
+ WIDTH="33" HEIGHT="37" ALIGN="MIDDLE" BORDER="0"
+ SRC="img3.gif"
+ ALT="$\sqrt{17}$"></SPAN>=4.123106.  Since the
+histogram is one-dimensional, we just as easily could have used,
+<dl><dd><pre class="verbatim">
+&gt;&gt;&gt; histogram.getBin(6)
+</pre></dl>
+
+<P>
+To set the contents of a bin, use the <tt class="method">setBin</tt> method, specifying
+the new value as the second argument.  To set the error estimate on a
+bin, use the <tt class="method">setError</tt> method, specifying a <code>'(lo, hi)'</code>
+pair for the size of the confidence interval as the second argument.
+Note that you may only call the <tt class="method">setError</tt> method of a histogram
+with <code>"asymmetric"</code> or <code>"symmetric"</code> error model, and in the
+latter case, the average of the <code>lo</code> and <code>hi</code> values you
+specify is stored as the single symmetric error estimate.
+
+<P>
+To obtain the range of coordinate values spanned by a single bin, use
+the <tt class="method">getBinRange</tt> method, passing the bin number.  The return
+value is a sequence, each of whose items is a <code>(lo, hi)</code> pair of
+coordinate values along on axis spanned by the bin.  For example, to
+print the bin range and value for bins in a one-dimensional histogram,
+<dl><dd><pre class="verbatim">
+&gt;&gt;&gt; for bin in range(histogram.axis.number_of_bins):
+...     (lo, hi), = histogram.getBinRange(bin)
+...     bin_value = histogram.getBin(bin)
+...     print "bin (%f,%f): %f" % (lo, hi, bin_value)
+</pre></dl>
+Note that the return value from <tt class="method">getBinRange</tt> is a one-element
+sequence, since the histogram is one-dimensional.  The single element is
+the pair <code>(lo, hi)</code> of the bin's range along the histogram's axis.
+
+<P>
+A histogram's <tt class="member">number_of_samples</tt> attribute contains the number
+of times the <tt class="method">accumualte</tt> method (or the <code>&#171;</code> operator) was
+invoked.
+
+<P>
+
+<DIV CLASS="navigation">
+<p><hr>
+<table align="center" width="100%" cellpadding="0" cellspacing="2">
+<tr>
+<td><A HREF="node11.html"><img src="icons//previous.gif"
+  border="0" height="32"
+  alt="Previous Page" width="32"></A></td>
+<td><A HREF="node4.html"><img src="icons//up.gif"
+  border="0" height="32"
+  alt="Up One Level" width="32"></A></td>
+<td><A HREF="node13.html"><img src="icons//next.gif"
+  border="0" height="32"
+  alt="Next Page" width="32"></A></td>
+<td align="center" width="100%"> PyHEP Tutorial</td>
+<td><A href="contents.html"><img src="icons//contents.gif"
+  border="0" height="32"
+  alt="Contents" width="32"></A></td>
+<td><img src="icons//blank.gif"
+  border="0" height="32"
+  alt="" width="32"></td>
+<td><img src="icons//blank.gif"
+  border="0" height="32"
+  alt="" width="32"></td>
+</tr></table>
+<b class="navlabel">Previous:</b> <a class="sectref" HREF="node11.html">2.4 Filling histograms</A>
+<b class="navlabel">Up:</b> <a class="sectref" HREF="node4.html">2. Histograms</A>
+<b class="navlabel">Next:</b> <a class="sectref" HREF="node13.html">2.6 More histogram operations</A>
+<hr>
+
+</DIV>
+<!--End of Navigation Panel-->
+<ADDRESS>
+<tt>alex@alexsamuel.net</tt>
+</ADDRESS>
+</BODY>
+</HTML>

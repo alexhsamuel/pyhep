@@ -1,0 +1,14 @@
+PyHEP code, documentation, tests, and support files
+Copyright 2003 by Alex Samuel <alex@alexsamuel.net>
+All rights reserved.
+
+Documentation generaton code is borrowed from the Python language
+distribution, available at http://www.python.org.  See source files for
+copyright information.
+
+Binary distributions may contain components from these systems:
+
+  - The ROOT framework, http://root.cern.ch
+
+  - The CERNLIB program libraries, http://wwwasd.web.cern.ch/wwwasd
+

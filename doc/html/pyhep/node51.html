@@ -1,0 +1,139 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+<title>8.3 Transformations and frames</title>
+<META NAME="description" CONTENT="8.3 Transformations and frames">
+<META NAME="keywords" CONTENT="pyhep">
+<META NAME="resource-type" CONTENT="document">
+<META NAME="distribution" CONTENT="global">
+<link rel="STYLESHEET" href="pyhep.css">
+<link rel="first" href="pyhep.html">
+<link rel="contents" href="contents.html" title="Contents">
+
+<LINK REL="previous" HREF="node50.html">
+<LINK REL="up" HREF="node48.html">
+<LINK REL="next" HREF="node52.html">
+</head>
+<body>
+<DIV CLASS="navigation">
+<table align="center" width="100%" cellpadding="0" cellspacing="2">
+<tr>
+<td><A HREF="node50.html"><img src="icons//previous.gif"
+  border="0" height="32"
+  alt="Previous Page" width="32"></A></td>
+<td><A HREF="node48.html"><img src="icons//up.gif"
+  border="0" height="32"
+  alt="Up One Level" width="32"></A></td>
+<td><A HREF="node52.html"><img src="icons//next.gif"
+  border="0" height="32"
+  alt="Next Page" width="32"></A></td>
+<td align="center" width="100%"> PyHEP Tutorial</td>
+<td><A href="contents.html"><img src="icons//contents.gif"
+  border="0" height="32"
+  alt="Contents" width="32"></A></td>
+<td><img src="icons//blank.gif"
+  border="0" height="32"
+  alt="" width="32"></td>
+<td><img src="icons//blank.gif"
+  border="0" height="32"
+  alt="" width="32"></td>
+</tr></table>
+<b class="navlabel">Previous:</b> <a class="sectref" HREF="node50.html">8.2 Vectors</A>
+<b class="navlabel">Up:</b> <a class="sectref" HREF="node48.html">8. Lorentz geometry and</A>
+<b class="navlabel">Next:</b> <a class="sectref" HREF="node52.html">9. Particle properties</A>
+<br><hr>
+</DIV>
+<!--End of Navigation Panel-->
+
+<H1><A NAME="SECTION0010300000000000000000">
+8.3 Transformations and frames</A>
+</H1>
+
+<P>
+A <tt class="class">hep.lorentz.Transformation</tt> object represents a general Lorentz
+transformation.  It can be used to transform either a geometric object,
+such as a four-vector, or a reference frame.
+
+<P>
+Typically, a transformation is specified as a rotation or a boost.  A
+rotation is specified by the Euler angles <!-- MATH
+ $\phi, \theta, \psi$
+ -->
+<SPAN CLASS="MATH"><IMG
+ WIDTH="47" HEIGHT="29" ALIGN="MIDDLE" BORDER="0"
+ SRC="img7.gif"
+ ALT="$\phi, \theta, \psi$"></SPAN> in a
+particular reference frame.  A boost is specified by the vector
+<SPAN CLASS="MATH"><IMG
+ WIDTH="14" HEIGHT="38" ALIGN="MIDDLE" BORDER="0"
+ SRC="img8.gif"
+ ALT="$\vec\beta$"></SPAN> in a particular reference frame.  The frame object's
+<tt class="method">Rotation</tt> and <tt class="method">Boost</tt> methods, respectively, create these
+transformations.   For example, 
+<dl><dd><pre class="verbatim">
+from hep.lorentz import lab
+from math import pi
+rotation = lab.Rotation(pi / 4, pi / 4, 0)
+boost = lab.Boost(0.0, 0.0, 0.5)
+</pre></dl>
+The arguments to <tt class="method">Rotation</tt> are the Euler angles, and the
+arguments to <tt class="method">Boost</tt> are the components of <SPAN CLASS="MATH"><IMG
+ WIDTH="14" HEIGHT="38" ALIGN="MIDDLE" BORDER="0"
+ SRC="img8.gif"
+ ALT="$\vec\beta$"></SPAN>.
+
+<P>
+Transformations may be composed using the  operation.  Be
+careful about the frame in which you specify each one; generally, for
+sequential transformations, you will want to apply the previous
+transformation to your starting frame of reference before specifying the
+next one.
+
+<P>
+You can apply a transformation to a four-vector using the <code>^</code>
+operator; this returns a different geometric four-vector.  
+
+<P>
+FIXME
+
+<P>
+A transformation can also be used to create a new reference frame.
+
+<P>
+
+<DIV CLASS="navigation">
+<p><hr>
+<table align="center" width="100%" cellpadding="0" cellspacing="2">
+<tr>
+<td><A HREF="node50.html"><img src="icons//previous.gif"
+  border="0" height="32"
+  alt="Previous Page" width="32"></A></td>
+<td><A HREF="node48.html"><img src="icons//up.gif"
+  border="0" height="32"
+  alt="Up One Level" width="32"></A></td>
+<td><A HREF="node52.html"><img src="icons//next.gif"
+  border="0" height="32"
+  alt="Next Page" width="32"></A></td>
+<td align="center" width="100%"> PyHEP Tutorial</td>
+<td><A href="contents.html"><img src="icons//contents.gif"
+  border="0" height="32"
+  alt="Contents" width="32"></A></td>
+<td><img src="icons//blank.gif"
+  border="0" height="32"
+  alt="" width="32"></td>
+<td><img src="icons//blank.gif"
+  border="0" height="32"
+  alt="" width="32"></td>
+</tr></table>
+<b class="navlabel">Previous:</b> <a class="sectref" HREF="node50.html">8.2 Vectors</A>
+<b class="navlabel">Up:</b> <a class="sectref" HREF="node48.html">8. Lorentz geometry and</A>
+<b class="navlabel">Next:</b> <a class="sectref" HREF="node52.html">9. Particle properties</A>
+<hr>
+
+</DIV>
+<!--End of Navigation Panel-->
+<ADDRESS>
+<tt>alex@alexsamuel.net</tt>
+</ADDRESS>
+</BODY>
+</HTML>

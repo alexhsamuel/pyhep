@@ -1,0 +1,84 @@
+\documentclass{manual}
+
+\usepackage{xspace}
+
+%-----------------------------------------------------------------------
+
+\newcommand{\codesample}[1]{\verbatiminput{samples/#1}}
+\newcommand{\evtgen}{EvtGen\xspace}
+\newcommand{\pyhep}{PyHEP\xspace}
+\newcommand{\readonly}{(read-only)}
+
+%-----------------------------------------------------------------------
+
+\title{\pyhep Tutorial}
+\author{Alex Samuel}
+
+% \input{boilerplate}
+
+\makeindex
+
+\begin{document}
+
+\maketitle
+
+\ifhtml
+\chapter*{Front Matter\label{front}}
+\fi
+
+% \input{copyright}
+
+\begin{abstract}
+
+\noindent
+This manual describes how to use the \pyhep Python tools for High Energy
+Physics.  Rather than documenting all APIs exhaustively, it provides
+examples of common use cases, and describes APIs and object protocols in
+general terms.  See the automatically-generated API documentation, doc
+comments, or the source code for detailed information about the APIs.
+
+\warning{This document, and the software it describes, are incomplete.
+In particular, the APIs and protocols described here and implemented in
+the software may change, as the author gains experience with how the
+software is best used.}
+
+\end{abstract}
+
+\tableofcontents
+
+%-----------------------------------------------------------------------
+
+\input{introduction}
+\input{histograms}
+\input{tables}
+\input{expressions}
+\input{filesystem}
+\input{drawing}
+\input{plotting}
+\input{geometry}
+\input{particles}
+\input{interactive}
+
+% FIXME: The reference manual is out-of-date.
+%% \chapter{Reference Manual}
+%% \input{lorentz}
+%% \input{histogram}
+%% \input{table}
+%% \input{cernlib}
+%% \input{root}
+
+%-----------------------------------------------------------------------
+
+\appendix
+
+% \chapter{Reporting Bugs}
+% \input{reportingbugs}
+
+% \chapter{History and License}
+% \input{license}
+
+% \input{test.ind}			% Index -- must be last
+
+%-----------------------------------------------------------------------
+
+\end{document}

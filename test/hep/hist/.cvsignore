@@ -1,0 +1,7 @@
+*.pyc
+*.pyo
+*.out
+*.table
+*.pickle
+*.ps
+*.eps

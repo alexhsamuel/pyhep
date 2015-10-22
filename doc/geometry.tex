@@ -1,0 +1,108 @@
+\chapter{Lorentz geometry and kinematics}
+
+\pyhep provides an implementation of Lorentz vectors, momenta, and
+transformations.  The implementation classes do not simply provide
+quadruplets of numbers equipped with a Minkowski inner product; instead,
+they represent coordinate-independent objects.  Ultimately, though, the
+coordinates of a vector must be specified and obtained; this is done
+using a \emph{reference frame}, which specifies the coordinate system to
+use. 
+
+Coordinates are given in the order $(t, x, y, z)$, the metric signature
+$(+,-,-,-)$ is employed, and the speed of light $c$ is assumed to be
+unity.
+
+\section{Reference frames}
+
+A four-vector is a geometric object, which can be used to represent, for
+instance, the space-time position of an event, or the energy-momentum of
+a particle.  The typical representation of a four-vector is a quadruplet
+of four coordinates, but the coordinate values for a particular
+four-vector depends on the basis used, or equivalently on the reference
+frame in which the coordinates are specified.
+
+The Python class \class{hep.lorentz.Frame} represents a reference
+frame.  The principle of relativity implies that there is no absolute
+way of specifying a frame; the frame may only be specified in relation
+to another.  In \pyhep, a frame is specified in relation to a special
+frame, the canonical \emph{lab frame}.  The lab frame is
+\member{hep.lorentz.lab}, an instance of \class{Frame}.  
+
+\section{Vectors}
+
+A four-vector is represented by an instance of
+\class{hep.lorentz.Vector} class.  A \class{Vector} instance represents
+the geometric object, which is independent of reference frame, so you
+can specify or obtain its coordinate values only in reference to a
+frame.  You may use the lab frame for this, or any other frame which you
+create.
+
+To create a vector by specifying its coordinates in a particular frame,
+use the \method{Vector} method of that frame.  For instance,
+\begin{verbatim}
+from hep.lorentz import lab
+vector = lab.Vector(5.0, 1.0, 0.0, -2.0)
+\end{verbatim}
+creates a four-vector whose time coordinate is 5.0 and whose space
+coordinates are (1.0, 0.0, -2.0) in the lab frame.
+
+To obtain the coordinates of a four-vector in a reference frame, use the
+\method{coordinatesOf} method of that frame.  For instance,
+\begin{verbatim}
+t, x, y, z = lab.coordinatesOf(vector)
+\end{verbatim}
+
+You may negate (invert) a vector or scale it by a constant.  You may
+also add or subtract two vectors.  Since these are geometric operations,
+no frame is specified.  For example,
+\begin{verbatim}
+vector3 = - vector1 / 2 + 3 * vector2
+\end{verbatim}
+Use the \code{\^} operator to obtain the inner product of two vectors.
+Each vector also has an attribute \member{norm}, its Lorentz-invariant
+normal.  For example,
+\begin{verbatim}
+c = (vector1 ^ vector2) / (vector1.norm * vector2.norm)
+\end{verbatim}
+
+You may also use \class{hep.lorentz.Momentum}, a subclass of
+\class{Vector} that represents a four-momentum.  It provided an
+additional attribute \member{mass}, which is equivalent to
+\member{norm}, plus an attribute \member{rest_frame}, which is a
+\class{Frame} object representing the rest frame of a particle with that
+four-momentum. 
+
+\section{Transformations and frames}
+
+A \class{hep.lorentz.Transformation} object represents a general Lorentz
+transformation.  It can be used to transform either a geometric object,
+such as a four-vector, or a reference frame.
+
+Typically, a transformation is specified as a rotation or a boost.  A
+rotation is specified by the Euler angles $\phi, \theta, \psi$ in a
+particular reference frame.  A boost is specified by the vector
+$\vec\beta$ in a particular reference frame.  The frame object's
+\method{Rotation} and \method{Boost} methods, respectively, create these
+transformations.   For example, 
+\begin{verbatim}
+from hep.lorentz import lab
+from math import pi
+rotation = lab.Rotation(pi / 4, pi / 4, 0)
+boost = lab.Boost(0.0, 0.0, 0.5)
+\end{verbatim}
+The arguments to \method{Rotation} are the Euler angles, and the
+arguments to \method{Boost} are the components of $\vec\beta$.
+
+Transformations may be composed using the \code{\*} operation.  Be
+careful about the frame in which you specify each one; generally, for
+sequential transformations, you will want to apply the previous
+transformation to your starting frame of reference before specifying the
+next one.
+
+You can apply a transformation to a four-vector using the \code{\^}
+operator; this returns a different geometric four-vector.  
+
+FIXME
+
+A transformation can also be used to create a new reference frame.
+

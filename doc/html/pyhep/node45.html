@@ -1,0 +1,141 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+<title>7.4 Plotting</title>
+<META NAME="description" CONTENT="7.4 Plotting">
+<META NAME="keywords" CONTENT="pyhep">
+<META NAME="resource-type" CONTENT="document">
+<META NAME="distribution" CONTENT="global">
+<link rel="STYLESHEET" href="pyhep.css">
+<link rel="first" href="pyhep.html">
+<link rel="contents" href="contents.html" title="Contents">
+
+<LINK REL="next" HREF="node46.html">
+<LINK REL="previous" HREF="node44.html">
+<LINK REL="up" HREF="node41.html">
+<LINK REL="next" HREF="node46.html">
+</head>
+<body>
+<DIV CLASS="navigation">
+<table align="center" width="100%" cellpadding="0" cellspacing="2">
+<tr>
+<td><A HREF="node44.html"><img src="icons//previous.gif"
+  border="0" height="32"
+  alt="Previous Page" width="32"></A></td>
+<td><A HREF="node41.html"><img src="icons//up.gif"
+  border="0" height="32"
+  alt="Up One Level" width="32"></A></td>
+<td><A HREF="node46.html"><img src="icons//next.gif"
+  border="0" height="32"
+  alt="Next Page" width="32"></A></td>
+<td align="center" width="100%"> PyHEP Tutorial</td>
+<td><A href="contents.html"><img src="icons//contents.gif"
+  border="0" height="32"
+  alt="Contents" width="32"></A></td>
+<td><img src="icons//blank.gif"
+  border="0" height="32"
+  alt="" width="32"></td>
+<td><img src="icons//blank.gif"
+  border="0" height="32"
+  alt="" width="32"></td>
+</tr></table>
+<b class="navlabel">Previous:</b> <a class="sectref" HREF="node44.html">7.3 Drawing accessories</A>
+<b class="navlabel">Up:</b> <a class="sectref" HREF="node41.html">7. Drawing and Plotting</A>
+<b class="navlabel">Next:</b> <a class="sectref" HREF="node46.html">7.5 Plotting Styles</A>
+<br><hr>
+</DIV>
+<!--End of Navigation Panel-->
+
+<H1><A NAME="SECTION009400000000000000000">
+7.4 Plotting</A>
+</H1>
+
+<P>
+The module <tt class="module">hep.hist.plot</tt> provides functions for plotting
+histograms and scatter plots.  
+
+<P>
+A plot is represented by a <tt class="class">Plot</tt> object.  It contains format and
+style information for plotting one or more histograms onto a single set
+of axes, and references to the histograms themselves.  Each histogram
+drawn in a single plot is called a ``series''; many series may be
+included in the same plot, but all share the same scales on their axes.
+
+<P>
+A <tt class="class">Plot</tt> object is not tied to a particular output device; rather,
+its <tt class="method">draw</tt> method draws the plot onto any <tt class="class">Draw</tt> object.
+
+<P>
+The <tt class="function">hep.hist.plot.plot</tt> function is a convenient way to
+construct a plot of single histogram.  It creates a new <tt class="class">Plot</tt>
+object using a style appropriate for the histogram.  You may
+subsequently alter the plot's style, add additional series to it, and
+then draw it.
+
+<P>
+This example creates a 6 cm by 4 cm encapsulated PostScript file showing
+the plot of a histogam.
+<dl><dd><pre class="verbatim">
+import hep.draw.postscript
+from   hep.hist.plot import plot
+
+eps_file = hep.draw.postscript.EPSFile("plot.eps", 0.06, 0.04)
+plot(eps_file, histogram).draw(eps_file)
+</pre></dl>
+
+<P>
+The function <tt class="function">drawPlot</tt> is equivalent to <tt class="function">plot</tt>,
+except that it draws the plot as well.  The last line of the above
+example may equivalently be written,
+<dl><dd><pre class="verbatim">
+from   hep.hist.plot import drawPlot
+drawPlot(eps_file, histogram)
+</pre></dl>
+
+<P>
+You may pass additional keyword arguments to <tt class="function">plot</tt> to override
+style attributes used in the plot.  For example, to include overflow and
+underflow bins in the plot, you woud call,
+<dl><dd><pre class="verbatim">
+plot(eps_file, histogram, show_overflow=True)
+</pre></dl>
+The next section describes the various style attributes.
+
+<P>
+
+<DIV CLASS="navigation">
+<p><hr>
+<table align="center" width="100%" cellpadding="0" cellspacing="2">
+<tr>
+<td><A HREF="node44.html"><img src="icons//previous.gif"
+  border="0" height="32"
+  alt="Previous Page" width="32"></A></td>
+<td><A HREF="node41.html"><img src="icons//up.gif"
+  border="0" height="32"
+  alt="Up One Level" width="32"></A></td>
+<td><A HREF="node46.html"><img src="icons//next.gif"
+  border="0" height="32"
+  alt="Next Page" width="32"></A></td>
+<td align="center" width="100%"> PyHEP Tutorial</td>
+<td><A href="contents.html"><img src="icons//contents.gif"
+  border="0" height="32"
+  alt="Contents" width="32"></A></td>
+<td><img src="icons//blank.gif"
+  border="0" height="32"
+  alt="" width="32"></td>
+<td><img src="icons//blank.gif"
+  border="0" height="32"
+  alt="" width="32"></td>
+</tr></table>
+<b class="navlabel">Previous:</b> <a class="sectref" HREF="node44.html">7.3 Drawing accessories</A>
+<b class="navlabel">Up:</b> <a class="sectref" HREF="node41.html">7. Drawing and Plotting</A>
+<b class="navlabel">Next:</b> <a class="sectref" HREF="node46.html">7.5 Plotting Styles</A>
+<hr>
+
+</DIV>
+<!--End of Navigation Panel-->
+<ADDRESS>
+<tt>alex@alexsamuel.net</tt>
+</ADDRESS>
+</BODY>
+</HTML>

@@ -1,0 +1,195 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+<title>5.1 Creating, opening, and examining HBOOK files</title>
+<META NAME="description" CONTENT="5.1 Creating, opening, and examining HBOOK files">
+<META NAME="keywords" CONTENT="pyhep">
+<META NAME="resource-type" CONTENT="document">
+<META NAME="distribution" CONTENT="global">
+<link rel="STYLESHEET" href="pyhep.css">
+<link rel="first" href="pyhep.html">
+<link rel="contents" href="contents.html" title="Contents">
+
+<LINK REL="next" HREF="node35.html">
+<LINK REL="previous" HREF="node33.html">
+<LINK REL="up" HREF="node33.html">
+<LINK REL="next" HREF="node35.html">
+</head>
+<body>
+<DIV CLASS="navigation">
+<table align="center" width="100%" cellpadding="0" cellspacing="2">
+<tr>
+<td><A HREF="node33.html"><img src="icons//previous.gif"
+  border="0" height="32"
+  alt="Previous Page" width="32"></A></td>
+<td><A HREF="node33.html"><img src="icons//up.gif"
+  border="0" height="32"
+  alt="Up One Level" width="32"></A></td>
+<td><A HREF="node35.html"><img src="icons//next.gif"
+  border="0" height="32"
+  alt="Next Page" width="32"></A></td>
+<td align="center" width="100%"> PyHEP Tutorial</td>
+<td><A href="contents.html"><img src="icons//contents.gif"
+  border="0" height="32"
+  alt="Contents" width="32"></A></td>
+<td><img src="icons//blank.gif"
+  border="0" height="32"
+  alt="" width="32"></td>
+<td><img src="icons//blank.gif"
+  border="0" height="32"
+  alt="" width="32"></td>
+</tr></table>
+<b class="navlabel">Previous:</b> <a class="sectref" HREF="node33.html">5. Working with HBOOK</A>
+<b class="navlabel">Up:</b> <a class="sectref" HREF="node33.html">5. Working with HBOOK</A>
+<b class="navlabel">Next:</b> <a class="sectref" HREF="node35.html">5.2 Loading and saving</A>
+<br><hr>
+</DIV>
+<!--End of Navigation Panel-->
+
+<H1><A NAME="SECTION007100000000000000000">
+5.1 Creating, opening, and examining HBOOK files</A>
+</H1>
+
+<P>
+The functions <tt class="function">hbook.create</tt> and <tt class="function">hbook.open</tt> create
+or open HBOOK files.   The argument is the path to the file;
+<tt class="function">open</tt> also takes an optional <var>update</var> argument, which is
+true if the file is to be opened in read-write mode for modification.
+The resulting object represents the top directory of the open HBOOK
+file.
+
+<P>
+An HBOOK directory object acts as a map, whose keys are entries in the
+directory.  You can use the usual map methods to examine and access the
+contents of the directory.  For example, the <tt class="method">keys</tt> method
+returns a sequence of names of items in the directory.
+
+<P>
+This sample demonstrates how you might open an HBOOK file and extract a
+histogram. 
+<dl><dd><pre class="verbatim">
+import hep.cernlib.hbook
+hbook_file = hep.cernlib.hbook.open("histograms.hbook")
+energy_hist = hbook_file["ENERGY"]
+</pre></dl>
+
+<P>
+To load a data item from an HBOOK directory, use the subscript operator
+(square brackets) or the <tt class="function">get</tt> method.  The type of the
+resulting object depends on the type of the data item in the HBOOK file.
+Use the same method to descend into subdirectories--the resulting
+object will be an HBOOK directory object corresponding to the
+subdirectory.  You may similarly access an item by its RZ ID.
+
+<P>
+As a shortcut to loading subdirectory objects one by one, you may get an
+item in a subdirectory by specifying its path, with directory names
+separated by slashes.  For instance, the code below shows three ways of
+accessing the same item.
+<dl><dd><pre class="verbatim">
+mc_dir = hbook_file.get("MC")
+batch2_dir = mc_dir.get("BATCH2")
+eff_hist = batch2_dir.get("EFFICIENCY")
+
+eff_hist = hbook_file["MC"]["BATCH2"]["EFFICIENCY"]
+
+eff_hist = hbook_file["MC/BATCH2/EFFICIENCY"]
+</pre></dl>
+
+<P>
+To find out information about an item in a directory without loading
+it, use the <tt class="method">getInfo</tt> method, passing the item's name.  The
+resulting <tt class="class">Info</tt> object has these attributes, which describe the
+directory entry:
+<dl><dt><b><a name="l2h-7"><tt class="member">name</tt></a></b>
+<dd>
+The RZ title of the entry.
+</dl>
+<dl><dt><b><a name="l2h-8"><tt class="member">rz_id</tt></a></b>
+<dd>
+The RZ ID number of the entry.
+</dl>
+<dl><dt><b><a name="l2h-9"><tt class="member">type</tt></a></b>
+<dd>
+A string describing the type of the object: one of <code>"1D
+histogram"</code>, <code>"2D histogram"</code>, <code>"table"</code>, or
+<code>"directory"</code>.
+</dl>
+<dl><dt><b><a name="l2h-10"><tt class="member">is_directory</tt></a></b>
+<dd>
+True if the entry corresponds to a subdirectory.
+</dl>
+
+<P>
+This script print a full listing of the contents of an HBOOK file,
+including the title, RZ ID, and type of each entry.
+<dl><dd><pre class="verbatim">from   hep.cernlib import hbook
+
+def ls(hbook_dir, indent=0):
+    # Loop over directory elements in 'path'.
+    for name in hbook_dir.keys():
+        info = hbook_dir.getInfo(name)
+        print "%s%s%s%5d  %s" % (" " * indent, name,
+                                 " " * (40 - indent - len(name)),
+                                 info.rz_id, info.type)
+        # If it's a directory, list its contents recursively.
+        if info.is_directory:
+            ls(hbook_dir[name], indent + 1)
+
+if __name__ == "__main__":
+    import sys
+    file = hbook.open(sys.argv[1])
+    ls(file)
+</pre>
+<div class="verbatiminput-footer">
+<a href="hbookls.txt" type="text/plain">Download as text.</a>
+</div>
+</dd></dl>
+
+<P>
+To create a directory, use the <tt class="method">mkdir</tt> method, specifying the
+full path to the new directory.
+
+<P>
+An HBOOK file is not closed until the file object is destroyed, i.e. all
+references to it are released.  Especially when writing an HBOOK file,
+be careful to release all references to the file object.
+
+<P>
+
+<DIV CLASS="navigation">
+<p><hr>
+<table align="center" width="100%" cellpadding="0" cellspacing="2">
+<tr>
+<td><A HREF="node33.html"><img src="icons//previous.gif"
+  border="0" height="32"
+  alt="Previous Page" width="32"></A></td>
+<td><A HREF="node33.html"><img src="icons//up.gif"
+  border="0" height="32"
+  alt="Up One Level" width="32"></A></td>
+<td><A HREF="node35.html"><img src="icons//next.gif"
+  border="0" height="32"
+  alt="Next Page" width="32"></A></td>
+<td align="center" width="100%"> PyHEP Tutorial</td>
+<td><A href="contents.html"><img src="icons//contents.gif"
+  border="0" height="32"
+  alt="Contents" width="32"></A></td>
+<td><img src="icons//blank.gif"
+  border="0" height="32"
+  alt="" width="32"></td>
+<td><img src="icons//blank.gif"
+  border="0" height="32"
+  alt="" width="32"></td>
+</tr></table>
+<b class="navlabel">Previous:</b> <a class="sectref" HREF="node33.html">5. Working with HBOOK</A>
+<b class="navlabel">Up:</b> <a class="sectref" HREF="node33.html">5. Working with HBOOK</A>
+<b class="navlabel">Next:</b> <a class="sectref" HREF="node35.html">5.2 Loading and saving</A>
+<hr>
+
+</DIV>
+<!--End of Navigation Panel-->
+<ADDRESS>
+<tt>alex@alexsamuel.net</tt>
+</ADDRESS>
+</BODY>
+</HTML>

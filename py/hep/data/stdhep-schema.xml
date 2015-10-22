@@ -1,0 +1,56 @@
+<?xml version="1.0" ?>
+<schema>
+ <column name="id" type="int32">
+  <description>PDG Monte Carlo particle ID</description>
+ </column>
+ <column name="energy" type="float32">
+  <description>energy in lab frame</description>
+  <units>GeV/c^2</units>
+ </column>
+ <column name="px" type="float32">
+  <description>x component of three-momentum in lab frame</description>
+  <units>GeV/c</units>
+ </column>
+ <column name="py" type="float32">
+  <description>y component of three-momentum in lab frame</description>
+  <units>GeV/c</units>
+ </column>
+ <column name="pz" type="float32">
+  <description>z component of three-momentum in lab frame</description>
+  <units>GeV/c</units>
+ </column>
+ <column name="t" type="float32">
+  <description>time in lab frame at production</description>
+  <units>?</units>
+ </column>
+ <column name="x" type="float32">
+  <description>x component of position in lab frame at production</description>
+  <units>?</units>
+ </column>
+ <column name="y" type="float32">
+  <description>y component of position in lab frame at production</description>
+  <units>?</units>
+ </column>
+ <column name="z" type="float32">
+  <description>z component of position in lab frame at production</description>
+  <units>?</units>
+ </column>
+ <column name="parent_offset" type="int16">
+  <description>relative offset to first parent, or 0 for no parent</description>
+ </column>
+ <column name="parent2_offset" type="int16">
+  <description>relative offset to second parent, or 0 for no second parent</description>
+ </column>
+ <column name="child_begin_offset" type="int16">
+  <description>relative offset to first child</description>
+ </column>
+ <column name="child_end_offset" type="int16">
+  <description>relative offset to last child; equals 'child_begin_offset' if no children</description>
+ </column>
+ <expression formula="Momentum(energy, px, py, pz)" name="p4"/>
+ <expression formula="parent_offset + _index" name="parent_index"/>
+ <expression formula="child_begin_offset + _index" name="child_begin_index"/>
+ <expression formula="child_end_offset + _index" name="child_end_index"/>
+ <expression formula="ifthen(parent_offset == 0, None, _table[parent_offset + _index])" name="parent"/>
+ <expression formula="ifthen(parent2_offset == 0, None, _table[parent2_offset + _index])" name="parent2"/>
+</schema>

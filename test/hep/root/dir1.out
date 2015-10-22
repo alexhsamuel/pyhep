@@ -1,0 +1,12 @@
+Traceback (most recent call last):
+  File "dir1.py", line 17, in ?
+    for table in (hep.root.open("dir1.root")["table1"], ):
+  File "/home/samuel/dev/pyhep/py/hep/root/__init__.py", line 667, in open
+    return file.root
+  File "/home/samuel/dev/pyhep/py/hep/root/__init__.py", line 541, in <lambda>
+    root = property(lambda self:
+  File "/home/samuel/dev/pyhep/py/hep/root/__init__.py", line 65, in __init__
+    for tkey in [ _cast(tlist[i]) for i in range(len(tlist)) ]:
+  File "/home/samuel/dev/pyhep/py/hep/root/__init__.py", line 600, in _cast
+    parts = object.this.split("_")
+AttributeError: 'PySwigObject' object has no attribute 'split'

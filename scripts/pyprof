@@ -1,0 +1,22 @@
+#!/usr/bin/python2
+#-----------------------------------------------------------------------
+
+import os
+import profile
+import pstats
+import sys
+
+script = sys.argv[1]
+sys.path.insert(0, os.path.dirname(script))
+profile_data_file = script + ".prof"
+
+profile.run("execfile('%s')" % script, profile_data_file)
+
+ps = pstats.Stats(profile_data_file)
+ps.strip_dirs().sort_stats("time").print_stats()
+
+#-----------------------------------------------------------------------
+# Local variables:
+# mode: python
+# End:
+

@@ -1,0 +1,153 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+<title>2. Histograms</title>
+<META NAME="description" CONTENT="2. Histograms">
+<META NAME="keywords" CONTENT="pyhep">
+<META NAME="resource-type" CONTENT="document">
+<META NAME="distribution" CONTENT="global">
+<link rel="STYLESHEET" href="pyhep.css">
+<link rel="first" href="pyhep.html">
+<link rel="contents" href="contents.html" title="Contents">
+
+<LINK REL="next" HREF="node15.html">
+<LINK REL="previous" HREF="node3.html">
+<LINK REL="up" HREF="pyhep.html">
+<LINK REL="next" HREF="node5.html">
+</head>
+<body>
+<DIV CLASS="navigation">
+<table align="center" width="100%" cellpadding="0" cellspacing="2">
+<tr>
+<td><A HREF="node3.html"><img src="icons//previous.gif"
+  border="0" height="32"
+  alt="Previous Page" width="32"></A></td>
+<td><A HREF="pyhep.html"><img src="icons//up.gif"
+  border="0" height="32"
+  alt="Up One Level" width="32"></A></td>
+<td><A HREF="node5.html"><img src="icons//next.gif"
+  border="0" height="32"
+  alt="Next Page" width="32"></A></td>
+<td align="center" width="100%"> PyHEP Tutorial</td>
+<td><A href="contents.html"><img src="icons//contents.gif"
+  border="0" height="32"
+  alt="Contents" width="32"></A></td>
+<td><img src="icons//blank.gif"
+  border="0" height="32"
+  alt="" width="32"></td>
+<td><img src="icons//blank.gif"
+  border="0" height="32"
+  alt="" width="32"></td>
+</tr></table>
+<b class="navlabel">Previous:</b> <a class="sectref" HREF="node3.html">1. Introduction</A>
+<b class="navlabel">Up:</b> <a class="sectref" HREF="pyhep.html">PyHEP Tutorial</A>
+<b class="navlabel">Next:</b> <a class="sectref" HREF="node5.html">2.1 Introductory example</A>
+<br><hr>
+</DIV>
+<!--End of Navigation Panel-->
+
+<H1><A NAME="SECTION004000000000000000000">
+2. Histograms</A>
+</H1>
+
+<P>
+A histogram is a tool for measuring an <i>N</i>-dimensional
+statistical distribution by summarizing samples drawn from it.
+
+<P>
+The histogram divides a rectangular region of the <i>N</i>-dimensional
+samples space into rectangular sub-regions, called <i>bins</i>.  Each
+bin records the number of recorded samples whose values fall in that
+sub-region; when a sample is added into the histogram, or
+<i>accumulated</i>, the bin's value is incremented.
+
+<P>
+The histogram designates an <i>axis</i> for each dimension of the
+sample space, which specifies the range of coordinate values in that
+dimension which the histogram will accept.  Coordinate values that fall
+below or above that range are called <i>underflows</i> and
+<i>overflows</i>, respectively.
+
+<P>
+Each axis also specifies the edges of the bins in the corresponding
+dimension, which forms rectangular bins.  For <i>evenly-binned</i>
+axes, the positions of the bin edges are evenly spaced along the range
+of the axis.  For <i>unevenly-binned</i> axes, the bin edges may be
+positioned arbitrarily; this allows smaller bins to be used in regions
+of the coordinate value where samples are more likely to fall more
+densely.
+
+<P>
+In some cases, samples are not drawn from the distribution which is
+being measured, but from a modified distribution (for example, when
+importance sampling).  The modified distribution can be transformed back
+to the original distribution by assigning each sample a <i>weight</i>.
+The value of the corresponding bin will then be increased by the sample
+weight.  When no weight is specified, unit weight is assumed.
+
+<P>
+If the samples are statistically independent, the contents of the bins
+will provide an approximation of the probability density function from
+which the samples are drawn.  This approximation is subject to
+statistical uncertainty or <i>error</i>.  The error is drawn from a
+Poisson distribution; for large statistics, a Gaussian distribution is a
+good approximation.  
+
+<P>
+
+<p><hr>
+<!--Table of Child-Links-->
+<A NAME="CHILD_LINKS"><STRONG>Subsections</STRONG></a>
+
+<UL CLASS="ChildLinks">
+<LI><A href="node5.html">2.1 Introductory example</a>
+<LI><A href="node6.html">2.2 Creating histograms</a>
+<UL>
+<LI><A href="node7.html">2.2.1 Axis type</a>
+<LI><A href="node8.html">2.2.2 Additional axis parameters</a>
+<LI><A href="node9.html">2.2.3 Bin type and error model</a>
+</ul>
+<LI><A href="node10.html">2.3 Other kinds of axes</a>
+<LI><A href="node11.html">2.4 Filling histograms</a>
+<LI><A href="node12.html">2.5 Accessing histogram contents</a>
+<LI><A href="node13.html">2.6 More histogram operations</a>
+<LI><A href="node14.html">2.7 Scatter plots</a>
+</ul>
+<!--End of Table of Child-Links-->
+
+<DIV CLASS="navigation">
+<p><hr>
+<table align="center" width="100%" cellpadding="0" cellspacing="2">
+<tr>
+<td><A HREF="node3.html"><img src="icons//previous.gif"
+  border="0" height="32"
+  alt="Previous Page" width="32"></A></td>
+<td><A HREF="pyhep.html"><img src="icons//up.gif"
+  border="0" height="32"
+  alt="Up One Level" width="32"></A></td>
+<td><A HREF="node5.html"><img src="icons//next.gif"
+  border="0" height="32"
+  alt="Next Page" width="32"></A></td>
+<td align="center" width="100%"> PyHEP Tutorial</td>
+<td><A href="contents.html"><img src="icons//contents.gif"
+  border="0" height="32"
+  alt="Contents" width="32"></A></td>
+<td><img src="icons//blank.gif"
+  border="0" height="32"
+  alt="" width="32"></td>
+<td><img src="icons//blank.gif"
+  border="0" height="32"
+  alt="" width="32"></td>
+</tr></table>
+<b class="navlabel">Previous:</b> <a class="sectref" HREF="node3.html">1. Introduction</A>
+<b class="navlabel">Up:</b> <a class="sectref" HREF="pyhep.html">PyHEP Tutorial</A>
+<b class="navlabel">Next:</b> <a class="sectref" HREF="node5.html">2.1 Introductory example</A>
+<hr>
+
+</DIV>
+<!--End of Navigation Panel-->
+<ADDRESS>
+<tt>alex@alexsamuel.net</tt>
+</ADDRESS>
+</BODY>
+</HTML>

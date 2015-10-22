@@ -1,0 +1,626 @@
+\chapter{Histograms}
+
+A histogram is a tool for measuring an \textit{N}-dimensional
+statistical distribution by summarizing samples drawn from it.
+
+The histogram divides a rectangular region of the \textit{N}-dimensional
+samples space into rectangular sub-regions, called \textit{bins}.  Each
+bin records the number of recorded samples whose values fall in that
+sub-region; when a sample is added into the histogram, or
+\textit{accumulated}, the bin's value is incremented.
+
+The histogram designates an \textit{axis} for each dimension of the
+sample space, which specifies the range of coordinate values in that
+dimension which the histogram will accept.  Coordinate values that fall
+below or above that range are called \textit{underflows} and
+\textit{overflows}, respectively.
+
+Each axis also specifies the edges of the bins in the corresponding
+dimension, which forms rectangular bins.  For \textit{evenly-binned}
+axes, the positions of the bin edges are evenly spaced along the range
+of the axis.  For \textit{unevenly-binned} axes, the bin edges may be
+positioned arbitrarily; this allows smaller bins to be used in regions
+of the coordinate value where samples are more likely to fall more
+densely.
+
+In some cases, samples are not drawn from the distribution which is
+being measured, but from a modified distribution (for example, when
+importance sampling).  The modified distribution can be transformed back
+to the original distribution by assigning each sample a \textit{weight}.
+The value of the corresponding bin will then be increased by the sample
+weight.  When no weight is specified, unit weight is assumed.
+
+If the samples are statistically independent, the contents of the bins
+will provide an approximation of the probability density function from
+which the samples are drawn.  This approximation is subject to
+statistical uncertainty or \textit{error}.  The error is drawn from a
+Poisson distribution; for large statistics, a Gaussian distribution is a
+good approximation.  
+
+%-----------------------------------------------------------------------
+
+\section{Introductory example}
+
+This example creates a one-dimensional histogram with five evenly-spaced
+bins between zero and ten, fills some sample values into it, and dumps
+the resulting contents.
+
+Import the histogram module.
+\begin{verbatim}
+>>> import hep.hist
+\end{verbatim}
+Create a histogram object.
+\begin{verbatim}
+>>> histogram = hep.hist.Histogram1D(5, (0, 10))
+\end{verbatim}
+Show the histogram object we just created.
+\begin{verbatim}
+>>> print histogram
+Histogram(EvenlyBinnedAxis(5, (0, 10)), bin_type=int, error_model='poisson')
+\end{verbatim}
+Accumulate samples into the histogram.
+\begin{verbatim}
+>>> for sample in (0, 4, 5, 6, 7, 7, 9, 10, 11):
+...   histogram << sample
+...
+\end{verbatim}
+Dump the histogram contents.
+\begin{verbatim}
+>>> hep.hist.dump(histogram)
+Histogram, 1 dimensions
+int bins, 'poisson' error model
+ 
+axes: EvenlyBinnedAxis(5, (0, 10))
+ 
+      axis 0             bin value / error
+---------------------------------------------
+[   None,      0)         0 +  1.148 -      0
+[      0,      2)         1 +  1.360 -  1.000
+[      2,      4)         0 +  1.148 -      0
+[      4,      6)         2 +  1.519 -  2.000
+[      6,      8)         3 +  1.724 -  2.143
+[      8,     10)         1 +  1.360 -  1.000
+[     10,   None)         2 +  1.519 -  2.000
+ 
+\end{verbatim}
+
+%-----------------------------------------------------------------------
+
+\section{Creating histograms}
+
+The class \class{hep.hist.Histogram} provides an arbitrary-dimensional
+histogram with binned axes.  Optionally, a histogram can store errors
+(uncertainties) of the contents of each bin, or can compute these
+automatically from the bin contents.
+
+To construct a \class{Histogram}, provide a specification of each axis,
+one for each dimension.  You can specify an \code{Axis} object for each
+axis (described later), but the easiest way to specify an evenly-binned
+axis is with a tuple containing the number of bins, and a '(lo, hi)'
+pair specifying the low edge of the first bin and the high edge of the
+last bin.  For example,
+\begin{verbatim}
+>>> import hep.hist
+>>> one_d_histogram = hep.hist.Histogram((20, (0, 100)))
+\end{verbatim}
+creates a one-dimensional histogram with 20 bins between values 0
+and 100.  Why all the parentheses?  The outermost pair are for the function
+call; the next pair group parameters of the (single) axis; the innermost
+group the low and high boundaries of the axis range.
+
+Similarly,
+\begin{verbatim}
+>>> two_d_histogram = hep.hist.Histogram((20, (-1.0, 1.0)), (100, (0.0, 10.0)))
+\end{verbatim}
+creates a two-dimensional histograms with 20 bins on the first axis and
+100 bins on the second axis.
+
+To create a one-dimensional histogram you may use
+\function{Histogram1D}, which is equivalent except the axis's
+parameters are specified directly as arguments instead of wrapped in a
+sequence, so that one pair of parentheses may be omitted.  Thus, the
+first example above may be written,
+\begin{verbatim}
+>>> one_d_histogram = hep.hist.Histogram1D(20, (0, 100))
+\end{verbatim}
+
+You can access the sequence of axes for a histogram from its \code{axes}
+attribute.  You'll see that the tuple arguments you specified have been
+converted into \code{EvenlyBinnedAxis} objects.
+\begin{verbatim}
+>>> two_d_histogram.axes
+(EvenlyBinnedAxis(20, (-1.0, 1.0)), EvenlyBinnedAxis(100, (0.0, 10.0)))
+\end{verbatim}
+For one-dimensional histograms, you may also use the \code{axis} attribute.
+\begin{verbatim}
+>>> one_d_histogram.axis
+EvenlyBinnedAxis(20, (0, 100))
+\end{verbatim}
+
+For evenly-binned axes such as these, the \code{range} and
+\code{number_of_bins} attributes contain the axis parameters.  The
+\code{dimensions} attribute contains the number of dimensions of the 
+histogram.  This is always equal to the length of the \code{axes}
+attribute.
+\begin{verbatim}
+>>> one_d_histogram.axis.number_of_bins
+20
+>>> one_d_histogram.axis.range
+(0, 100)
+>>> one_d_histogram.dimensions
+1
+\end{verbatim}
+
+If you specify additional keyword arguments when creating the histogram,
+they are added as attributes to the new histogram object.  For example,
+\begin{verbatim}
+>>> histogram = hep.hist.Histogram(
+...   (40, (0.0, 10.0), "momentum", "GeV/c"),
+...   (32, (0, 32), "track hits"),
+...   title="drift chamber tracks")
+>>> histogram.title
+'drift chamber tracks'
+\end{verbatim}
+This creates a two-dimensional histogram of 40 bins of track energy
+between 0 and 10 GeV/c, and 32 integer bins counting track hits.  Note
+that this histogram has $(40 + 2) \times (32 + 2) = 1428$ bins,
+including overflow and underflow bins on each axis.  The histogram has
+an additional attribute \member{title} whose value is
+\code{"drift chamber tracks"}.  You can, of course, set or modify
+additional attributes like \member{title} after creating the histogram.
+
+\subsection{Axis type}
+
+By specifying the range for each axis, you also implicitly specify the
+numeric type for values along the axis.  (If the low and high values you
+specify for the range are of different types, a common type is obtained
+by Python's standard \code{coerce} mechanism.)  So, for instance, if
+you specify two integer values for the low and high boundaries for the
+axis, the axis will expect integer values, but if you specify one
+integer and one floating-point value, the axis will expect
+floating-point values.
+
+You can find out the type of an axis by consulting its \code{type}
+attribute.  For example,
+\begin{verbatim}
+>>> histogram = hep.hist.Histogram((20, (-1.0, 1.0)), (20, (-10, 10)))
+>>> histogram.axes[0].type
+<type 'float'>
+>>> histogram.axes[1].type
+<type 'int'>
+\end{verbatim}
+
+If the type for an axis is \code{int} or \code{long} (because you
+specified integer or long values for the axis range), the difference
+between the high and low ends of the range must be an even multiple of
+the number of bins.  If this is not desired, use \code{float} values for
+the axis.  For example, this construction raises an exception:
+\begin{verbatim}
+>>> histogram = hep.hist.Histogram1D(8, (-50, 50))
+[... stack trace ...]
+ValueError: number of bins must be a divisor of axis range
+\end{verbatim}
+because 50 - (-50) = 100 is not a multiple of 8.  However, any of these
+will work:
+\begin{verbatim}
+>>> histogram = hep.hist.Histogram1D(10, (-50, 50))
+>>> histogram = hep.hist.Histogram1D(8, (-60, 60))
+>>> histogram = hep.hist.Histogram1D(8, (-50.0, 50.0))
+\end{verbatim}
+
+\subsection{Additional axis parameters}
+
+In addition to the number of bins and axis range, you may optionally
+provide additional elements to a tuple specifying an axis (or as the
+arguments to \function{Histogram1D}).  The third argument is the string
+name of the axis quantity, and the fourth argument is a string
+describing the units of this quantity.  For example,
+\begin{verbatim}
+h = hep.hist.Histogram1D(30, (0.05, 0.20), "mass", "GeV/$c^2$")
+\end{verbatim}
+creates a histogram of 30 bins of mass between 0.05 and 0.2 GeV/$c^2$.
+
+\LaTeX markup may be used in the axis name and units; these will be
+rendered appropriately when plotting the histogram.  See the section on
+\LaTeX markup for details of the syntax.
+
+\subsection{Bin type and error model}
+
+A histogram stores for each bin the total number of samples, or the sum
+of weights of samples, that have fallen in this bin.  The keyword
+argument \var{bin_type} specifies the numerical type used to store these
+totals.  The histogram's \code{bin_type} attribute contains this type.
+\begin{verbatim}
+>>> histogram = hep.hist.Histogram1D(10, (-50, 50))
+>>> histogram.bin_type
+<type 'int'>
+>>> histogram = hep.hist.Histogram1D(10, (-50, 50), bin_type=float)
+>>> histogram.bin_type
+<type 'float'>
+\end{verbatim}
+
+By default, bin contents are stored as \code{int} values.
+\emph{Therefore, if you plan to use non-integer weights, you must
+specify} \code{bin_type=float} \emph{when creating the histogram!}
+Otherwise, weights will be truncated to integers when filling.  If your
+weights are all less than one, you fill find your histogram to be empty.
+
+A histogram can also estimate the statistical counting uncertainty on
+each bin.  This error is represented by a 68.2\% confidence interval
+around the bin value.  The interval is represented by a pair of values
+specifying the sizes of the low and high ``error bars'',
+\textit{e.g.} if the bin value is \code{20} and the errors are
+\code{(5.5, 4.5)}, the 68.2\% confidence interval is the range (14.5,
+24.5).
+
+Several models are available are available that control how the errors
+are stored or computed:
+\begin{itemize}
+ \item \code{"none"}: Each bin is assumed to have zero uncertainty.
+
+ \item \code{"gaussian"}: The errors are computed assuming symmetrical
+ Gaussian counting errors.  The bin value is interpreted as a number of
+ counts, and the low and high errors are both the square root of the bin
+ content.
+
+ \item \code{"poisson"}: The errors are computed assuming Poisson
+ counting errors.  The bin value is interpreted as a number of counts,
+ and the low and high errors are chosen to cover 68.2\% of the Poisson
+ cumulative distribution around the bin value.  The confidence interval
+ is chosen to cover 34.1\% on either side of the central value where
+ possible.  However, for a central value of zero, one, or two counts,
+ this would produce a confidence interval with a lower edge below zero,
+ so the lower edge is fixed at zero and the upper edge is chosen to
+ capture 68.2\%.
+
+ \item \code{"symmetric"}: For each bin, the histogram stores a single
+ value representing both the lower and upper errors.  The error value
+ may be specified explicitly for each bin with the \method{setBinError}
+ method.  
+
+ When a sample is accumulated into the histogram, the sample weight is
+ added in quadrature to the bin error.  The error value on a bin (used
+ as both the upper and lower error) are is given by $\sigma=\sqrt{\sum
+ w_i^2}$ where $w_i$ are the sample weights accumulated into the bin.
+
+ \item \code{"asymmetric"}: For each bin, the histogram stores two
+ values representing the lower and upper errors.  The two error values
+ may be specified explicitly for each bin with the \method{setBinError}
+ method.  
+
+ Errors are computed from weights as in the \code{"symmetric"} error
+ model.  The only difference is that you may specify manually different
+ values for the lower and upper errors using the \method{setBinError}
+ method.
+\end{itemize}
+
+Specify the error model for a histogram with the \var{error_model}
+keyword argument.  The default is \constant{"poisson"} if the bin type is
+\code{int} or \code{long}, or \constant{"gaussian"} otherwise.  If you will
+specify bin errors explicitly using the \method{setBinError} method, you
+must specify the \constant{"symmetric"} or the \constant{"asymmetric"}
+error model.  The \constant{error_model} attribute contains a histogram's
+error model.
+
+For example,
+\begin{verbatim}
+>>> histogram = hep.hist.Histogram1D(10, (-50, 50))
+>>> histogram.error_model
+'poisson'
+>>> histogram = hep.hist.Histogram1D(10, (-50, 50), bin_type=float)
+>>> histogram.error_model
+'gaussian'
+>>> histogram = hep.hist.Histogram1D(10, (-50, 50), error_model="symmetric")
+>>> histogram.error_model
+'symmetric'
+\end{verbatim}
+
+%-----------------------------------------------------------------------
+
+\section{Other kinds of axes}
+
+The histogram axes we've used up to now have been evenly binned,
+\textit{i.e.} all the bins on each axis are the same size.  It is also
+possible to create a histogram with unevenly-binned axes, using the
+\class{hep.hist.UnevenlyBinnedAxis} class.  
+
+Create an \class{UnevenlyBinnedAxis} instance, specifying a list of bin
+edges as its argument.  You can then specify this axis when creating a
+histogram.  Note that each histogram axis is independently specified, so
+that one, several, or all may be unevenly binned.
+
+For example, to create a 2-D histogram with an unevenly-binned x axis
+and one evenly-binned y axis,
+\begin{verbatim}
+>>> import hep.hist.axis
+>>> x_axis = hep.hist.UnevenlyBinnedAxis(
+...     [0, 2, 4, 5, 6, 8, 10, 15, 20], name="count")
+>>> histogram = hep.hist.Histogram(x_axis, 
+...     (10, (0., 5.), "time", "sec"))
+\end{verbatim}
+
+%-----------------------------------------------------------------------
+
+\section{Filling histograms}
+
+To ``fill'' a histogram is to accumulate samples from the sample
+distribution into it.  A sample is represented by a sequence of
+coordinate values, where the length of the sequence is equal to the
+number of dimensions of the histogram.   Each item in the sequence is
+the coordinate value along the corresponding axis of the histogram.
+
+For each bin, the histogram keeps track of the number of accumulated
+samples whose coordinates fall within the bin.  Optionally, samples may
+be specified a ``weight''; in that case, the histogram keeps track of
+the sum of weights of samples.  The numeric type used to store the
+number of samples or sum of weights for each bin is given by the
+\code{bin_type} attribute.  The histogram also tracks the total
+number of accumulations (the ``number of entries'') that you have made.
+
+The \method{accumulate} method accumulates an event into the histogram.
+Specify the coordinates of the sample, and optionally the event weight
+(which otherwise is taken to be unity).  The left-shift operator
+\code{<<} is shorthand for \method{accumulate} with unit weight.
+
+If any of the coordinate values passed to \method{accumulate} is
+\code{None}, the sample is not accumulated into the histogram and the number
+of entries is not changed.
+
+For example, to accumulate a the sample whose coordinates are \code{x}
+and \code{y} into a two-dimensional histogram \code{histogram},
+\begin{verbatim}
+>>> histogram.accumulate((x, y))
+\end{verbatim}
+or
+\begin{verbatim}
+>>> histogram << (x, y)
+\end{verbatim}
+To accumulate the same sample with weight \code{weight},
+\begin{verbatim}
+>>> histogram.accumulate((x, y), weight)
+\end{verbatim}
+
+For one-dimensional histograms, you may specify the sample coordinate by
+itself, instead of as a one-element sequence.  So, to accumulate the
+sample with coordinate \code{x} into one-dimensional \code{histogram},
+you may use any of these:
+\begin{verbatim}
+>>> histogram.accumulate((x, ))
+>>> histogram.accumulate(x)
+>>> histogram << (x, )
+>>> histogram << x
+\end{verbatim}
+
+Plotting histograms is described later in the plotting chapter.  A quick
+way of displaying histogram contents in text format is with the
+\function{hep.hist.dump} function.
+
+This script below creates a one-dimensional histogram with eleven
+integer bins between 2 and 12, inclusive, and fills the histogram with
+the result of simulating 1000 rolls of two dice.
+\codesample{histogram1.py}
+
+%-----------------------------------------------------------------------
+
+\section{Accessing histogram contents}
+
+You may specify a particular bin of a histogram with a ``bin number'',
+which is a sequence of bin positions along successive axes.  The length
+of the sequence is equal to the histogram's number of dimensions.  Each
+item is the index of the bin along the corresponding axis.
+
+Along each axis, the coordinate in the bin number ranges between zero
+and one less than the number of bins on the axis.  It may also take the
+values \code{"underflow"} and \code{"overflow"}, which denote the
+underflow and overflow bins, respectively
+
+For example, consider this histogram:
+\begin{verbatim}
+>>> histogram = hep.hist.Histogram((20, (-1.0, 1.0)), (24, (0, 24)))
+\end{verbatim}
+The corner bin numbers are for this histogram \code{(0,~0)},
+\code{(9,~0)}, \code{(0,~23)}, and \code{(9,~23)}.  
+The bin whose number is \code{(12,~"underflow")} is for any samples
+whose first coordinate is between 0.2 and 0.3, and whose second
+coordinate is less than 0.  The bin whose number is
+\code{("underflow",~"overflow")} is for any sample whose first
+coordinate is less than -1 and whose second coordinate is greater than
+24.
+
+To get the bin number corresponding to a sample point, use the
+\method{map} method, passing the sample coordinates. 
+
+Just as with sample coordinates, for a one-dimensional histogram you may
+specify either the bin number as a one-element sequence, or simply the
+bin number along the (only) axis.
+
+To obtain the contents of a bin, use the \method{getBinContent} method,
+passing the bin number.  To obtain the 68.2\% confidence interval on a
+bin, use the \method{getBinError} method, which returns two values
+specifying how far the interval extends below and above the central
+value.
+
+For example,
+\begin{verbatim}
+>>> histogram = hep.hist.Histogram1D(10, (0.0, 1.0), error_model="gaussian")
+>>> histogram.accumulate(0.64, 17)
+>>> histogram.map(0.64)
+(6,)
+>>> histogram.getBinContent((6, ))
+17
+>>> histogram.getBinError((6, ))
+(4.1231056256176606, 4.1231056256176606)
+\end{verbatim}
+In the \code{"gaussian"} error model, the errors on the bin are the
+square root of the bin contents, here, $\sqrt{17}$=4.123106.  Since the
+histogram is one-dimensional, we just as easily could have used,
+\begin{verbatim}
+>>> histogram.getBinContent(6)
+\end{verbatim}
+
+To set the contents of a bin, use the \method{setBinContent} method,
+specifying the new value as the second argument.  To set the error
+estimate on a bin, use the \method{setBinError} method and specify a
+pair for the sizes of lower and upper errors.  Note that you may only
+call the \method{setBinError} method of a histogram with
+\code{"asymmetric"} or \code{"symmetric"} error model, and in the latter
+case, the average of the lower and upper error values you specify is
+used as the single symmetric error estimate.
+
+To obtain the range of coordinate values spanned by a single bin, use
+the \method{getBinRange} method, passing the bin number.  The return
+value is a sequence, each of whose items is a \code{(lo, hi)} pair of
+coordinate values along on axis spanned by the bin.  For example, to
+print the bin range and value for bins in a one-dimensional histogram,
+\begin{verbatim}
+>>> for bin in range(histogram.axis.number_of_bins):
+...     (lo, hi), = histogram.getBinRange(bin)
+...     content = histogram.getBinContent(bin)
+...     print "bin (%f,%f): %f" % (lo, hi, content)
+\end{verbatim}
+Note that the return value from \method{getBinRange} is a one-element
+sequence, since the histogram is one-dimensional.  The single element is
+the pair \code{(lo, hi)} of the bin's range along the histogram's axis.
+
+A histogram's \member{number_of_samples} attribute contains the number
+of times the \method{accumulate} method (or the \code{<<} operator) was
+invoked.
+
+%-----------------------------------------------------------------------
+
+\section{More histogram operations}
+
+The following functions are provided in \module{hep.hist}.  Invoke
+\code{help(hep.hist.}\textit{function}\code{)} for a description of a
+function's parameters.
+
+\begin{itemize}
+ \item The function \function{scale} produces a copy of a histogram with
+ its contents scaled by a constant factor.  
+
+ \item The function \function{integrate} returns returns the sum over
+ all bins of a histogram.  Specify \code{overflows=True} to include
+ underflow and overflow bins in the integral.  
+
+ \item The function \function{normalize} returns a copy of a histogram,
+ scaled such that its integral a fixed integral value (by default, one).
+
+ \item The function \function{normalizeSlices} returns a copy of a
+ histogram in which slices along a specified axis are normalized
+ independently to a fixed integral value (by default, one).
+
+ \item The functions \function{add} and \function{divide} create a new
+ histogram by adding or dividing, respectively, the corresponding bins
+ in two histograms.  The histograms must have the same axis ranges and
+ binning.
+
+ \item The function \function{getMoment} computes the Nth moments of a
+ histogram in each of its dimensions.
+
+ \item The \function{mean} and \function{variance} functions compute
+ those two statistics. 
+
+ \item The function \function{slice} produces an (N-1)-dimensional
+ histogram by slicing or projecting out one dimension of an
+ N-dimensional histogram.  
+
+ \item The function \function{rebin} produces a copy of a histogram with
+ groups of adjacent bins combined together.
+
+ \item The function \function{transform} transforms a histogram axis by
+ an arbitrary monotonically increasing function by creating a copy of
+ the histogram with adjusted bin boundaries.
+
+ \item The function \function{getRange} determines the range of bin
+ values in a histogram.  Optionally, the range can accommodate the error
+ intervals on each bin.
+
+ \item The function \function{dump} prints the contents of a histogram
+ to standard output or another file.
+
+ \item The function \function{project} accumulates samples
+ simultaneously into several histograms from an array of sample events.
+ This function is described later in the chapter on tables.
+
+\end{itemize}
+
+You may also add or divide two histogram with the ordinary addition and
+division operators, respectively, and you may scale a histogram with the
+ordinary multiplication operator.  For example,
+\begin{verbatim}
+>>> combined_histogram = 3 * histogram1 + histogram2
+\end{verbatim}
+
+To iterate over all bins in a histogram, use these functions.  Each
+takes an optional second argument \code{overflow}; if true, underflow
+and underflow bins are included (by default false).
+\begin{itemize}
+  \item \function{AxisIterator} takes an \code{Axis}.  It returns an
+  iterator that yields the bin numbers for that axis.
+
+  \item \function{AxesIterator} takes a sequence of \code{Axis} objects,
+  such as the value of a histogram's \member{axes} attribute.  It return
+  s an iterator that yields the bin numbers for the multidimensional bin
+  space specified by the axes.
+
+  \item \function{BinValueIterator} takes a histogram.  It returns an
+  iterator that yields the contents of each bin in the histogram.
+
+  \item \function{BinErrorIterator} takes a histogram.  It returns an
+  iterator that yields the error estimate on each bin in the histogram.
+
+  \item \function{BinIterator} takes a histogram.  It returns an
+  iterator that yields triplets \code{(bin_number, contents, error)} for
+  each bin in the histogram.
+
+\end{itemize}
+
+For example, the code below shows how you might find the largest bin
+value in a histogram, including underflow and overflow bins.  (You could
+also use the \function{getRange} function.)
+\begin{verbatim}
+>>> max(hep.hist.BinValueIterator(histogram, overflow=True))
+\end{verbatim}
+
+%-----------------------------------------------------------------------
+
+\section{Scatter plots}
+
+A \class{hep.hist.Scatter} object collects sample points from a
+bivariate distribution.  The samples are typically displayed as a
+``scatter plot''.
+
+The sample points are not binned in any way; rather, the two coordinates
+of each samples is stored.  Unlike with a histogram, the memory usage of
+a \class{Scatter} object increases as additional samples are
+accumulated.  However, the resulting object contains the full covariance
+information for the two coordinate variables, and can be plotted
+precisely.
+
+To create a \class{Scatter}, specify information about the two axes.
+Each may be an instance of \class{hep.hist.Axis}, or more simply a
+sequence '(type, name, units)', where 'type' is the Python type of
+coordinate values along this axis, and 'name' and 'units' are strings
+describing the coordinate values (which may be omitted).  If no axes are
+specified, they are taken to have 'float' coordinates
+
+For example, this code creates a \class{Scatter} object.
+\begin{verbatim}
+>>> scatter = hep.hist.Scatter(
+...     (float, "energy", "GeV"), (int, "number of hits"),
+...     title="candidate tracks")
+\end{verbatim}
+
+Use the \method{accumulate} method to add a sample to the
+\class{Scatter}.  The argument must be a two-element sequence containing
+the two coordinates.  The left-shift operator \code{<<} is a synonym for
+\method{accumulate}.  The sample values are stored in a sequence
+attribute \member{points}.
+
+For example,
+\begin{verbatim}
+>>> for track in tracks:
+...     scatter << (track.energy, track.number_of_hits)
+... 
+\end{verbatim}
+

@@ -1,0 +1,181 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+<title>7.2 Drawing Primitives</title>
+<META NAME="description" CONTENT="7.2 Drawing Primitives">
+<META NAME="keywords" CONTENT="pyhep">
+<META NAME="resource-type" CONTENT="document">
+<META NAME="distribution" CONTENT="global">
+<link rel="STYLESHEET" href="pyhep.css">
+<link rel="first" href="pyhep.html">
+<link rel="contents" href="contents.html" title="Contents">
+
+<LINK REL="next" HREF="node44.html">
+<LINK REL="previous" HREF="node42.html">
+<LINK REL="up" HREF="node41.html">
+<LINK REL="next" HREF="node44.html">
+</head>
+<body>
+<DIV CLASS="navigation">
+<table align="center" width="100%" cellpadding="0" cellspacing="2">
+<tr>
+<td><A HREF="node42.html"><img src="icons//previous.gif"
+  border="0" height="32"
+  alt="Previous Page" width="32"></A></td>
+<td><A HREF="node41.html"><img src="icons//up.gif"
+  border="0" height="32"
+  alt="Up One Level" width="32"></A></td>
+<td><A HREF="node44.html"><img src="icons//next.gif"
+  border="0" height="32"
+  alt="Next Page" width="32"></A></td>
+<td align="center" width="100%"> PyHEP Tutorial</td>
+<td><A href="contents.html"><img src="icons//contents.gif"
+  border="0" height="32"
+  alt="Contents" width="32"></A></td>
+<td><img src="icons//blank.gif"
+  border="0" height="32"
+  alt="" width="32"></td>
+<td><img src="icons//blank.gif"
+  border="0" height="32"
+  alt="" width="32"></td>
+</tr></table>
+<b class="navlabel">Previous:</b> <a class="sectref" HREF="node42.html">7.1 Creating Draw objects</A>
+<b class="navlabel">Up:</b> <a class="sectref" HREF="node41.html">7. Drawing and Plotting</A>
+<b class="navlabel">Next:</b> <a class="sectref" HREF="node44.html">7.3 Drawing accessories</A>
+<br><hr>
+</DIV>
+<!--End of Navigation Panel-->
+
+<H1><A NAME="SECTION009200000000000000000">
+7.2 Drawing Primitives</A>
+</H1>
+
+<P>
+A <tt class="class">Draw</tt> object provides methods for drawing primitives such as
+lines, text, and symbols.  
+
+<P>
+A <tt class="class">Draw</tt> object does not carry any state information, so drawing
+styles such as colors, line thickness, and fonts must be specified with
+each call.  Such styles are specified using instances of these classes:
+
+<P>
+
+<UL>
+<LI><tt class="class">Color(red, green, blue)</tt> produces an object representing a
+ color with the specified red, green, and blue components, each between
+ zero and one.  The constants <code>black</code> and <code>white</code> are also
+ provided.  The default color for drawing operations is black
+
+<P>
+You may also specify a color using an instance of <tt class="class">Gray(level)</tt>,
+ where <var>level</var> is a gray level, or an instance of <tt class="class">HSV(hue,
+ saturation, value)</tt>.
+
+<P>
+</LI>
+<LI>An instance of <tt class="class">LineStyle(color, width)</tt> specifies the
+ color and line width for drawn lines.  The default line style for
+ drawing operations is black with a 1 pt line width.
+
+<P>
+</LI>
+<LI>An instance of <tt class="class">Fill(color)</tt> specifies the fill pattern for
+ solid objects.  The default fill is solid black.
+
+<P>
+</LI>
+<LI>An instance of <tt class="class">Marker(shape, color, size)</tt> specifies the
+ style of drawn markers (see below).  Available shapes are
+ <code>"filled&nbsp;dot"</code> (the default), <code>"empty&nbsp;dot"</code>,
+ <code>"filled&nbsp;square"</code>, <code>"empty&nbsp;square"</code>, <code>"filled&nbsp;diamond"</code>,
+ <code>"empty&nbsp;diamond"</code>, <code>"asterisk"</code>, <code>"+"</code>, <code>"X"</code>.  The
+ default color is black and the default size is 1 mm.
+
+<P>
+</LI>
+<LI>An insance of <tt class="class">Font(family, size)</tt> specifies the drawing
+ style for text.  Available shapes are <code>"Courier"</code>,
+ <code>"Courier-Bold"</code>, <code>"Courier-Oblique"</code>, <code>"Helvetica"</code>,
+ <code>"Helvetica-Bold"</code>, <code>"Helvetica-Oblique"</code>, <code>"Symbol"</code>,
+ <code>"Times"</code> (the default), <code>"Times-Bold"</code>, and
+ <code>"Times-Italic"</code>.  The default size is 11 pt.
+
+<P>
+</LI>
+</UL>
+
+<P>
+Below are listed the available methods for drawing primitives.  You may
+always omit color, font, and style arguments, in which case the defaults
+specified above are used.
+
+<P>
+
+<UL>
+<LI><tt class="method">drawLine(x0, y0, x1, y1, line_style)</tt> draws a line.
+
+<P>
+</LI>
+<LI><tt class="method">drawRectangle(x0, y0, x1, y1, fill_style)</tt> draws a
+ rectangle.
+
+<P>
+</LI>
+<LI><tt class="method">drawText(x, y, text, font, color, alignment)</tt> draws text.
+ The <var>alingment</var> argument is a sequence of two values between zero
+ and one which specify the X and Y alignment of the text relative to the
+ specified position.  The default alignment <code>(0, 0)</code> specifies
+ left- and bottom-justified text.  The alignment value <code>(1, 0.5)</code>,
+ for instance, specifies text that extends rightwards and is vertically
+ centered around the specified position.  Note that <var>text</var> should be
+ Latin-1 encoded.
+
+<P>
+</LI>
+<LI><tt class="method">drawMarker(x, y, marker_style)</tt> draws a marker symbol,
+ such as for a point in a scatter plot.  A variety of marker shapes are
+ available; see the description of <tt class="class">MarkerStyle</tt> above.
+
+<P>
+</LI>
+</UL>
+
+<P>
+
+<DIV CLASS="navigation">
+<p><hr>
+<table align="center" width="100%" cellpadding="0" cellspacing="2">
+<tr>
+<td><A HREF="node42.html"><img src="icons//previous.gif"
+  border="0" height="32"
+  alt="Previous Page" width="32"></A></td>
+<td><A HREF="node41.html"><img src="icons//up.gif"
+  border="0" height="32"
+  alt="Up One Level" width="32"></A></td>
+<td><A HREF="node44.html"><img src="icons//next.gif"
+  border="0" height="32"
+  alt="Next Page" width="32"></A></td>
+<td align="center" width="100%"> PyHEP Tutorial</td>
+<td><A href="contents.html"><img src="icons//contents.gif"
+  border="0" height="32"
+  alt="Contents" width="32"></A></td>
+<td><img src="icons//blank.gif"
+  border="0" height="32"
+  alt="" width="32"></td>
+<td><img src="icons//blank.gif"
+  border="0" height="32"
+  alt="" width="32"></td>
+</tr></table>
+<b class="navlabel">Previous:</b> <a class="sectref" HREF="node42.html">7.1 Creating Draw objects</A>
+<b class="navlabel">Up:</b> <a class="sectref" HREF="node41.html">7. Drawing and Plotting</A>
+<b class="navlabel">Next:</b> <a class="sectref" HREF="node44.html">7.3 Drawing accessories</A>
+<hr>
+
+</DIV>
+<!--End of Navigation Panel-->
+<ADDRESS>
+<tt>alex@alexsamuel.net</tt>
+</ADDRESS>
+</BODY>
+</HTML>

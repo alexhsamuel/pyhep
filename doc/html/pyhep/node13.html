@@ -1,0 +1,213 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+<title>2.6 More histogram operations</title>
+<META NAME="description" CONTENT="2.6 More histogram operations">
+<META NAME="keywords" CONTENT="pyhep">
+<META NAME="resource-type" CONTENT="document">
+<META NAME="distribution" CONTENT="global">
+<link rel="STYLESHEET" href="pyhep.css">
+<link rel="first" href="pyhep.html">
+<link rel="contents" href="contents.html" title="Contents">
+
+<LINK REL="next" HREF="node14.html">
+<LINK REL="previous" HREF="node12.html">
+<LINK REL="up" HREF="node4.html">
+<LINK REL="next" HREF="node14.html">
+</head>
+<body>
+<DIV CLASS="navigation">
+<table align="center" width="100%" cellpadding="0" cellspacing="2">
+<tr>
+<td><A HREF="node12.html"><img src="icons//previous.gif"
+  border="0" height="32"
+  alt="Previous Page" width="32"></A></td>
+<td><A HREF="node4.html"><img src="icons//up.gif"
+  border="0" height="32"
+  alt="Up One Level" width="32"></A></td>
+<td><A HREF="node14.html"><img src="icons//next.gif"
+  border="0" height="32"
+  alt="Next Page" width="32"></A></td>
+<td align="center" width="100%"> PyHEP Tutorial</td>
+<td><A href="contents.html"><img src="icons//contents.gif"
+  border="0" height="32"
+  alt="Contents" width="32"></A></td>
+<td><img src="icons//blank.gif"
+  border="0" height="32"
+  alt="" width="32"></td>
+<td><img src="icons//blank.gif"
+  border="0" height="32"
+  alt="" width="32"></td>
+</tr></table>
+<b class="navlabel">Previous:</b> <a class="sectref" HREF="node12.html">2.5 Accessing histogram contents</A>
+<b class="navlabel">Up:</b> <a class="sectref" HREF="node4.html">2. Histograms</A>
+<b class="navlabel">Next:</b> <a class="sectref" HREF="node14.html">2.7 Scatter plots</A>
+<br><hr>
+</DIV>
+<!--End of Navigation Panel-->
+
+<H1><A NAME="SECTION004600000000000000000">
+2.6 More histogram operations</A>
+</H1>
+
+<P>
+The following functions are provided in <tt class="module">hep.hist</tt>.  Invoke
+<code>help(hep.hist.</code><i>function</i><code>)</code> for a description of a
+function's parameters.
+
+<P>
+
+<UL>
+<LI>The function <tt class="function">scale</tt> produces a copy of a histogram with
+ its contents scaled by a constant factor.  
+
+<P>
+</LI>
+<LI>The function <tt class="function">integrate</tt> returns returns the sum over
+ all bins of a histogram.  Specify <code>overflows=True</code> to include
+ underflow and overflow bins in the integral.  
+
+<P>
+</LI>
+<LI>The function <tt class="function">normalize</tt> returns a copy of a histogram,
+ scaled such that its integral is unity (or another constant value
+ specified as the optional second argument).
+
+<P>
+</LI>
+<LI>The functions <tt class="function">add</tt> and <tt class="function">divide</tt> add or divide
+ two histograms binwise, respectively.  The histograms must have the
+ same axis ranges and binning.
+
+<P>
+</LI>
+<LI>The function <tt class="function">getMoment</tt> computes the Nth moments of a
+ histogram in each of its dimensions.
+
+<P>
+</LI>
+<LI>The <tt class="function">mean</tt> and <tt class="function">variance</tt> functions compute
+ those two statistics. 
+
+<P>
+</LI>
+<LI>The function <tt class="function">slice</tt> produces an (N-1)-dimensional
+ histogram by slicing or projecting out one dimension of an
+ N-dimensional histogram.  
+
+<P>
+</LI>
+<LI>The function <tt class="function">rebin</tt> produces a copy of a histogram with
+ groups of adjacent bins combined together.
+
+<P>
+</LI>
+<LI>The function <tt class="function">getRange</tt> determines the range of bin
+ values in a histogram.  Optionally, the range can accommodate the error
+ intervals on each bin.
+
+<P>
+</LI>
+<LI>The function <tt class="function">dump</tt> prints the contents of a histogram
+ to standard output or another file.
+
+<P>
+</LI>
+<LI>The function <tt class="function">project</tt> accumulates samples
+ simultaneously into several histograms from an array of sample events.
+ This function is described later in the chapter on tables.
+
+<P>
+</LI>
+</UL>
+
+<P>
+You may also add or divide two histogram with the ordinary addition and
+division operators, respectively, and you may scale a histogram with the
+ordinary multiplication operator.  For example,
+<dl><dd><pre class="verbatim">
+&gt;&gt;&gt; combined_histogram = 3 * histogram1 + histogram2
+</pre></dl>
+
+<P>
+To iterate over all bins in a histogram, use these functions.  Each
+takes an optional second argument <code>overflow</code>; if true, underflow
+and underflow bins are included (by default false).
+
+<UL>
+<LI><tt class="function">AxisIterator</tt> takes an <code>Axis</code>.  It returns an
+  iterator that yields the bin numbers for that axis.
+
+<P>
+</LI>
+<LI><tt class="function">AxesIterator</tt> takes a sequence of <code>Axis</code> objects,
+  such as the value of a histogram's <tt class="member">axes</tt> attribute.  It return
+  s an iterator that yields the bin numbers for the multidimensional bin
+  space specified by the axes.
+
+<P>
+</LI>
+<LI><tt class="function">BinValueIterator</tt> takes a histogram.  It returns an
+  iterator that yields the contents of each bin in the histogram.
+
+<P>
+</LI>
+<LI><tt class="function">BinErrorIterator</tt> takes a histogram.  It returns an
+  iterator that yields the error estimate on each bin in the histogram.
+
+<P>
+</LI>
+<LI><tt class="function">BinIterator</tt> takes a histogram.  It returns an
+  iterator that yields triplets <code>(bin_number, contents, error)</code> for
+  each bin in the histogram.
+
+<P>
+</LI>
+</UL>
+
+<P>
+For example, the code below show how you might find the largest bin
+value in a histogram, including underflow and overflow bins.  (You could
+also use the <tt class="function">getRange</tt> function.)
+<dl><dd><pre class="verbatim">
+&gt;&gt;&gt; max(hep.hist.BinValueIterator(histogram, overflow=True))
+</pre></dl>
+
+<P>
+
+<DIV CLASS="navigation">
+<p><hr>
+<table align="center" width="100%" cellpadding="0" cellspacing="2">
+<tr>
+<td><A HREF="node12.html"><img src="icons//previous.gif"
+  border="0" height="32"
+  alt="Previous Page" width="32"></A></td>
+<td><A HREF="node4.html"><img src="icons//up.gif"
+  border="0" height="32"
+  alt="Up One Level" width="32"></A></td>
+<td><A HREF="node14.html"><img src="icons//next.gif"
+  border="0" height="32"
+  alt="Next Page" width="32"></A></td>
+<td align="center" width="100%"> PyHEP Tutorial</td>
+<td><A href="contents.html"><img src="icons//contents.gif"
+  border="0" height="32"
+  alt="Contents" width="32"></A></td>
+<td><img src="icons//blank.gif"
+  border="0" height="32"
+  alt="" width="32"></td>
+<td><img src="icons//blank.gif"
+  border="0" height="32"
+  alt="" width="32"></td>
+</tr></table>
+<b class="navlabel">Previous:</b> <a class="sectref" HREF="node12.html">2.5 Accessing histogram contents</A>
+<b class="navlabel">Up:</b> <a class="sectref" HREF="node4.html">2. Histograms</A>
+<b class="navlabel">Next:</b> <a class="sectref" HREF="node14.html">2.7 Scatter plots</A>
+<hr>
+
+</DIV>
+<!--End of Navigation Panel-->
+<ADDRESS>
+<tt>alex@alexsamuel.net</tt>
+</ADDRESS>
+</BODY>
+</HTML>

@@ -1,0 +1,177 @@
+This is TeX, Version 3.14159 (Web2C 7.4.5) (format=latex 2004.3.25)  1 DEC 2004 00:20
+**./images.tex
+(./images.tex
+LaTeX2e <2001/06/01>
+Babel <v3.7h> and hyphenation patterns for american, french, german, ngerman, n
+ohyphenation, loaded.
+
+(/home/samuel/dev/pyhep/doc/texinputs/manual.cls
+Document Class: manual 1998/03/03 Document class (Python manual)
+(/home/samuel/dev/pyhep/doc/texinputs/pypaper.sty (/usr/share/texmf/tex/latex/p
+snfss/times.sty
+Package: times 2002/09/08 PSNFSS-v9.0a (SPQR) 
+)
+Using Times instead of Computer Modern.
+) (/usr/share/texmf/tex/latex/base/report.cls
+Document Class: report 2001/04/21 v1.4e Standard LaTeX document class
+(/usr/share/texmf/tex/latex/base/size10.clo
+File: size10.clo 2001/04/21 v1.4e Standard LaTeX file (size option)
+)
+\c@part=\count79
+\c@chapter=\count80
+\c@section=\count81
+\c@subsection=\count82
+\c@subsubsection=\count83
+\c@paragraph=\count84
+\c@subparagraph=\count85
+\c@figure=\count86
+\c@table=\count87
+\abovecaptionskip=\skip41
+\belowcaptionskip=\skip42
+\bibindent=\dimen102
+) (/home/samuel/dev/pyhep/doc/texinputs/fancyhdr.sty
+\headwidth=\dimen103
+)
+Using fancier footers than usual.
+(/home/samuel/dev/pyhep/doc/texinputs/fncychap.sty
+Package: fncychap 1997/04/06 v1.11 LaTeX package (Revised chapters)
+\RW=\skip43
+\mylen=\skip44
+\myhi=\skip45
+\px=\skip46
+\py=\skip47
+\pyy=\skip48
+\pxx=\skip49
+\c@AlphaCnt=\count88
+\c@AlphaDecCnt=\count89
+)
+Using fancy chapter headings.
+(/home/samuel/dev/pyhep/doc/texinputs/python.sty
+Package: python 1998/01/11 LaTeX package (Python markup)
+(/usr/share/texmf/tex/latex/tools/longtable.sty
+Package: longtable 2000/10/22 v4.10 Multi-page Table package (DPC)
+\LTleft=\skip50
+\LTright=\skip51
+\LTpre=\skip52
+\LTpost=\skip53
+\LTchunksize=\count90
+\LTcapwidth=\dimen104
+\LT@head=\box26
+\LT@firsthead=\box27
+\LT@foot=\box28
+\LT@lastfoot=\box29
+\LT@cols=\count91
+\LT@rows=\count92
+\c@LT@tables=\count93
+\c@LT@chunks=\count94
+\LT@p@ftn=\toks14
+) (/usr/share/texmf/tex/latex/tools/verbatim.sty
+Package: verbatim 2001/03/12 v1.5p LaTeX2e package for verbatim enhancements
+\every@verbatim=\toks15
+\verbatim@line=\toks16
+\verbatim@in@stream=\read1
+)
+\py@codewidth=\skip54
+(/usr/share/texmf/tex/latex/base/alltt.sty
+Package: alltt 1997/06/16 v2.0g defines alltt environment
+)
+\py@ModSynopsisFile=\write3
+)) (/usr/share/texmf/tex/latex/base/ifthen.sty
+Package: ifthen 2001/05/26 v1.1c Standard LaTeX ifthen package (DPC)
+) (/usr/share/texmf/tex/latex/tools/xspace.sty
+Package: xspace 1997/10/13 v1.06 Space after command names (DPC)
+)
+\@indexfile=\write4
+\openout4 = `images.idx'.
+
+Writing index file images.idx
+(/usr/share/texmf/tex/latex/graphics/color.sty
+Package: color 1999/02/16 v1.0i Standard LaTeX Color (DPC)
+(/usr/share/texmf/tex/latex/config/color.cfg
+File: color.cfg 2001/08/31 v1.1 color configuration of teTeX/TeXLive
+)
+Package color Info: Driver file: dvips.def on input line 125.
+(/usr/share/texmf/tex/latex/graphics/dvips.def
+File: dvips.def 1999/02/16 v3.0i Driver-dependant file (DPC,SPQR)
+) (/usr/share/texmf/tex/latex/graphics/dvipsnam.def
+File: dvipsnam.def 1999/02/16 v3.0i Driver-dependant file (DPC,SPQR)
+)) (/usr/share/texmf/tex/latex/base/inputenc.sty
+Package: inputenc 2001/07/10 v0.99a Input encoding file 
+(/usr/share/texmf/tex/latex/base/latin1.def
+File: latin1.def 2001/07/10 v0.99a Input encoding file 
+))
+\sizebox=\box30
+\lthtmlwrite=\write5
+(./images.aux)
+\openout1 = `images.aux'.
+
+LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 131.
+LaTeX Font Info:    ... okay on input line 131.
+LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 131.
+LaTeX Font Info:    ... okay on input line 131.
+LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 131.
+LaTeX Font Info:    ... okay on input line 131.
+LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 131.
+LaTeX Font Info:    ... okay on input line 131.
+LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 131.
+LaTeX Font Info:    ... okay on input line 131.
+LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 131.
+LaTeX Font Info:    ... okay on input line 131.
+LaTeX Font Info:    Try loading font information for OT1+ptm on input line 131.
+
+(/usr/share/texmf/tex/latex/psnfss/ot1ptm.fd
+File: ot1ptm.fd 2001/06/04 font definitions for OT1/ptm.
+)
+
+latex2htmlLength hsize=349.0pt
+
+latex2htmlLength vsize=680.43pt
+
+latex2htmlLength hoffset=0.0pt
+
+latex2htmlLength voffset=0.0pt
+
+latex2htmlLength topmargin=0.0pt
+
+latex2htmlLength topskip=0.00003pt
+
+latex2htmlLength headheight=0.0pt
+
+latex2htmlLength headsep=0.0pt
+
+latex2htmlLength parskip=5.69054pt
+
+latex2htmlLength oddsidemargin=0.0pt
+
+latex2htmlLength evensidemargin=0.0pt
+
+LaTeX Font Info:    External font `cmex10' loaded for size
+(Font)              <7> on input line 161.
+LaTeX Font Info:    External font `cmex10' loaded for size
+(Font)              <5> on input line 161.
+l2hSize :tex2html_wrap_inline950:8.0pt::8.0pt::116.05542pt.
+[1
+
+
+
+]
+l2hSize :tex2html_wrap_inline952:8.14003pt::0.0pt::9.31372pt.
+[2
+
+
+]
+l2hSize :tex2html_wrap_inline954:9.57217pt::9.57217pt::18.83342pt.
+[3
+
+
+] (./images.aux) ) 
+Here is how much of TeX's memory you used:
+ 1300 strings out of 95847
+ 16099 string characters out of 1193752
+ 60786 words of memory out of 1000001
+ 4255 multiletter control sequences out of 10000+50000
+ 4147 words of font info for 15 fonts, out of 500000 for 1000
+ 15 hyphenation exceptions out of 1000
+ 30i,5n,42p,236b,231s stack positions out of 1500i,500n,5000p,200000b,5000s
+
+Output written on images.dvi (3 pages, 924 bytes).

@@ -1,0 +1,144 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+<title>4.2.1 Expression types</title>
+<META NAME="description" CONTENT="4.2.1 Expression types">
+<META NAME="keywords" CONTENT="pyhep">
+<META NAME="resource-type" CONTENT="document">
+<META NAME="distribution" CONTENT="global">
+<link rel="STYLESHEET" href="pyhep.css">
+<link rel="first" href="pyhep.html">
+<link rel="contents" href="contents.html" title="Contents">
+
+<LINK REL="previous" HREF="node28.html">
+<LINK REL="up" HREF="node28.html">
+<LINK REL="next" HREF="node30.html">
+</head>
+<body>
+<DIV CLASS="navigation">
+<table align="center" width="100%" cellpadding="0" cellspacing="2">
+<tr>
+<td><A HREF="node28.html"><img src="icons//previous.gif"
+  border="0" height="32"
+  alt="Previous Page" width="32"></A></td>
+<td><A HREF="node28.html"><img src="icons//up.gif"
+  border="0" height="32"
+  alt="Up One Level" width="32"></A></td>
+<td><A HREF="node30.html"><img src="icons//next.gif"
+  border="0" height="32"
+  alt="Next Page" width="32"></A></td>
+<td align="center" width="100%"> PyHEP Tutorial</td>
+<td><A href="contents.html"><img src="icons//contents.gif"
+  border="0" height="32"
+  alt="Contents" width="32"></A></td>
+<td><img src="icons//blank.gif"
+  border="0" height="32"
+  alt="" width="32"></td>
+<td><img src="icons//blank.gif"
+  border="0" height="32"
+  alt="" width="32"></td>
+</tr></table>
+<b class="navlabel">Previous:</b> <a class="sectref" HREF="node28.html">4.2 Compiling expressions</A>
+<b class="navlabel">Up:</b> <a class="sectref" HREF="node28.html">4.2 Compiling expressions</A>
+<b class="navlabel">Next:</b> <a class="sectref" HREF="node30.html">4.3 Using expressions with</A>
+<br><hr>
+</DIV>
+<!--End of Navigation Panel-->
+
+<H2><A NAME="SECTION006210000000000000000">
+4.2.1 Expression types</A>
+</H2>
+
+<P>
+PyHEP attempts to determine the numeric type of the result of an
+expression.  To do this, it needs to know the types of the symbol values
+in the expression.  For constants, this is obvious, but since Python is
+an untyped language, the expression compiler cannot automatically
+determine the types of symbolic names in an expression, and treats them
+as generic objects.  
+
+<P>
+PyHEP expressions understand the types <code>int</code>, <code>float</code>, and
+<code>complex</code>.  The value <code>None</code> indicates that the type is not
+known, so the value should be treated as a generic Python object.
+
+<P>
+For example, in these expressions,  PyHEP can infer the type of the
+expression value entirely from the types of constants.
+<dl><dd><pre class="verbatim">
+&gt;&gt;&gt; print hep.expr.asExpression("10 + 12.5").type
+&lt;type 'float'&gt;
+&gt;&gt;&gt; print hep.expr.asExpression("3 ** 4").type
+&lt;type 'int'&gt;
+</pre></dl>
+However, a symbol's type is assumed to be generic, so the whole
+expression's type cannot be inferred.
+<dl><dd><pre class="verbatim">
+&gt;&gt;&gt; print hep.expr.asExpression("2 * c + 10").type
+None
+</pre></dl>
+
+<P>
+The expression compiler can do a much better job if it knows the
+numerical type of the expression's symbols.  When you call
+<tt class="function">compile</tt>, you can specify the types of symbols as keyword
+arguments.  For example,
+<dl><dd><pre class="verbatim">
+&gt;&gt;&gt; cex = hep.expr.compile("2 * c + 10", c=int)
+&gt;&gt;&gt; print cex.type
+&lt;type 'int'&gt;
+</pre></dl>
+If you provide a second non-keyword argument, this type is used as the
+default for all symbols in the expression.
+<dl><dd><pre class="verbatim">
+&gt;&gt;&gt; cex = hep.expr.compile("a**2 + b**2 + c**2", float)
+&gt;&gt;&gt; print cex.type
+&lt;type 'float'&gt;
+</pre></dl>
+By specifying symbol types, you can construct compiled expressions that
+execute much faster than expressions with generic types.
+
+<P>
+You can also construct an uncompiled expression with types specified for
+symbols using the <tt class="function">hep.expr.setTypes</tt>,
+<tt class="function">hep.expr.setTypesFrom</tt>, and <tt class="function">hep.expr.setTypesFixed</tt>
+functions.
+
+<P>
+
+<DIV CLASS="navigation">
+<p><hr>
+<table align="center" width="100%" cellpadding="0" cellspacing="2">
+<tr>
+<td><A HREF="node28.html"><img src="icons//previous.gif"
+  border="0" height="32"
+  alt="Previous Page" width="32"></A></td>
+<td><A HREF="node28.html"><img src="icons//up.gif"
+  border="0" height="32"
+  alt="Up One Level" width="32"></A></td>
+<td><A HREF="node30.html"><img src="icons//next.gif"
+  border="0" height="32"
+  alt="Next Page" width="32"></A></td>
+<td align="center" width="100%"> PyHEP Tutorial</td>
+<td><A href="contents.html"><img src="icons//contents.gif"
+  border="0" height="32"
+  alt="Contents" width="32"></A></td>
+<td><img src="icons//blank.gif"
+  border="0" height="32"
+  alt="" width="32"></td>
+<td><img src="icons//blank.gif"
+  border="0" height="32"
+  alt="" width="32"></td>
+</tr></table>
+<b class="navlabel">Previous:</b> <a class="sectref" HREF="node28.html">4.2 Compiling expressions</A>
+<b class="navlabel">Up:</b> <a class="sectref" HREF="node28.html">4.2 Compiling expressions</A>
+<b class="navlabel">Next:</b> <a class="sectref" HREF="node30.html">4.3 Using expressions with</A>
+<hr>
+
+</DIV>
+<!--End of Navigation Panel-->
+<ADDRESS>
+<tt>alex@alexsamuel.net</tt>
+</ADDRESS>
+</BODY>
+</HTML>

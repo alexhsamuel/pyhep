@@ -1,0 +1,148 @@
+\section{\module{hep.cernlib} -- CERNLIB interface}
+
+\declaremodule{extension}{hep.cernlib}
+\modulesynopsis{CERNLIB interface}
+
+The \module{hep.cernlib} module provides access from Python to features
+in CERNLIB, the CERN program library for high energy physics.  The
+applicable components of CERNLIB are linked into \pyhep and need not be
+provided separately.
+
+\subsection{\module{hep.cernlib.hbook} -- HBOOK}
+
+\declaremodule{extension}{hep.cernlib.hbook}
+\modulesynopsis{HBOOK interface}
+
+HBOOK is a system for managing histograms and ntuples.  It implements a
+file format for storing these in structured disk files.  \pyhep provides
+read and write access to histograms and ntuples stored in HBOOK files.
+
+The module \module{hep.cernlib.hbook} provides these functions:
+
+\begin{funcdesc}{open}{path\optional{, mode="r", record_length=1024,
+purge_cycles=1}}
+ Create or open an HBOOK file at \var{path}.  
+
+ \var{mode} is the access mode, analogous to Python's built-in
+ \function{file} and \function{open} functions.  If \code{"r"}, opens an
+ existing HBOOK file for reading.  If \code{"r+"}, \code{"w"},
+ \code{"a"}, or \code{"a+"}, opens an existing file for reading and
+ writing, or creates the file if it doesn't exist.  If \code{"w+"},
+ creates a file or overwrites an existing file.
+
+ \var{record_length} is the RZ record length to use for this file.  
+
+ If \var{purge_cycles} is set to a true value and the file is open for
+ writing, the entire file will be purged when it is closed.
+\end{funcdesc}
+
+The return value from \function{open} is a \class{File} object.  The
+file remains open until it is deleted.  
+
+\subsubsection{Paths, IDs, and cycles}
+
+In \pyhep, all paths in HBOOK files are specified relative to the root
+directory of the HBOOK file.  The root directory itself is represented
+by an empty string, and the path separator is a forward slash.  Note
+that there is no notion of working directory or relative paths.
+
+The last component of a path is the title of a histogram, ntuple, or
+directory.  HBOOK does not require titles to be unique, even in the same
+directory.  However, each entry is also assigned a positive integer ID
+number (which is called the RZ ID, because HBOOK's file format is built
+on top of the RZ input/output system).  \pyhep's functions for creating
+tables and directories and saving histograms will choose an available RZ
+ID by default, but you can specify a different value to use (except for
+directories).
+
+Thus, HBOOK allows you to place multiple items with the same title in
+the same directory, but each must have a unique RZ ID.  When loading or
+deleting histograms or ntuples, you may specify either the RZ ID instead
+of the title in the path.  For example, a histogram with title MYHIST
+and RZ ID 17 in directory DIR/SUBDIR can be accessed as
+\code{"DIR/SUBDIR/MYHIST"} or \code{"DIR/SUBDIR/17"}.  When saving
+histograms, though, you must specify the title in the path.
+
+Note that because of how HBOOK keeps ntuples in memory while they're
+being accessed, you may not access two ntuples with the same RZ ID at
+the same time, even if the ntuples are stored in different HBOOK files
+or directories.  Be sure to delete the \class{Table} object for one
+before creating or loading another.
+
+HBOOK files also support revision cycles; see the HBOOK or RZ
+documentation for details.  Unless \function{hbook.open} is invoked with
+\code{purge_cycles=0} (or the file is opened read-only), \pyhep
+``purges'' the entire file when the file is closed.  This removes cycles
+except the most recent for each histogram and ntuple in the file.
+
+\subsubsection{\class{File} objects}
+
+A \class{File} object has the following methods and attributes:
+
+\begin{memberdesc}{writeable}
+ True if the file is open for writing as well as reading.
+\end{memberdesc}
+
+\begin{methoddesc}{listdir}{\optional{path}}
+ Return the contents of the directory specified by \var{path}.  The
+ return value is a sequence of \code{(id, type, title)} tuples, where
+ \var{id} is the RZ ID of the entry; \var{type} is one of
+ \code{"1d~histogram"}, \code{"2d~histogram"}, \code{"ntuple"}, or
+ \code{"directory"}; and \var{title} is the title of the entry.
+\end{methoddesc}
+
+\begin{methoddesc}{mkdir}{path}
+ Create a new directory at \var{path}.
+\end{methoddesc}
+
+\begin{methoddesc}{rmdir}{path}
+ Remove the directory at \var{path}.
+\end{methoddesc}
+
+\begin{methoddesc}{save}{path, object\optional{, rz_id}}
+ Store a histogram \var{object} at \var{path}.  One- and two-dimensional
+ histograms are supported.  An unused RZ ID is chosen automatically,
+ unless \var{rz_id} is specified or \var{object} has an \member{rz_id}
+ attribute.  The function returns the RZ ID under which 'object' was
+ saved. 
+\end{methoddesc}
+
+\begin{methoddesc}{load}{path}
+ Load a histogram or connect to an ntuple at \var{path}.  If \var{path}
+ is a one- or two-dimensional histogram, returns a histogram object with
+ its contents.  If \var{path} is an ntuple, returns a table object (see
+ \module{hep.table}) accessing it.
+\end{methoddesc}
+
+\begin{methoddesc}{createTable}{path, schema\optional{, rz_id, column_wise=1}}
+ Create a table as an ntuple at \var{path} in the HBOOK file, using
+ columns from \var{schema}, a \class{hep.table.Schema} instance.  If
+ \var{rz_id} is not provided, an unused RZ ID is chosen automatically.
+ The table is stored as a column-wise ntuple, unless a false value is
+ passed for \var{column_wise}.  
+
+ Column-wise ntuples support these column types: \constant{"int32"},
+ \constant{"int64"}, \constant{"float32"}, and \constant{"float64"}.
+
+ Row-wise ntuples support only \constant{"float32"} column types.
+\end{methoddesc}
+
+\begin{methoddesc}{remove}{path}
+ Remove the ntuple or histogram at \var{path}.  Use \method{rmdir} to
+ remove a directory.
+\end{methoddesc}
+
+\begin{methoddesc}{normpath}{path}
+ Return the canonical form of absolute path \var{path} in the HBOOK
+ file.
+\end{methoddesc}
+
+\begin{methoddesc}{join}{*components}
+ Join together \var{components} to form an absolute path.
+\end{methoddesc}
+
+\begin{methoddesc}{split}{path}
+ Return \code{(dir, name)}, where \var{dir} is the portion of \var{path}
+ up to the last directory separator, and \var{name} is the remainder.
+\end{methoddesc}
+

@@ -1,0 +1,516 @@
+\chapter{Tables}
+
+\pyhep provides a flat-format database facility, similar to ``n-tuples''
+in other HEP analysis systems.  
+
+A \pyhep table is similar to a table in a typical database system.  A
+table is a sequence of rows, each of which has the same number of
+columns and values for each column of the same type.  The number and
+types of columns constitutes the table's schema.  
+
+\pyhep's tables are subject to the following restrictions:
+
+\begin{itemize}
+
+ \item A table's schema is set when it is created, and cannot
+ subsequently be changed.  (Creating another table with a different
+ schema using the same data is straightforward.)
+
+ \item The size in bytes of each table row is a constant.  This limits
+ the types of table columns, but allows the implementation of fast seeks
+ in a large table.
+
+ \item Rows are appended to the table.  An entire row must be appended
+ at one time.  Rows may not be inserted into the middle of a table,
+ modified, or removed.
+
+\end{itemize}
+
+\section{Table implementations}
+
+Several table implementations are provided.  Other than for creating new
+tables or opening existing tables, the interfaces of these
+implementations are identical.
+
+\begin{enumerate}
+
+ \item A extension-class implementation written in C++ in the
+ \module{hep.table} module.  The table resides in a disk file, and rows
+ are loaded into memory as needed.  The implementation is simple and
+ efficient.  Other programs may write and access these tables via a
+ simple C++ interface.
+
+ \item An implementation which uses HBOOK n-tuples (column-wise or
+ row-wise) stored in HBOOK files.  Not all features of HBOOK n-tuples are
+ supported.
+
+ \item An implementation which uses ROOT tress stored in ROOT files.
+ Not all features of ROOT trees are supported.
+
+\end{enumerate}
+
+The extension-class implementation in \module{hep.table} is used in this
+tutorial. 
+
+\section{Creating and filling tables}
+
+A table schema is represented by an instance of
+\class{hep.table.Schema}.  The schema collects together the definitions of the columns in the table.  Each column is identified by a name, which is
+a string composed of letters, digits, and underscores.  
+
+A new instance of \class{Schema} has no columns.  Add columns using the
+\method{addColumn} method, specifying the column name and type.  For instance, 
+\begin{verbatim}
+>>> import hep.table
+>>> schema = hep.table.Schema()
+>>> schema.addColumn("energy", "float64")
+>>> schema.addColumn("momentum", "float64")
+>>> schema.addColumn("hits", "int32")
+\end{verbatim}
+
+The second argument to \function{addColumn} specifies the storage format
+used for values in that column.  These column types are supported in
+\code{hep.table} (note that other table implementations may not support
+all of these):
+\begin{itemize}
+ \item three signed integer types: \constant{"int8"}, \constant{"int16"},
+ and \constant{"int32"}
+
+ \item two floating-point types, \constant{"float32"} and
+ \constant{"float64"}
+
+ \item two floating-point complex types, \constant{"complex64"} and
+ \constant{"complex128"}
+\end{itemize}
+
+More concisely, you may specify columns as keyword arguments, so the
+above schema may be constructed with,
+\begin{verbatim}
+>>> schema = hep.table.Schema(energy="float64", momentum="float64", hits="int32")
+\end{verbatim}
+
+You can also load or save schemas in an XML file format using
+\function{hep.table.loadSchema} and \function{hep.table.saveSchema}.
+The schema above would be represented by the XML file
+\begin{verbatim}
+<?xml version="1.0" ?>
+<schema>
+ <column name="energy" type="float64"/>
+ <column name="momentum" type="float64"/>
+ <column name="hits" type="int32"/>
+</schema>
+\end{verbatim}
+
+Call the \function{create} function to create a new table.  The
+parameters will vary for each implementation; for the \module{hep.table}
+implementation, the parameters are the file name for the new table, and
+the table's schema.  
+\begin{verbatim}
+>>> table = hep.table.create("test.table", schema)
+\end{verbatim}
+The return value is a \emph{connection} to the newly-created table,
+which resides on disk.
+
+To add a row to the table, call the table's \method{append} method.  You
+may pass it a mapping argument (such as a dictionary) that associates
+column values with column names, and/or you may provide column values as
+keyword arguments.  One way or another, you must specify values for all
+columns in the table.  The return value of \method{append} is the index
+of the newly-appended row.
+
+For instance, to add a row to the table created above,
+\begin{verbatim}
+>>> row = {
+...   "energy": 2.7746,
+...   "momentum": 1.8725,
+...   "hits": 17,
+>>> }
+>>> table.append(row)
+\end{verbatim}
+or equivalently,
+\begin{verbatim}
+>>> table.append(energy=2.7746, momentum=1.8725, hits=17)
+\end{verbatim}
+
+\subsection{Example: creating a table from a text file}
+
+The script below converts a table of values in a text file into a
+\pyhep table.  The script assumes that the file contains floating-point
+values only, except that the first line of the text file contains
+headings that will be used as the names of the columns in the table.
+\codesample{table1.py}
+
+Here is a table containing parameters for tracks measured in a
+detector.  The first column is the track's energy; the other three are
+the x, y, and z components of momentum.
+\codesample{tracks.txt}
+
+If you save the script as \file{txt2table.py} and the table as
+\file{tracks.table}, you would invoke this command to convert it to a
+table: 
+\begin{verbatim}
+> python txt2table.py tracks.txt tracks.table
+\end{verbatim}
+
+\section{Using tables}
+
+To open an existing table, use the \function{open} function.  The first
+argument is the table file name.  The second argument is the mode in
+which to open the table, similar to the built-in \function{open}
+function: \constant{"r"} (the default) for read-only, \constant{"w"} for
+write.  
+
+For instance, to open the table we created in the last section,
+\begin{verbatim}
+>>> tracks = hep.table.open("tracks.table")
+\end{verbatim}
+
+The table object is a sequence whose elements are the rows.  Each row is
+has a row index, which is equal to its position in the table.  Thus, the
+\function{len} function returns the number of rows in the table.
+\begin{verbatim}
+>>> number_of_tracks = len(tracks)
+\end{verbatim}
+To access a row by its row index, use the normal sequence index
+notation.  This returns a \class{Row} object, which is a mapping from
+column names to values.
+\begin{verbatim}
+>>> track = tracks[19]
+>>> print track["energy"]
+\end{verbatim}
+
+The table's \member{schema} attribute contains the table's schema; the
+schema's \member{column} attribute is a sequence of the columns in the
+schema (in unspecified order).  You can examine these directly, or use
+the \function{dumpSchema} function to print out the schema.
+\begin{verbatim}
+>>> hep.table.dumpSchema(tracks.schema)
+name             type
+-----------------------------
+energy           float32
+p_x              float32
+p_y              float32
+p_z              float32
+ 
+\end{verbatim}
+
+
+\section{Iterating over rows}
+
+For most HEP applications, the rows of a table represent independent
+measurements, and are processed sequentially.  An \emph{iterator}
+represents this sequential processing of rows.  Using iterators instead
+of indexed looping constructs simplifies code, opens up powerful
+functional-programming methods, and enables automatic optimization of
+independent operations on rows.
+
+Since a table satisfies the Python sequence protocol, you can produce an
+iterator over its elements (\textit{i.e.} rows) with the \function{iter}
+function.  The Python \code{for} construction does even this
+automatically.  The simplest idiom for processing rows in a table
+sequentially looks like this:
+\begin{verbatim}
+>>> total_energy = 0
+>>> for track in tracks:
+...     total_energy += track["energy"]
+...
+>>> print total_energy
+74.7496351004
+\end{verbatim}
+
+Since \code{iter(tracks)} is an iterator rather than a sequence of all
+rows, each row is loaded from disk into memory only when needed in the
+loop, and is subsequently deleted.  This is critical for scanning over
+large tables.  (Note that after the loop completes, the last row remains
+loaded, until the variable \var{track} is deleted or goes out of scope.
+Also, the table object itself is deleted only after any variables that
+refer to it, as well as any variables that refer to any of its rows, are
+deleted.)
+
+Table iterators may be used to iterate over a subset of rows in a
+sequence.  Most obviously, you could implement this by using a
+conditional in the loop.  For instance, to print the energy of each
+track with an energy greater than 2.5,
+\begin{verbatim}
+>>> for track in tracks:
+...     if track["energy"] > 2.5:
+...         print track["energy"]
+... 
+\end{verbatim}
+While this is straightforward, it forces \pyhep to examine each row
+every time the program is run.  By using the selection in the iterator,
+\pyhep can optimize the selection process, often significantly.
+The selection criterion can be any boolean-valued expression involving
+the values in the row.  The selection expression is evaluated for each
+row, and if the result is true, the iterator yields that row; otherwise,
+that row is skipped.  (This is semantically similar to the first
+argument of the built-in \function{filter} function.)  The expression
+can be a string containing an ordinary Python expression using column
+names as if they were variable name (with certain limitations and
+special features), or may be specified in other ways.  Expressions are
+discussed in greater detail later.
+
+For instance, the same high-energy tracks can be obtained using the
+selection expression \constant{"energy > 2.5"}.  Notice that
+\var{energy} appears in this expression as if it were a variable defined
+when the expression is evaluated.  The \method{select} method returns an
+iterator which yields only rows for which the selection is true.
+\begin{verbatim}
+>>> for track in tracks.select("energy > 2.5"):
+...     print track["energy"]
+... 
+\end{verbatim}
+
+Python's list comprehensions provide a handy method for collecting
+values from a table.  For instance, to enumerate all values of
+\var{energy} above 2.5 instead of merely printing them,
+\begin{verbatim}
+>>> energies = [ track["energy"] for track in tracks.select("energy > 2.5") ]
+\end{verbatim}
+Note here that \code{tracks.select("energy > 2.5")} returns an iterator
+object, so it may only be used (i.e. iterated over) once.  However, if
+you really want a sequence of \code{Row} objects, you can use the
+\function{list} or \function{tuple} functions to expand an iterator into
+an actual sequence, as in
+\begin{verbatim}
+>>> high_energy_tracks = list(tracks.select("energy > 2.5"))
+\end{verbatim}
+Such a sequence consumes more resources than an iterator.  You can
+iterate over such a sequence repeatedly, or perform other sequence
+operations. 
+
+ 
+\section{Projecting histograms from tables}
+
+If you have a sequence or iterator of values, you can use the built-in
+\function{map} function to accumulate them into a histogram.  For
+instance, if \var{energies} is a sequence of energy values, you could
+fill them into a histogram using,
+\begin{verbatim}
+>>> energy_hist = hep.hist.Histogram1D(20, (0.0, 5.0))
+>>> map(energy_hist.accumulate, energies)
+\end{verbatim}
+
+Generally, though, you will want to project many histograms at one time
+from a table.  Use the \function{hep.hist.project} function to project
+multiple histograms in a single scan over a table.  Pass an iterable
+over the table rows to project---the table itself, or an iterator
+constructed with the \method{select} method---and a sequence of
+histogram objects.  Each histogram should have an attribute
+\member{expression}, which is the expression whose value is accumulated
+into the histogram for each table row.  The expression are similar to
+those used with the \method{select} method, except that their values
+should be numerical instead of boolean.
+
+For example, this script projects three histograms -- energy, transverse
+momentum, and invariant mass, from the table of tracks we constructed
+previously.  Only high-energy tracks (those with energy above 2.5) are
+included.  The dictionary containing the histograms is stored in a
+standard pickle file.
+\codesample{project1.py}
+Observe that the last histogram is two-dimensional, and its expression
+specifies the two coordinates of the sample using a comma expression.
+
+With this scheme, you can determine later how the values in a histogram
+were computed, by checking its \member{expression} attribute.
+
+
+\section{Using expressions with tables}
+
+Expressions are described in more detail in a later chapter.  This
+section presents techniques for optimizing expressions used with tables.
+
+As described above, you can use Python expressions encoded in character
+strings with \method{select} method and \function{hep.hist.project}
+function.  When such an expressions are evaluated, unbound symbols
+(\textit{i.e.} variables) are bound to the value of the corresponding
+column.
+
+Since a table row satisfies the Python mapping protocol, you can pass a
+table row directly to an expression's \method{evaluate} method.  For
+example, this constructs an expression object to compute the transverse
+momentum of a track in the tracks table constructed above.
+\begin{verbatim}
+>>> import hep.expr
+>>> p_t = hep.expr.asExpression("hypot(p_x, p_y)")
+\end{verbatim}
+Its \method{evaluate} method computes transverse momentum for a track by
+binding \var{p_x} and \var{p_y} to the corresponding values of the table
+row. 
+\begin{verbatim}
+>>> print p_t.evaluate(tracks[0])
+0.92102783203
+\end{verbatim}
+To find the largest transverse momentum in the track table,
+\begin{verbatim}
+>>> print max(map(p_t.evaluate, tracks))
+2.44177757441
+\end{verbatim}
+
+The chapter on expressions, below, describes how to compile an
+expression into a format for faster evaluation.  When the expression is
+used with a table, you can produce an even faster version by compiling
+it with the table's \method{compile} method.  This sets the symbol types
+correctly based on the table's schema, and applies additional
+optimizations specific to tables.  For example,
+\begin{verbatim}
+>>> p_t = tracks.compile("hypot(p_x, p_y)")
+>>> print p_t.evaluate(tracks[0])
+0.92102783203
+\end{verbatim}
+When you evaluate an expression on many rows of a large table,
+performance will be substantially better if you compile the expression
+first for that table.  Note that an expression compiled for a table
+should only be used with that table.
+
+
+\subsection{Caching expressions in tables}
+
+You can also configure a table to cache the results of evaluating a
+boolean expression on the rows.  The first time you evaluate the
+expression on a row, the row is loaded and the expression is evaluated
+as usual.  On subsequent times, the table reuses the cached value of the
+expression, instead of reloading the row and re-evaluating the
+expression. 
+
+To instruct a table to cache the value of an expression, pass the
+expression to the table's \method{cache} method.  Do not pass a compiled
+expression; pass the uncompiled form instead.  You may pass a string or
+function here as well.  Once you add the expression to the table's
+cache, the expression cache will automatically be used when you compile
+the expression or use it with \method{select} and other table functions.
+
+For example, suppose your table file \file{tracks.table} was extremely
+large, and you expect to select repeatedly all tracks with energy above
+2.5.  You could cache this selection expression like this:
+\begin{verbatim}
+>>> cut = "energy > 2.5"
+>>> tracks.cache(cut)
+\end{verbatim}
+\begin{verbatim}
+>>> cut = tracks.compile(cut)
+\end{verbatim}
+Optionally, compile the expression and evaluate it on each row once, to
+fill the cache.
+\begin{verbatim}
+>>> cut = table.compile(cut)
+>>> for track in tracks:
+...   cut.evaluate(track)
+... 
+\end{verbatim}
+
+Once you have added a cached expression to the table, the cache will be
+used automatically whenever you compile the expression for that table:
+the compiled \code{cut} above uses the cache.  The cache will also be
+used for subexpressions, so if you were to compile the expression
+\code{"mass < 1 and energy > 2.5"} would use the cache, too.
+
+\subsection{Row types}
+
+As we have seen above, the object representing one row of a table
+satisfies Python's read-only mapping protocol: it maps the name of a
+column to the corresponding value in the row.  While in many ways, they
+behave like ordinary Python dictionaries (for instance, they support the
+\method{keys} and \method{items} methods), they actually instances of
+the \class{hep.table.RowDict} class.
+\begin{verbatim}
+>>> track = tracks[0]
+>>> print type(track)
+<type 'RowDict'>
+\end{verbatim}
+If you ever need an actual dictionary object containing the values in a
+row, Python will produce that for you:
+\begin{verbatim}
+>>> dict(track)
+{'energy': 1.1803040504455566, 'p_z': -0.73052072525024414, 
+ 'p_x': -0.47519099712371826, 'p_y': -0.78897768259048462}
+\end{verbatim}
+
+For some applications, however, it is more convenient to use a different
+interface to access row data.  You can specify another type to use for
+row objects by setting the table's \member{row_type} attribute (or with
+the \var{row_type} keyword argument to \function{hep.table.open}).  The
+default value, as you have seen, is \class{hep.table.RowDict}.
+
+\pyhep includes a second row implementation,
+\class{hep.table.RowObject}, which provides access to row values as
+object attributes instead of items in a map.  The row has an attribute
+named for each column in the table, and the value of the attribute is
+the corresponding value in the row.
+
+For example,
+\begin{verbatim}
+>>> tracks.row_type = hep.table.RowObject
+>>> track = tracks[0]
+>>> print track.p_x, track.p_y, track.p_z
+-0.475190997124 -0.78897768259 -0.73052072525
+\end{verbatim}
+
+You may also derive a subclass from \class{RowObject} and use that as
+your table's row type.  This is very handy for adding additional
+methods, get-set attributes, etc. to the row, for instance to compute
+derived values.
+
+For example, you could create a \class{Track} class that provides the
+mass and scalar momentum as ``attributes'' that are computed dynamically
+from the row's contents.
+\begin{verbatim}
+>>> from hep.num import hypot
+>>> from math import sqrt
+>>> class Track(hep.table.RowObject):
+...   momentum = property(lambda self: hypot(self.p_x, self.p_y, self.p_z))
+...   mass = property(lambda self: sqrt(self.energy**2 - self.momentum**2))
+...
+\end{verbatim}
+Now set this class as the row type.
+\begin{verbatim}
+>>> tracks.row_type = Track
+>>> track = tracks[0]
+>>> print type(track)
+<class '__main__.Track'>
+\end{verbatim}
+You can now access the members of \class{Track}:
+\begin{verbatim}
+>>> print track.momentum
+1.17556488438
+>>> print track.mass
+0.105663873224
+\end{verbatim}
+
+Setting a table's row type to \class{RowObject} or a subclass will not
+break evaluation of compiled expressions on row objects.  Expressions
+look for a \method{get} method, which is provided by both
+\class{RowDict} and \class{RowObject}.
+
+Note that computing complicated derived values in this way is less
+efficient than using compiled expressions, as described above.  However,
+you can create methods or get-set members that evaluate compiled
+expressions.  
+
+Only subclasses of \class{RowDict} and \class{RowObject} may be used as
+a table's \member{row_type}.
+
+
+\section{More table functions}
+
+The function \function{hep.table.project} is a generalization of
+\function{hep.hist.project}.  Like the latter, it iterates over table
+rows and evaluates a set of expressions on each row.  Instead of
+accumulating the expression values into histograms, passes them to
+arbitrary functions.  Invoke \code{help(hep.table.project)} for usage
+information. 
+
+The \class{hep.table.Chain} class concatenates multiple tables into one.
+Simply pass the tables as arguments.  Of course, any columns accessed in
+the chain must appear in all the included tables.  For example, this
+code chains together all table files (files with the ".table" extension)
+in the current working directory.
+\begin{verbatim}
+>>> import os
+>>> tables = [ hep.table.open(path)
+...            for path in os.listdir(".") 
+...            if path.endswith(".table") ]
+>>> chain = hep.table.Chain(*tables)
+\end{verbatim}
+
+

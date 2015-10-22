@@ -1,0 +1,121 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+<title>4.3 Using expressions with tables</title>
+<META NAME="description" CONTENT="4.3 Using expressions with tables">
+<META NAME="keywords" CONTENT="pyhep">
+<META NAME="resource-type" CONTENT="document">
+<META NAME="distribution" CONTENT="global">
+<link rel="STYLESHEET" href="pyhep.css">
+<link rel="first" href="pyhep.html">
+<link rel="contents" href="contents.html" title="Contents">
+
+<LINK REL="next" HREF="node31.html">
+<LINK REL="previous" HREF="node28.html">
+<LINK REL="up" HREF="node26.html">
+<LINK REL="next" HREF="node31.html">
+</head>
+<body>
+<DIV CLASS="navigation">
+<table align="center" width="100%" cellpadding="0" cellspacing="2">
+<tr>
+<td><A HREF="node29.html"><img src="icons//previous.gif"
+  border="0" height="32"
+  alt="Previous Page" width="32"></A></td>
+<td><A HREF="node26.html"><img src="icons//up.gif"
+  border="0" height="32"
+  alt="Up One Level" width="32"></A></td>
+<td><A HREF="node31.html"><img src="icons//next.gif"
+  border="0" height="32"
+  alt="Next Page" width="32"></A></td>
+<td align="center" width="100%"> PyHEP Tutorial</td>
+<td><A href="contents.html"><img src="icons//contents.gif"
+  border="0" height="32"
+  alt="Contents" width="32"></A></td>
+<td><img src="icons//blank.gif"
+  border="0" height="32"
+  alt="" width="32"></td>
+<td><img src="icons//blank.gif"
+  border="0" height="32"
+  alt="" width="32"></td>
+</tr></table>
+<b class="navlabel">Previous:</b> <a class="sectref" HREF="node29.html">4.2.1 Expression types</A>
+<b class="navlabel">Up:</b> <a class="sectref" HREF="node26.html">4. Expressions</A>
+<b class="navlabel">Next:</b> <a class="sectref" HREF="node31.html">4.4 Expression syntax</A>
+<br><hr>
+</DIV>
+<!--End of Navigation Panel-->
+
+<H1><A NAME="SECTION006300000000000000000">
+4.3 Using expressions with tables</A>
+</H1>
+
+<P>
+Since a table row object is a map from column names to values, you may
+specify a row object as the argument to <tt class="method">evaluate</tt>.  In the
+expression, the name of a column in the table is replaced by the
+corresponding value in that row.  Using the <span class="file">tracks.table</span> table we
+created earlier,
+<dl><dd><pre class="verbatim">
+&gt;&gt;&gt; import hep.table
+&gt;&gt;&gt; tracks = hep.table.open("tracks.table")
+&gt;&gt;&gt; print ex.evaluate(tracks[0])
+0.848292267373
+</pre></dl>
+
+<P>
+This works well for small numbers of rows.  However, if the expression
+is to be evaluated on a large number of rows in the same table, it
+should be compiled.  Use the table's <tt class="method">compile</tt> method, which sets
+the symbol types according to the table's schema and performs other
+necessary expansions before compiling the expression.  The compiled
+expression object behaves just like the original expression object,
+except that it runs faster.
+<dl><dd><pre class="verbatim">
+&gt;&gt;&gt; cm = tracks.compile(ex)
+&gt;&gt;&gt; print cm.evaluate(tracks[0])
+0.848292267373
+</pre></dl>
+You may also pass an expression as a string to <tt class="method">compile</tt>.
+Functions provided by  PyHEP which work with expressions, such as a
+table's <tt class="method">select</tt> method or <tt class="function">hep.hist.project</tt> will
+compile expressions automatically, where possible.  
+
+<P>
+
+<DIV CLASS="navigation">
+<p><hr>
+<table align="center" width="100%" cellpadding="0" cellspacing="2">
+<tr>
+<td><A HREF="node29.html"><img src="icons//previous.gif"
+  border="0" height="32"
+  alt="Previous Page" width="32"></A></td>
+<td><A HREF="node26.html"><img src="icons//up.gif"
+  border="0" height="32"
+  alt="Up One Level" width="32"></A></td>
+<td><A HREF="node31.html"><img src="icons//next.gif"
+  border="0" height="32"
+  alt="Next Page" width="32"></A></td>
+<td align="center" width="100%"> PyHEP Tutorial</td>
+<td><A href="contents.html"><img src="icons//contents.gif"
+  border="0" height="32"
+  alt="Contents" width="32"></A></td>
+<td><img src="icons//blank.gif"
+  border="0" height="32"
+  alt="" width="32"></td>
+<td><img src="icons//blank.gif"
+  border="0" height="32"
+  alt="" width="32"></td>
+</tr></table>
+<b class="navlabel">Previous:</b> <a class="sectref" HREF="node29.html">4.2.1 Expression types</A>
+<b class="navlabel">Up:</b> <a class="sectref" HREF="node26.html">4. Expressions</A>
+<b class="navlabel">Next:</b> <a class="sectref" HREF="node31.html">4.4 Expression syntax</A>
+<hr>
+
+</DIV>
+<!--End of Navigation Panel-->
+<ADDRESS>
+<tt>alex@alexsamuel.net</tt>
+</ADDRESS>
+</BODY>
+</HTML>

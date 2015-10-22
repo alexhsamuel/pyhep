@@ -1,0 +1,6 @@
+Traceback (most recent call last):
+  File "generate1.py", line 7, in ?
+    import hep.evtgen
+  File "/home/samuel/dev/pyhep/py/hep/evtgen/__init__.py", line 15, in ?
+    from   ext import Generator, Particle
+ImportError: No module named ext

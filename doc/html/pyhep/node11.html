@@ -1,0 +1,168 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+<title>2.4 Filling histograms</title>
+<META NAME="description" CONTENT="2.4 Filling histograms">
+<META NAME="keywords" CONTENT="pyhep">
+<META NAME="resource-type" CONTENT="document">
+<META NAME="distribution" CONTENT="global">
+<link rel="STYLESHEET" href="pyhep.css">
+<link rel="first" href="pyhep.html">
+<link rel="contents" href="contents.html" title="Contents">
+
+<LINK REL="next" HREF="node12.html">
+<LINK REL="previous" HREF="node10.html">
+<LINK REL="up" HREF="node4.html">
+<LINK REL="next" HREF="node12.html">
+</head>
+<body>
+<DIV CLASS="navigation">
+<table align="center" width="100%" cellpadding="0" cellspacing="2">
+<tr>
+<td><A HREF="node10.html"><img src="icons//previous.gif"
+  border="0" height="32"
+  alt="Previous Page" width="32"></A></td>
+<td><A HREF="node4.html"><img src="icons//up.gif"
+  border="0" height="32"
+  alt="Up One Level" width="32"></A></td>
+<td><A HREF="node12.html"><img src="icons//next.gif"
+  border="0" height="32"
+  alt="Next Page" width="32"></A></td>
+<td align="center" width="100%"> PyHEP Tutorial</td>
+<td><A href="contents.html"><img src="icons//contents.gif"
+  border="0" height="32"
+  alt="Contents" width="32"></A></td>
+<td><img src="icons//blank.gif"
+  border="0" height="32"
+  alt="" width="32"></td>
+<td><img src="icons//blank.gif"
+  border="0" height="32"
+  alt="" width="32"></td>
+</tr></table>
+<b class="navlabel">Previous:</b> <a class="sectref" HREF="node10.html">2.3 Other kinds of</A>
+<b class="navlabel">Up:</b> <a class="sectref" HREF="node4.html">2. Histograms</A>
+<b class="navlabel">Next:</b> <a class="sectref" HREF="node12.html">2.5 Accessing histogram contents</A>
+<br><hr>
+</DIV>
+<!--End of Navigation Panel-->
+
+<H1><A NAME="SECTION004400000000000000000">
+2.4 Filling histograms</A>
+</H1>
+
+<P>
+To ``fill'' a histogram is to accumulate samples from the sample
+distribution into it.  A sample is represented by a sequence of
+coordinate values, where the length of the sequence is equal to the
+number of dimensions of the histogram.   Each item in the sequence is
+the coordinate value along the corresponding axis of the histogram.
+
+<P>
+For each bin, the histogram keeps track the number of accumulated
+samples whose coordiantes fall within the bin.  Optionally, samples may
+be specified a ``weight''; in that case, the histogram keeps track of
+the sum of weights of samples.  The numeric type used to store the
+number of samples or sum of weights for each bin is given by the
+<code>bin_type</code> attribute.  The histogram also tracks the total
+number of accumulations (the ``number of entries'') that you have made.
+
+<P>
+The <tt class="method">accumulate</tt> method accumulates an event into the histogram.
+Specify the coordinates of the sample, and optionally the event weight
+(which otherwise is taken to be unity).  The left-shift operator
+<code>&#171;</code> is shorthand for <tt class="method">accumulate</tt> with unit weight.
+
+<P>
+If any of the coordinate values passed to <tt class="method">accumulate</tt> is
+<code>None</code>, the sample is not accumulated into the histogram and the number
+of entries is not changed.
+
+<P>
+For example, to accumulate a the sample whose coordinates are <code>x</code>
+and <code>y</code> into a two-dimensional histogram <code>histogram</code>,
+<dl><dd><pre class="verbatim">
+&gt;&gt;&gt; histogram.accumulate((x, y))
+</pre></dl>
+or
+<dl><dd><pre class="verbatim">
+&gt;&gt;&gt; histogram &lt;&lt; (x, y)
+</pre></dl>
+To accumulate the same sample with weight <code>weight</code>,
+<dl><dd><pre class="verbatim">
+&gt;&gt;&gt; histogram.accumulate((x, y), weight)
+</pre></dl>
+
+<P>
+For one-dimensional histograms, you may specify the sample coordinate by
+itself, instead of as a one-element sequence.  So, to accumulate the
+sample with coordinate <code>x</code> into one-dimensional <code>histogram</code>,
+you may use any of these:
+<dl><dd><pre class="verbatim">
+&gt;&gt;&gt; histogram.accumulate((x, ))
+&gt;&gt;&gt; histogram.accumulate(x)
+&gt;&gt;&gt; histogram &lt;&lt; (x, )
+&gt;&gt;&gt; histogram &lt;&lt; x
+</pre></dl>
+
+<P>
+Plotting histograms is described later in the plotting chapter.  A quick
+way of displaying histogram contents in text format is with the
+<tt class="function">hep.hist.dump</tt> function.
+
+<P>
+This script below creates a one-dimensional histogram with eleven
+integer bins between 2 and 12, inclusive, and fills the histogram with
+the result of simulating 1000 rolls of two dice.
+<dl><dd><pre class="verbatim">import hep.hist
+import random
+
+histogram = hep.hist.Histogram1D(11, (2, 13), "rolls", bin_type=int)
+for count in xrange(0, 1000):
+    roll = random.randint(1, 6) + random.randint(1, 6)
+    histogram &lt;&#60; roll
+
+hep.hist.dump(histogram)
+</pre>
+<div class="verbatiminput-footer">
+<a href="histogram1.txt" type="text/plain">Download as text.</a>
+</div>
+</dd></dl>
+
+<P>
+
+<DIV CLASS="navigation">
+<p><hr>
+<table align="center" width="100%" cellpadding="0" cellspacing="2">
+<tr>
+<td><A HREF="node10.html"><img src="icons//previous.gif"
+  border="0" height="32"
+  alt="Previous Page" width="32"></A></td>
+<td><A HREF="node4.html"><img src="icons//up.gif"
+  border="0" height="32"
+  alt="Up One Level" width="32"></A></td>
+<td><A HREF="node12.html"><img src="icons//next.gif"
+  border="0" height="32"
+  alt="Next Page" width="32"></A></td>
+<td align="center" width="100%"> PyHEP Tutorial</td>
+<td><A href="contents.html"><img src="icons//contents.gif"
+  border="0" height="32"
+  alt="Contents" width="32"></A></td>
+<td><img src="icons//blank.gif"
+  border="0" height="32"
+  alt="" width="32"></td>
+<td><img src="icons//blank.gif"
+  border="0" height="32"
+  alt="" width="32"></td>
+</tr></table>
+<b class="navlabel">Previous:</b> <a class="sectref" HREF="node10.html">2.3 Other kinds of</A>
+<b class="navlabel">Up:</b> <a class="sectref" HREF="node4.html">2. Histograms</A>
+<b class="navlabel">Next:</b> <a class="sectref" HREF="node12.html">2.5 Accessing histogram contents</A>
+<hr>
+
+</DIV>
+<!--End of Navigation Panel-->
+<ADDRESS>
+<tt>alex@alexsamuel.net</tt>
+</ADDRESS>
+</BODY>
+</HTML>

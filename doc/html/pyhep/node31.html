@@ -1,0 +1,192 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+<title>4.4 Expression syntax</title>
+<META NAME="description" CONTENT="4.4 Expression syntax">
+<META NAME="keywords" CONTENT="pyhep">
+<META NAME="resource-type" CONTENT="document">
+<META NAME="distribution" CONTENT="global">
+<link rel="STYLESHEET" href="pyhep.css">
+<link rel="first" href="pyhep.html">
+<link rel="contents" href="contents.html" title="Contents">
+
+<LINK REL="next" HREF="node32.html">
+<LINK REL="previous" HREF="node30.html">
+<LINK REL="up" HREF="node26.html">
+<LINK REL="next" HREF="node32.html">
+</head>
+<body>
+<DIV CLASS="navigation">
+<table align="center" width="100%" cellpadding="0" cellspacing="2">
+<tr>
+<td><A HREF="node30.html"><img src="icons//previous.gif"
+  border="0" height="32"
+  alt="Previous Page" width="32"></A></td>
+<td><A HREF="node26.html"><img src="icons//up.gif"
+  border="0" height="32"
+  alt="Up One Level" width="32"></A></td>
+<td><A HREF="node32.html"><img src="icons//next.gif"
+  border="0" height="32"
+  alt="Next Page" width="32"></A></td>
+<td align="center" width="100%"> PyHEP Tutorial</td>
+<td><A href="contents.html"><img src="icons//contents.gif"
+  border="0" height="32"
+  alt="Contents" width="32"></A></td>
+<td><img src="icons//blank.gif"
+  border="0" height="32"
+  alt="" width="32"></td>
+<td><img src="icons//blank.gif"
+  border="0" height="32"
+  alt="" width="32"></td>
+</tr></table>
+<b class="navlabel">Previous:</b> <a class="sectref" HREF="node30.html">4.3 Using expressions with</A>
+<b class="navlabel">Up:</b> <a class="sectref" HREF="node26.html">4. Expressions</A>
+<b class="navlabel">Next:</b> <a class="sectref" HREF="node32.html">4.5 Other ways to</A>
+<br><hr>
+</DIV>
+<!--End of Navigation Panel-->
+
+<H1><A NAME="SECTION006400000000000000000">
+4.4 Expression syntax</A>
+</H1>
+
+<P>
+An expression is specified using Python's ordinary expression syntax,
+with the following assumptions:
+
+<UL>
+<LI>Arbitrary names may be used in expressions as variable
+ quantities, functions, etc.  Other than the built-in names listed
+ below, all names must be resolved when the expression is evaluated.
+
+<P>
+</LI>
+<LI>The forward-slash operator for integers is true division, i.e. it
+ produces a <code>float</code> quotient.  Use the double forward-slash
+ operator (e.g. ``x // 3'') to obtain the C-style truncated integer
+ division.
+</LI>
+</UL>
+
+<P>
+The following names are recognized in expressions:
+
+<UL>
+<LI>Built-in Python constants <code>True</code>, <code>False</code>, and
+ <code>None</code>.  
+
+<P>
+</LI>
+<LI>Built-in Python types <code>int</code>, <code>float</code>, <code>complex</code>,
+ and <code>bool</code>.
+
+<P>
+</LI>
+<LI>Built-in Python functions <code>abs</code>, <code>min</code>, and <code>max</code>.
+
+<P>
+</LI>
+<LI>Constants from the <tt class="module">math</tt> module: <code>e</code> and <code>pi</code>.
+
+<P>
+</LI>
+<LI>Functions from the <tt class="module">math</tt> module: <code>acos</code>,
+ <code>asin</code>, <code>atan</code>, <code>atan2</code>, <code>ceil</code>, <code>cos</code>,
+ <code>cosh</code>, <code>exp</code>, <code>floor</code>, <code>log</code>, <code>sin</code>,
+ <code>sinh</code>, <code>sqrt</code>, <code>tan</code>, and <code>tanh</code>.
+
+<P>
+</LI>
+<LI>From the <tt class="module">hep.lorentz</tt> module, <code>Frame</code> and
+ <code>lab</code>.
+</LI>
+</UL>
+
+<P>
+In addition, expressions may use these numerical convenience functions.
+(They are also availble in Python programs in the <tt class="module">hep.num</tt>
+module.)
+
+<P>
+<dl><dt><b><a name="l2h-1"><tt class="function">gaussian</tt></a></b>(<var>mu, sigma, x</var>)
+<dd>
+Returns the probability density at <var>x</var> from a gaussian PDF with mean
+<var>mu</var> and standard deviation <var>sigma</var>.
+</dl>
+
+<P>
+<dl><dt><b><a name="l2h-2"><tt class="function">get_bit</tt></a></b>(<var>value, bit</var>)
+<dd>
+Returns true iff bit <var>bit</var> in <var>value</var> is set.
+</dl>
+
+<P>
+<dl><dt><b><a name="l2h-3"><tt class="function">hypot</tt></a></b>(<var>*terms</var>)
+<dd>
+A generalization of <tt class="function">math.hypot</tt> to arbitrary number of
+arguments.  Returns the square root of the sum of the squares of its
+arguments.
+</dl>
+
+<P>
+<dl><dt><b><a name="l2h-4"><tt class="function">if_then</tt></a></b>(<var>condition, value_if_true, value_if_false</var>)
+<dd>
+Returns <var>value_if_true</var> if <var>condition</var> is true,
+<var>value_if_false</var> otherwise.  Note that in a compiled expression
+(only), the second and third arguments are evaluated lazily, so that
+if <var>condition</var> is true, <var>value_if_false</var> is not evaluated, and
+otherwise <var>value_if_true</var> is not evaluated.
+</dl>
+
+<P>
+<dl><dt><b><a name="l2h-5"><tt class="function">in_range</tt></a></b>(<var>min_value, value, max_value</var>)
+<dd>
+Returns true if <var>min_value</var> is less than or equal to <var>value</var> and
+<var>value</var> is less than <var>max_value</var>.
+</dl>
+
+<P>
+<dl><dt><b><a name="l2h-6"><tt class="function">near</tt></a></b>(<var>central_value, half_interval, value</var>)
+<dd>
+Returns true if the absolute difference between <var>central_value</var> and
+<var>value</var> is less than <var>half_interval</var>. 
+</dl>
+
+<P>
+
+<DIV CLASS="navigation">
+<p><hr>
+<table align="center" width="100%" cellpadding="0" cellspacing="2">
+<tr>
+<td><A HREF="node30.html"><img src="icons//previous.gif"
+  border="0" height="32"
+  alt="Previous Page" width="32"></A></td>
+<td><A HREF="node26.html"><img src="icons//up.gif"
+  border="0" height="32"
+  alt="Up One Level" width="32"></A></td>
+<td><A HREF="node32.html"><img src="icons//next.gif"
+  border="0" height="32"
+  alt="Next Page" width="32"></A></td>
+<td align="center" width="100%"> PyHEP Tutorial</td>
+<td><A href="contents.html"><img src="icons//contents.gif"
+  border="0" height="32"
+  alt="Contents" width="32"></A></td>
+<td><img src="icons//blank.gif"
+  border="0" height="32"
+  alt="" width="32"></td>
+<td><img src="icons//blank.gif"
+  border="0" height="32"
+  alt="" width="32"></td>
+</tr></table>
+<b class="navlabel">Previous:</b> <a class="sectref" HREF="node30.html">4.3 Using expressions with</A>
+<b class="navlabel">Up:</b> <a class="sectref" HREF="node26.html">4. Expressions</A>
+<b class="navlabel">Next:</b> <a class="sectref" HREF="node32.html">4.5 Other ways to</A>
+<hr>
+
+</DIV>
+<!--End of Navigation Panel-->
+<ADDRESS>
+<tt>alex@alexsamuel.net</tt>
+</ADDRESS>
+</BODY>
+</HTML>

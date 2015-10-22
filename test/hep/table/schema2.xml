@@ -1,0 +1,9 @@
+<?xml version="1.0" ?>
+<schema>
+ <column name="y" type="int16">
+  <description>
+   'y' must be an integer
+  </description>
+ </column>
+ <column name="x" type="float32"/>
+</schema>

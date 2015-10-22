@@ -1,0 +1,16 @@
+Traceback (most recent call last):
+  File "fs10.py", line 16, in ?
+    dir1 = root_file.mkdir("dir1")
+  File "/home/samuel/dev/pyhep/py/hep/fs.py", line 360, in mkdir
+    subdir.set(key, {}, type="directory")
+  File "/home/samuel/dev/pyhep/py/hep/fs.py", line 369, in set
+    subdir.__set(key, value, **kw_args)
+  File "/home/samuel/dev/pyhep/py/hep/fs.py", line 441, in __set
+    self._set(key, value, **kw_args)
+  File "/home/samuel/dev/pyhep/py/hep/root/__init__.py", line 226, in _set
+    tkey = self.__getTKey(key)
+  File "/home/samuel/dev/pyhep/py/hep/root/__init__.py", line 262, in __getTKey
+    return _cast(key)
+  File "/home/samuel/dev/pyhep/py/hep/root/__init__.py", line 600, in _cast
+    parts = object.this.split("_")
+AttributeError: 'PySwigObject' object has no attribute 'split'

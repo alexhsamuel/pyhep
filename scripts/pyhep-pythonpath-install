@@ -1,0 +1,8 @@
+#!/bin/bash
+
+prefix=$(echo $0 | /usr/bin/python2 -c \
+    "from os.path import *; print dirname(dirname(realpath(raw_input())))")
+
+pyhep_libdir="${prefix}/lib/python2.3"
+echo ${pyhep_libdir}
+

@@ -1,0 +1,185 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+<title>7.1 Creating Draw objects</title>
+<META NAME="description" CONTENT="7.1 Creating Draw objects">
+<META NAME="keywords" CONTENT="pyhep">
+<META NAME="resource-type" CONTENT="document">
+<META NAME="distribution" CONTENT="global">
+<link rel="STYLESHEET" href="pyhep.css">
+<link rel="first" href="pyhep.html">
+<link rel="contents" href="contents.html" title="Contents">
+
+<LINK REL="next" HREF="node43.html">
+<LINK REL="previous" HREF="node41.html">
+<LINK REL="up" HREF="node41.html">
+<LINK REL="next" HREF="node43.html">
+</head>
+<body>
+<DIV CLASS="navigation">
+<table align="center" width="100%" cellpadding="0" cellspacing="2">
+<tr>
+<td><A HREF="node41.html"><img src="icons//previous.gif"
+  border="0" height="32"
+  alt="Previous Page" width="32"></A></td>
+<td><A HREF="node41.html"><img src="icons//up.gif"
+  border="0" height="32"
+  alt="Up One Level" width="32"></A></td>
+<td><A HREF="node43.html"><img src="icons//next.gif"
+  border="0" height="32"
+  alt="Next Page" width="32"></A></td>
+<td align="center" width="100%"> PyHEP Tutorial</td>
+<td><A href="contents.html"><img src="icons//contents.gif"
+  border="0" height="32"
+  alt="Contents" width="32"></A></td>
+<td><img src="icons//blank.gif"
+  border="0" height="32"
+  alt="" width="32"></td>
+<td><img src="icons//blank.gif"
+  border="0" height="32"
+  alt="" width="32"></td>
+</tr></table>
+<b class="navlabel">Previous:</b> <a class="sectref" HREF="node41.html">7. Drawing and Plotting</A>
+<b class="navlabel">Up:</b> <a class="sectref" HREF="node41.html">7. Drawing and Plotting</A>
+<b class="navlabel">Next:</b> <a class="sectref" HREF="node43.html">7.2 Drawing Primitives</A>
+<br><hr>
+</DIV>
+<!--End of Navigation Panel-->
+
+<H1><A NAME="SECTION009100000000000000000">
+7.1 Creating <tt class="class">Draw</tt> objects</A>
+</H1>
+
+<P>
+The procedure to create an initial <tt class="class">Draw</tt> object depends on the
+output device.
+
+<P>
+
+<UL>
+<LI>The <tt class="module">hep.draw.x11win</tt> module implements a drawing surface
+ in a pop-up X window.  Note that only X servers that provide TrueColor
+ visuals are supported.  To create a drawing window, instantiate
+ <tt class="class">x11.Window</tt>, passing the window width and height (in meters) as
+ arguments.
+
+<P>
+</LI>
+<LI>The <tt class="module">hep.draw.gtkwin</tt> module implements a drawing surface
+ in a pop-up window using the GTK toolkit.  You must have the GTK2
+ bindings for Python installed to use this module.  To create a drawing
+ window, instantiate <tt class="class">gtkwin.Window</tt>, passing the window width and
+ height (in meters) as arguments.
+
+<P>
+</LI>
+<LI>The <tt class="module">hep.draw.postscript</tt> module provides drawing to a
+ PostScript file.  Two variants exist: the <tt class="class">postscript.PSFile</tt>
+ class draws to a multi-page ADSC PostScript file, and the
+ <tt class="class">postscript.EPSFile</tt> class draws to a file containing an
+ encapsulated PostScript figure.  When instantiating either, pass the
+ path to the output file and the width and height of the output as
+ arguments.  
+
+<P>
+For <tt class="class">postscript.PSFile</tt>, the width and height may be omitted; the
+ default is standard US letter page size.  
+
+<P>
+</LI>
+</UL>
+
+<P>
+Some <tt class="class">Draw</tt> objects have a <tt class="method">clear</tt> method.  For GTK window
+objects, this clears the window.  For PostScript file objects, this
+advances output to the next page.  
+
+<P>
+In addition, you create a new <tt class="class">Draw</tt> object from another
+<tt class="class">Draw</tt> object when you apply a coordinate transformation.  Call a
+<tt class="class">Draw</tt> object's <tt class="method">transform</tt> method, specifying the
+arguments below; the return value is another <tt class="class">Draw</tt> object using
+the transformed coordinates.  You may still draw using the original
+object.  
+
+<P>
+
+<UL>
+<LI>The <var>range</var> argument to <tt class="method">transform</tt> is a four-element
+  sequence containing the range along the X and Y axes of the new,
+  transformed <tt class="class">Draw</tt> object, as <code>(x0, y0, x1, y1)</code>.
+
+<P>
+</LI>
+<LI>The <var>origin</var> argument is a two-component sequence indicating
+  the position in the old, untransformed <tt class="class">Draw</tt> object at which to
+  position <code>(x0, y0)</code> in the new, transformed <tt class="class">Draw</tt>
+  object.  The default value for <var>origin</var> <code>(0, 0)</code>.  
+
+<P>
+</LI>
+<LI>The <var>scale</var> argument is a two-component sequence indicating
+  the scale factor of the new, transformed <tt class="class">Draw</tt> object relative
+  to to the old, untransformed one.  The default value for <var>scale</var>
+  is <code>(1, 1)</code>.
+
+<P>
+</LI>
+</UL>
+
+<P>
+This example demonstrates how to create a PostScript <tt class="class">Draw</tt>
+object.  The output is a PostScript file with US letter page size, but
+drawing is restricted to a four-inch square centered on the page.  The
+coordinates for <var>ps_draw</var> range from zero to one along both axes.
+
+<P>
+<dl><dd><pre class="verbatim">
+import hep.draw.postscript
+from   hep.draw.postscript import inch
+
+ps_page = hep.draw.postscript.PSFile("ps_page.ps")
+ps_draw = ps_page.transform(
+    range=(0, 0, 1, 1),
+    origin=((8.5 - 4) / 2 * inch, (11 - 4) / 2 * inch),
+    scale=(4 * inch, 4 * inch))
+</pre></dl>
+
+<P>
+
+<DIV CLASS="navigation">
+<p><hr>
+<table align="center" width="100%" cellpadding="0" cellspacing="2">
+<tr>
+<td><A HREF="node41.html"><img src="icons//previous.gif"
+  border="0" height="32"
+  alt="Previous Page" width="32"></A></td>
+<td><A HREF="node41.html"><img src="icons//up.gif"
+  border="0" height="32"
+  alt="Up One Level" width="32"></A></td>
+<td><A HREF="node43.html"><img src="icons//next.gif"
+  border="0" height="32"
+  alt="Next Page" width="32"></A></td>
+<td align="center" width="100%"> PyHEP Tutorial</td>
+<td><A href="contents.html"><img src="icons//contents.gif"
+  border="0" height="32"
+  alt="Contents" width="32"></A></td>
+<td><img src="icons//blank.gif"
+  border="0" height="32"
+  alt="" width="32"></td>
+<td><img src="icons//blank.gif"
+  border="0" height="32"
+  alt="" width="32"></td>
+</tr></table>
+<b class="navlabel">Previous:</b> <a class="sectref" HREF="node41.html">7. Drawing and Plotting</A>
+<b class="navlabel">Up:</b> <a class="sectref" HREF="node41.html">7. Drawing and Plotting</A>
+<b class="navlabel">Next:</b> <a class="sectref" HREF="node43.html">7.2 Drawing Primitives</A>
+<hr>
+
+</DIV>
+<!--End of Navigation Panel-->
+<ADDRESS>
+<tt>alex@alexsamuel.net</tt>
+</ADDRESS>
+</BODY>
+</HTML>
